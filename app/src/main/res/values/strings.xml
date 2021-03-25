@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">韵礼音乐</string>
+    <string name="albumPicture">专辑图片</string>
+    <string name="background">背景图</string>
+    <string name="play_button">播放键</string>
+    <string name="next_button">下一首按钮</string>
+    <string name="last_button">上一首按钮</string>
+    <string name="test">测试</string>
+    <string name="startPagePicture">起始页面图片</string>
+</resources>
