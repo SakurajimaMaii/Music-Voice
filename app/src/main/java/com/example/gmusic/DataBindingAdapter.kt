@@ -12,7 +12,7 @@ import com.example.gmusic.DataBindingAdapter.BindingHolder
 /**
  * @author HP
  */
-class DataBindingAdapter(var items: List<BindingAdapterItem>) :
+class DataBindingAdapter(private var items: List<BindingAdapterItem>) :
     RecyclerView.Adapter<BindingHolder>() {
     private var onItemClickListener: SetOnItemClickListener? = null
     fun setOnItemClickListener(onItemClickListener: SetOnItemClickListener?) {
@@ -53,7 +53,7 @@ class DataBindingAdapter(var items: List<BindingAdapterItem>) :
         return items[position].viewType
     }
 
-    class BindingHolder(var binding: ViewDataBinding) : ViewHolder(
+    class BindingHolder(private var binding: ViewDataBinding) : ViewHolder(
         binding.root
     ) {
         fun bindData(item: BindingAdapterItem?) {

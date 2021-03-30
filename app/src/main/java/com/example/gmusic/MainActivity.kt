@@ -1,5 +1,6 @@
 package com.example.gmusic
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -18,6 +19,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gmusic.DataBindingAdapter.SetOnItemClickListener
 import com.example.gmusic.databinding.ActivityMainBinding
+import com.permissionx.guolindev.PermissionX
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,21 +57,33 @@ class MainActivity : AppCompatActivity(){
     /**
      * 记录暂停音乐时进度条的位置
      */
-    var currentPausePositionInSong = 0
+    private var currentPausePositionInSong = 0
 
     /**
      * 创建MediaPlayer对象
      */
-    var mediaPlayer: MediaPlayer? = null
+    private var mediaPlayer: MediaPlayer? = null
 
     /**
      * 判断是不是首次启动 默认值为false
      */
-    var isFirstRun = false
+    private var isFirstRun = false
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //申请权限
+        PermissionX.init(this)
+                .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .request { allGranted, _, deniedList ->
+                    if (allGranted) {
+                        Toast.makeText(this, "All permissions are granted", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "These permissions are denied: $deniedList", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
         //加载布局
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         initView()
@@ -83,7 +97,7 @@ class MainActivity : AppCompatActivity(){
                 currentPlayPosition = position
                 val localMusicBean = mData[position] as LocalMusicBean
                 //设置item
-                binding.setItem(localMusicBean)
+                binding.item = localMusicBean
                 binding.localMusicBottomTvAlbumArt.setImageBitmap(localMusicBean.albumArt)
                 playMusicInMusicBean(localMusicBean)
             }
@@ -252,13 +266,11 @@ class MainActivity : AppCompatActivity(){
         mmr.setDataSource(albumPath)
         //获取图片数据
         val data = mmr.embeddedPicture
-        val albumPicture: Bitmap
-        albumPicture = if (data != null) {
+        return if (data != null) {
             BitmapFactory.decodeByteArray(data, 0, data.size)
         } else {
             BitmapFactory.decodeResource(resources, R.drawable.earphone)
         }
-        return albumPicture
     }
 
     private fun initView() {
@@ -280,7 +292,7 @@ class MainActivity : AppCompatActivity(){
                     loadLocalMusicData()
                     return false
                 }
-                mData!!.addAll(cacheMusicData)
+                mData.addAll(cacheMusicData)
                 adapter!!.notifyDataSetChanged()
                 return false
             }
