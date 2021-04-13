@@ -8,12 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
+        setContentView(R.layout.splash_activity)
         //隐藏状态栏
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         //隐藏标题栏
         supportActionBar!!.hide()
-        setContentView(R.layout.activity_splash)
+        setContentView(R.layout.splash_activity)
         val myThread: Thread = object : Thread() {
             override fun run() {
                 try {

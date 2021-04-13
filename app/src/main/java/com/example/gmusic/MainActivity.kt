@@ -2,6 +2,7 @@ package com.example.gmusic
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,43 +12,51 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gmusic.DataBindingAdapter.SetOnItemClickListener
-import com.example.gmusic.databinding.ActivityMainBinding
+import com.example.gmusic.databinding.MainActivityBinding
+import com.gcode.gutils.adapter.BaseBindingAdapter
+import com.gcode.gutils.adapter.BaseItem
+import com.gcode.gutils.utils.MsgWindowUtils
 import com.permissionx.guolindev.PermissionX
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * @author HP
- */
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
+
+    inner class MusicBindingAdapter(items: MutableList<BaseItem>) : BaseBindingAdapter(items) {
+        override fun setVariableId(): Int {
+            return BR.item
+        }
+    }
+
     /**
      * 获取binding对象
      */
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: MainActivityBinding
 
     /**
      * 搜索到的数据
      */
-    var searchResultMusic: List<BindingAdapterItem> = ArrayList()
+    var searchResultMusic: List<BaseItem> = ArrayList()
 
     /**
      * 做个数据缓存
      */
-    private val cacheMusicData: MutableList<BindingAdapterItem> = ArrayList()
+    private val cacheMusicData: MutableList<BaseItem> = ArrayList()
 
     /**
      * 数据源
      */
-    var mData: MutableList<BindingAdapterItem> = ArrayList()
-    private var adapter: DataBindingAdapter? = null
+    var mData: MutableList<BaseItem> = ArrayList()
+    private var adapter: MusicBindingAdapter? = null
 
     /**
      * 记录当前正在播放的音乐的位置
@@ -69,7 +78,8 @@ class MainActivity : AppCompatActivity(){
      */
     private var isFirstRun = false
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,24 +88,24 @@ class MainActivity : AppCompatActivity(){
                 .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .request { allGranted, _, deniedList ->
                     if (allGranted) {
-                        Toast.makeText(this, "All permissions are granted", Toast.LENGTH_SHORT).show()
+                        Log.i(this.localClassName, "All permissions are granted")
                     } else {
                         Toast.makeText(this, "These permissions are denied: $deniedList", Toast.LENGTH_SHORT).show()
                     }
                 }
 
         //加载布局
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
         initView()
         //初始化mediaPlayer
         mediaPlayer = MediaPlayer()
         mData = ArrayList()
         //创建适配器对象
-        adapter = DataBindingAdapter(mData)
-        adapter!!.setOnItemClickListener(object : SetOnItemClickListener{
-            override fun onItemClick(position: Int) {
-                currentPlayPosition = position
-                val localMusicBean = mData[position] as LocalMusicBean
+        adapter = MusicBindingAdapter(mData)
+        adapter!!.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener {
+            override fun onItemClick(itemView: View?, pos: Int) {
+                currentPlayPosition = pos
+                val localMusicBean = mData[pos] as MusicBean
                 //设置item
                 binding.item = localMusicBean
                 binding.localMusicBottomTvAlbumArt.setImageBitmap(localMusicBean.albumArt)
@@ -114,7 +124,7 @@ class MainActivity : AppCompatActivity(){
                 Toast.makeText(this, "已经是第一首了，没有上一曲！", Toast.LENGTH_SHORT).show()
             }
             currentPlayPosition -= 1
-            val lastBean = mData[currentPlayPosition] as LocalMusicBean
+            val lastBean = mData[currentPlayPosition] as MusicBean
             binding.item = lastBean
             playMusicInMusicBean(lastBean)
         }
@@ -136,13 +146,17 @@ class MainActivity : AppCompatActivity(){
                 Toast.makeText(this, "已经是最后一首了，没有下一曲！", Toast.LENGTH_SHORT).show()
             }
             currentPlayPosition += 1
-            val nextBean = mData[currentPlayPosition] as LocalMusicBean
+            val nextBean = mData[currentPlayPosition] as MusicBean
             binding.item = nextBean
             playMusicInMusicBean(nextBean)
         }
+
+        binding.localMusicBottomLayout.setOnClickListener {
+            startForResult.launch(Intent(this, MusicItemActivity::class.java))
+        }
     }
 
-    private fun playMusicInMusicBean(musicBean: LocalMusicBean) {
+    private fun playMusicInMusicBean(musicBean: MusicBean) {
         /*根据传入对象播放音乐*/
         //设置底部显示的歌手名称和歌曲名
         stopMusic()
@@ -212,51 +226,60 @@ class MainActivity : AppCompatActivity(){
         stopMusic()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     private fun loadLocalMusicData() {
-        var cursor: Cursor? = null
-        try {
-            //加载本地文件到集合中
-            //获取ContentResolver对象
-            val resolver = contentResolver
-            //获取本地存储的Uri地址
-            val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-            //开始查询地址
-            cursor = resolver.query(uri, null, null, null, null)
-            //遍历cursor
-            var id = 0
-            while (cursor!!.moveToNext()) {
-                //设立条件过滤掉一部分歌曲
-                if (cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)) != "<unknown>" &&
-                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)) != "<unknown>"
-                ) {
-                    val song = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
-                    @SuppressLint("InlinedApi") val singer =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                    @SuppressLint("InlinedApi") val album =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                    id++
-                    val sid = id.toString()
-                    val path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                    val duration =
-                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    @SuppressLint("SimpleDateFormat") val sdf = SimpleDateFormat("mm:ss")
-                    val time = sdf.format(Date(duration))
-                    val mp = getAlbumArt(path)
-                    //将一行当中的对象封装到数据当中
-                    val bean = LocalMusicBean(sid, song, singer, album, time, path, mp)
-                    mData.add(bean)
-                }
+        //加载本地文件到集合中
+        //获取ContentResolver对象
+        val resolver = contentResolver
+        //获取本地存储的Uri地址
+        val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        //开始查询地址
+        val cursor: Cursor? = resolver.query(uri, null, null, null, null)
+        //遍历cursor
+        //设立条件过滤掉一部分歌曲
+        when {
+            cursor == null -> {
+                Log.e(this.localClassName, "query failed, handle error.")
             }
-            //做数据缓存，提升效率
-            cacheMusicData.addAll(mData)
-            //数据源变化，提示适配器更新
-            adapter!!.notifyDataSetChanged()
-            cursor.close()
-        } finally {
-            cursor!!.close()
+            !cursor.moveToFirst() -> {
+                MsgWindowUtils.showShortMsg(this, "设备上没有歌曲")
+            }
+            else -> {
+                var id = 0
+                do {
+                    if (cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)) != "<unknown>" &&
+                            cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)) != "<unknown>"
+                    ) {
+                        val song = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                        var singer: String? = null
+                        var album: String? = null
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            singer = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                            album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
+                        } else {
+                            Log.w(this.localClassName, "当前版本的手机不支持查找singer和album,MIN VERSION_CODE R")
+                        }
+                        id++
+                        val sid = id.toString()
+                        val path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                        var duration: Long? = null
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                        } else {
+                            Log.w(this.localClassName, "当前版本的手机不支持查找singer和album,MIN VERSION_CODE Q")
+                        }
+                        val mp = getAlbumArt(path)
+                        //将一行当中的对象封装到数据当中
+                        val bean = MusicBean(sid, song, singer, album, duration, path, mp)
+                        mData.add(bean)
+                    }
+                } while (cursor.moveToNext())
+            }
         }
+        //做数据缓存，提升效率
+        cacheMusicData.addAll(mData)
+        //数据源变化，提示适配器更新
+        adapter!!.notifyDataSetChanged()
+        cursor?.close()
     }
 
     private fun getAlbumArt(albumPath: String): Bitmap {
@@ -274,7 +297,6 @@ class MainActivity : AppCompatActivity(){
     }
 
     private fun initView() {
-        binding.searchView.isSubmitButtonEnabled = true
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -285,7 +307,6 @@ class MainActivity : AppCompatActivity(){
                 return false
             }
 
-            @RequiresApi(api = Build.VERSION_CODES.Q)
             override fun onQueryTextChange(newText: String): Boolean {
                 mData.clear()
                 if (cacheMusicData.size < 1) {
@@ -297,5 +318,27 @@ class MainActivity : AppCompatActivity(){
                 return false
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.main_toolbar_setting->{
+                MsgWindowUtils.showShortMsg(this,"Hello")
+            }
+            
+            R.id.main_toolbar_search->{
+                if (binding.searchView.visibility == View.GONE){
+                    binding.searchView.visibility = View.VISIBLE
+                }else{
+                    binding.searchView.visibility = View.GONE
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

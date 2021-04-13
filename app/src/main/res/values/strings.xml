@@ -7,4 +7,6 @@
     <string name="last_button">上一首按钮</string>
     <string name="test">测试</string>
     <string name="startPagePicture">起始页面图片</string>
+    <string name="main_toolbar_setting">设置</string>
+    <string name="main_toolbar_search">搜索</string>
 </resources>
