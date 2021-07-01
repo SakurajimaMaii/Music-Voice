@@ -15,20 +15,6 @@
         android:layout_margin="5sp">
 
         <TextView
-            android:id="@+id/item_local_music_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10sp"
-            android:text="@{item.id}"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/item_local_music_singer"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
             android:id="@+id/item_local_music_song"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,27 +23,31 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintLeft_toRightOf="@id/item_local_music_num"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/item_local_music_singer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:text="@{item.singer}"
-            android:textColor="#666666"
+            android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintLeft_toLeftOf="@id/item_local_music_song"
             app:layout_constraintTop_toBottomOf="@id/item_local_music_song" />
 
-        <TextView
+        <com.example.gmusic.components.FocusedTextView
             android:id="@+id/item_local_music_album"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5sp"
             android:text="@{item.album}"
-            android:textColor="#666666"
+            android:textColor="@color/white"
             android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxEms="20"
             app:layout_constraintBottom_toBottomOf="@id/item_local_music_singer"
             app:layout_constraintLeft_toRightOf="@id/item_local_music_singer"
             app:layout_constraintTop_toTopOf="@id/item_local_music_singer" />
@@ -68,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10sp"
             android:text="@{item.duration.toString()}"
-            android:textColor="#888"
+            android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
