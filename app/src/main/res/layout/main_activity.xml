@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@drawable/search_view_background"
+            android:background="@drawable/sv_bg"
             android:iconifiedByDefault="false"
             android:queryHint="请输入要搜索的歌名"
             android:visibility="gone"/>
@@ -28,8 +28,9 @@
             android:id="@+id/local_music_bottomLayout"
             android:layout_width="match_parent"
             android:layout_height="70dp"
+            android:layout_margin="10dp"
             android:layout_alignParentBottom="true"
-            android:background="#33EEEEEE"
+            android:background="@drawable/control_bg"
             android:baselineAligned="false">
 
             <ImageView
@@ -104,11 +105,11 @@
             </LinearLayout>
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/local_music_rv"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/fragment_vp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/local_music_bottomLayout"
-            android:layout_below="@id/searchView" />
+            android:layout_below="@id/searchView"/>
     </RelativeLayout>
 </layout>

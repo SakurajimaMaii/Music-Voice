@@ -2,14 +2,8 @@ package com.example.gmusic
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ContentUris
 import android.content.Intent
-import android.database.Cursor
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -17,28 +11,30 @@ import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.gmusic.databinding.MainActivityBinding
-import com.gcode.gutils.adapter.BaseBindingAdapter
+import com.example.gmusic.fragment.MusicPlayFragment
+import com.example.gmusic.fragment.SettingsFragment
+import com.example.gmusic.manager.PlayManager
+import com.example.gmusic.viewModel.MainActVM
 import com.gcode.gutils.adapter.BaseItem
 import com.gcode.gutils.utils.MsgWindowUtils
 import com.permissionx.guolindev.PermissionX
-import java.io.IOException
 import java.util.*
 
+/**
+ * Fragment页面的数量.
+ */
+private const val NUM_PAGES = 2
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : FragmentActivity() {
 
     companion object {
         const val ActTag = "MainActivity"
-    }
-
-    inner class MusicBindingAdapter(items: MutableList<BaseItem>) : BaseBindingAdapter(items) {
-        override fun setVariableId(): Int {
-            return BR.item
-        }
     }
 
     /**
@@ -51,36 +47,9 @@ class MainActivity : AppCompatActivity() {
      */
     var searchResultMusic: List<BaseItem> = ArrayList()
 
-    /**
-     * 做个数据缓存
-     */
-    private val cacheMusicData: MutableList<BaseItem> = ArrayList()
+    private var vpAdapter: ScreenSlidePagerAdapter? = null
 
-    /**
-     * 数据源
-     */
-    var mData: MutableList<BaseItem> = ArrayList()
-    private var adapter: MusicBindingAdapter? = null
-
-    /**
-     * 记录当前正在播放的音乐的位置
-     */
-    var currentPlayPosition = -1
-
-    /**
-     * 记录暂停音乐时进度条的位置
-     */
-    private var currentPausePositionInSong = 0
-
-    /**
-     * 创建MediaPlayer对象
-     */
-    private var mediaPlayer: MediaPlayer = MediaPlayer()
-
-    /**
-     * 判断是不是首次启动 默认值为false
-     */
-    private var isFirstRun = false
+    private val actVM:MainActVM by viewModels()
 
     private val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
@@ -106,56 +75,55 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-        //加载布局
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
-        initView()
-        //初始化mediaPlayer
-        mediaPlayer = MediaPlayer()
-        mData = ArrayList()
+        //initView()
         //创建适配器对象
-        adapter = MusicBindingAdapter(mData)
-        adapter!!.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener {
-            override fun onItemClick(itemView: View?, pos: Int) {
-                currentPlayPosition = pos
-                val localMusicBean = mData[pos] as MusicBean
-                binding.item = localMusicBean
-                playMusicInMusicBean(localMusicBean.id.toLong())
-            }
-        })
-        binding.localMusicRv.adapter = adapter
+        vpAdapter = ScreenSlidePagerAdapter(this)
+        binding.fragmentVp.adapter = vpAdapter
         //设置布局管理器
-        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.localMusicRv.layoutManager = layoutManager
-        //加载本地数据源
-        loadLocalMusicData()
+
         //设置每一项的点击事件
         binding.localMusicBottomIvLast.setOnClickListener {
-            if (currentPlayPosition == 0) {
-                Toast.makeText(this, "已经是第一首了，没有上一曲！", Toast.LENGTH_SHORT).show()
+            actVM.currentPlayPos.observe(this){
+                if (it == 0) {
+                    Toast.makeText(this, "已经是第一首了，没有上一曲！", Toast.LENGTH_SHORT).show()
+                }else{
+                    val cpp = it - 1
+                    actVM.setCurrentPlayPos(cpp)
+                    val lastBean = actVM.getMusicPyPos(cpp)
+                    actVM.setCurrentPlayMusic(lastBean)
+                    PlayManager.playMusicInMusicBean(lastBean.id.toLong())
+                }
             }
-            currentPlayPosition -= 1
-            val lastBean = mData[currentPlayPosition] as MusicBean
-            binding.item = lastBean
-            playMusicInMusicBean(lastBean.id.toLong())
         }
         binding.localMusicBottomIvPlay.setOnClickListener {
-            if (currentPlayPosition == -1) {
-                Toast.makeText(this, "请选择想要播放的音乐", Toast.LENGTH_SHORT).show()
-            }
-            if (mediaPlayer.isPlaying) {
-                pauseMusic()
-            } else {
-                playMusic()
+            actVM.currentPlayPos.observe(this){
+                if (it == -1) {
+                    Toast.makeText(this, "请选择想要播放的音乐", Toast.LENGTH_SHORT).show()
+                }
+                if (PlayManager.isPlaying()) {
+                    PlayManager.pauseMusic()
+                } else {
+                    PlayManager.playMusic()
+                }
             }
         }
         binding.localMusicBottomIvNext.setOnClickListener {
-            if (currentPlayPosition == mData.size - 1) {
-                Toast.makeText(this, "已经是最后一首了，没有下一曲！", Toast.LENGTH_SHORT).show()
+            actVM.currentPlayPos.observe(this){
+                if (it == actVM.getMusicCount() - 1) {
+                    Toast.makeText(this, "已经是最后一首了，没有下一曲！", Toast.LENGTH_SHORT).show()
+                }else{
+                    val cpp = it + 1
+                    actVM.setCurrentPlayPos(cpp)
+                    val nextBean = actVM.getMusicPyPos(cpp)
+                    actVM.setCurrentPlayMusic(nextBean)
+                    PlayManager.playMusicInMusicBean(nextBean.id.toLong())
+                }
             }
-            currentPlayPosition += 1
-            val nextBean = mData[currentPlayPosition] as MusicBean
-            binding.item = nextBean
-            playMusicInMusicBean(nextBean.id.toLong())
+        }
+
+        actVM.currentPlayMusic.observe(this){
+            binding.item = it
         }
 
         binding.localMusicBottomLayout.setOnClickListener {
@@ -163,159 +131,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun playMusicInMusicBean(musicId: Long) {
-        /*根据传入对象播放音乐*/
-        //设置底部显示的歌手名称和歌曲名
-        stopMusic()
-        //重置多媒体播放器
-        mediaPlayer.reset()
-        //设置新的播放路径
-        try {
-            mediaPlayer.apply {
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .build()
-                )
-                setDataSource(
-                    this@MainActivity,
-                    ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, musicId)
-                )
-            }
-            playMusic()
-        } catch (e: IOException) {
-            Log.e(ActTag, "Play error,function execution error")
-            e.printStackTrace()
-        }
-    }
-
-    private fun playMusic() {
-        //播放音乐的函数
-        if (!mediaPlayer.isPlaying) {
-            if (currentPausePositionInSong == 0) {
-                try {
-                    mediaPlayer.prepare()
-                    mediaPlayer.start()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            } else {
-                //从暂停到播放
-                mediaPlayer.seekTo(currentPausePositionInSong)
-                mediaPlayer.start()
-            }
-            binding.localMusicBottomIvPlay.setImageResource(R.drawable.pause)
-        }
-    }
-
-    private fun pauseMusic() {
-        /* 暂停音乐的函数*/
-        if (mediaPlayer.isPlaying) {
-            currentPausePositionInSong = mediaPlayer.currentPosition
-            mediaPlayer.pause()
-            binding.localMusicBottomIvPlay.setImageResource(R.drawable.play)
-        }
-    }
-
-    /**
-     * 停止音乐的函数
-     * 在这里加入isFirstRun的主要用意如下:
-     * 在首次启动软件时,如果第一次点击音乐,执行playMusicInMusicBean()时,进行到stopMusic()函数时,在不加isFirstRun判定条件的情况下,
-     * 直接执行mediaPlayer.pause();会报错,诸如 E/MediaPlayerNative: pause called in state 1, mPlayer(0x0),那是因为不符合MediaPlayer生命周期,
-     * 因而在加入isFirstRun条件,在初次运行时并不执行if条件句里面的内容,之后将isFirstRun设置为true
-     */
-    private fun stopMusic() {
-        if (isFirstRun) {
-            Log.d(ActTag, "stopMusic()")
-            currentPausePositionInSong = 0
-            mediaPlayer.pause()
-            mediaPlayer.seekTo(0)
-            mediaPlayer.stop()
-            binding.localMusicBottomIvPlay.setImageResource(R.drawable.play)
-        } else {
-            isFirstRun = true
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        stopMusic()
+        PlayManager.stopMusic()
     }
 
-    private fun loadLocalMusicData() {
 
-        val cursor: Cursor? = contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            null,
-            MediaStore.Audio.Media.ARTIST+"!=?",
-            arrayOf("<unknown>"),
-            null
-        )
-        when {
-            cursor == null -> {
-                Log.e(this.localClassName, "query failed, handle error.")
-            }
-            !cursor.moveToFirst() -> {
-                MsgWindowUtils.showShortMsg(this, "设备上没有歌曲")
-            }
-            else -> {
-                do {
-                    val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                    val song = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
-                    var singer: String? = null
-                    var album: String? = null
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        singer =
-                            cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                        album =
-                            cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                    } else {
-                        Log.w(this.localClassName, "当前版本的手机不支持查找singer和album,MIN VERSION_CODE R")
-                    }
-                    var duration: Long? = null
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        duration =
-                            cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    } else {
-                        Log.w(this.localClassName, "当前版本的手机不支持查找singer和album,MIN VERSION_CODE Q")
-                    }
-                    //将一行当中的对象封装到数据当中
-                    val bean = MusicBean(id, song, singer, album, duration)
-                    mData.add(bean)
-                } while (cursor.moveToNext())
-            }
-        }
-        //做数据缓存，提升效率
-        cacheMusicData.addAll(mData)
-        //数据源变化，提示适配器更新
-        adapter!!.notifyDataSetChanged()
-        cursor?.close()
-    }
 
-    private fun initView() {
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchResultMusic = SearchSong.searchSongByName(mData, query)
-                mData.clear()
-                mData.addAll(searchResultMusic)
-                adapter!!.notifyDataSetChanged()
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                mData.clear()
-                if (cacheMusicData.size < 1) {
-                    loadLocalMusicData()
-                    return false
-                }
-                mData.addAll(cacheMusicData)
-                adapter!!.notifyDataSetChanged()
-                return false
-            }
-        })
-    }
+//    private fun initView() {
+//        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            @SuppressLint("NotifyDataSetChanged")
+//            override fun onQueryTextSubmit(query: String): Boolean {
+//                searchResultMusic = SearchSong.searchSongByName(mData, query)
+//                mData.clear()
+//                mData.addAll(searchResultMusic)
+//                adapter!!.notifyDataSetChanged()
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                mData.clear()
+//                if (cacheMusicData.size < 1) {
+//                    loadLocalMusicData()
+//                    return false
+//                }
+//                mData.addAll(cacheMusicData)
+//                adapter!!.notifyDataSetChanged()
+//                return false
+//            }
+//        })
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_toolbar_menu, menu)
@@ -337,5 +182,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (binding.fragmentVp.currentItem == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed()
+        } else {
+            // Otherwise, select the previous step.
+            binding.fragmentVp.currentItem = binding.fragmentVp.currentItem - 1
+        }
+    }
+
+    /**
+     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+     * sequence.
+     */
+    private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+        override fun getItemCount(): Int = NUM_PAGES
+
+        override fun createFragment(position: Int): Fragment = when(position){
+            0->MusicPlayFragment()
+            1->SettingsFragment()
+            else -> MusicPlayFragment()
+        }
     }
 }
