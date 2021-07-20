@@ -1,14 +1,12 @@
 package com.example.gmusic
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -16,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.gmusic.databinding.MainActivityBinding
 import com.example.gmusic.fragment.MusicPlayFragment
 import com.example.gmusic.fragment.SettingsFragment
@@ -24,6 +23,7 @@ import com.example.gmusic.viewModel.MainActVM
 import com.gcode.gutils.adapter.BaseItem
 import com.gcode.gutils.utils.MsgWindowUtils
 import com.permissionx.guolindev.PermissionX
+import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
 
 /**
@@ -126,9 +126,30 @@ class MainActivity : FragmentActivity() {
             binding.item = it
         }
 
-        binding.localMusicBottomLayout.setOnClickListener {
+        binding.localMusicControlLayout.setOnClickListener {
             startForResult.launch(Intent(this, MusicItemActivity::class.java))
         }
+
+        binding.bottomBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
+            override fun onTabSelected(
+                lastIndex: Int,
+                lastTab: AnimatedBottomBar.Tab?,
+                newIndex: Int,
+                newTab: AnimatedBottomBar.Tab
+            ) {
+                binding.fragmentVp.currentItem = newIndex
+            }
+
+            override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {
+                binding.fragmentVp.currentItem = index
+            }
+        })
+
+        binding.fragmentVp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                binding.bottomBar.selectTabAt(position)
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -203,8 +224,8 @@ class MainActivity : FragmentActivity() {
         override fun getItemCount(): Int = NUM_PAGES
 
         override fun createFragment(position: Int): Fragment = when(position){
-            0->MusicPlayFragment()
-            1->SettingsFragment()
+            0-> MusicPlayFragment()
+            1-> SettingsFragment()
             else -> MusicPlayFragment()
         }
     }

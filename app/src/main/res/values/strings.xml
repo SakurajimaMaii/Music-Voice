@@ -9,6 +9,8 @@
     <string name="startPagePicture">起始页面图片</string>
     <string name="main_toolbar_setting">设置</string>
     <string name="main_toolbar_search">搜索</string>
+    <string name="main_bottom_home">主页</string>
+    <string name="main_bottom_setting">设置</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
