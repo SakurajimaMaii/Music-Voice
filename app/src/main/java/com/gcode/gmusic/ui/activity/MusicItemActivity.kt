@@ -1,7 +1,8 @@
-package com.example.gmusic
+package com.gcode.gmusic.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.gmusic.R
 
 class MusicItemActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

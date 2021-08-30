@@ -1,6 +1,7 @@
-package com.example.gmusic
+package com.gcode.gmusic.model
 
-import com.gcode.gutils.adapter.BaseItem
+import com.example.gmusic.R
+import com.gcode.tools.adapter.BaseItem
 
 data class MusicBean(
     val id:Int,
@@ -8,9 +9,9 @@ data class MusicBean(
     var singer: String?, //专辑名称
     var album: String?, //歌曲时长
     var duration: Long?, //歌曲路径
-):BaseItem {
+): BaseItem {
     override fun getItemBindViewType(): Int {
-        return R.layout.local_music_recycle_item
+        return R.layout.rv_item_local_music
     }
 
     override fun getItemViewType(): Int {

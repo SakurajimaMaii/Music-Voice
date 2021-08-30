@@ -1,4 +1,4 @@
-package com.example.gmusic.viewModel
+package com.gcode.gmusic.viewModel
 
 import android.database.Cursor
 import android.os.Build
@@ -7,10 +7,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.gmusic.MusicBean
-import com.example.gmusic.utils.AppUtils
-import com.gcode.gutils.adapter.BaseItem
-import com.gcode.gutils.utils.MsgWindowUtils
+import com.gcode.gmusic.model.MusicBean
+import com.gcode.gmusic.utils.AppUtils
+import com.gcode.tools.adapter.BaseItem
+import com.gcode.tools.utils.MsgWindowUtils
 import java.util.ArrayList
 
 /**
@@ -101,7 +101,7 @@ class MainActVM:ViewModel() {
     val currentPlayMusic:LiveData<MusicBean>
         get() = _currentPlayMusic
 
-    fun setCurrentPlayMusic(music:MusicBean){
+    fun setCurrentPlayMusic(music: MusicBean){
         this._currentPlayMusic.postValue(music)
     }
 

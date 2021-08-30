@@ -1,4 +1,4 @@
-package com.example.gmusic.fragment
+package com.gcode.gmusic.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceFragmentCompat
 import com.example.gmusic.R
 import com.example.gmusic.databinding.SettingFragmentBinding
 

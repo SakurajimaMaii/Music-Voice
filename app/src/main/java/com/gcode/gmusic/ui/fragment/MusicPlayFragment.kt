@@ -1,44 +1,43 @@
-package com.example.gmusic.fragment
+package com.gcode.gmusic.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gmusic.BR
-import com.example.gmusic.MusicBean
 import com.example.gmusic.databinding.PlayMusicFragmentBinding
-import com.example.gmusic.manager.PlayManager
-import com.example.gmusic.utils.AppUtils
-import com.example.gmusic.viewModel.MainActVM
-import com.gcode.gutils.adapter.BaseBindingAdapter
-import com.gcode.gutils.adapter.BaseItem
+import com.gcode.gmusic.manager.PlayManager
+import com.gcode.gmusic.ui.adapter.MusicBindingAdapter
+import com.gcode.gmusic.ui.components.SpacesItemDecoration
+import com.gcode.gmusic.utils.AppUtils
+import com.gcode.gmusic.viewModel.MainActVM
+import com.gcode.tools.adapter.BaseBindingAdapter
+import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
+import jp.wasabeef.recyclerview.animators.OvershootInLeftAnimator
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 
 class MusicPlayFragment : Fragment() {
-
-    companion object {
-    }
-
-    inner class MusicBindingAdapter(items: MutableList<BaseItem>) : BaseBindingAdapter(items) {
-        override fun setVariableId(): Int {
-            return BR.item
-        }
-    }
 
     private val mainVM: MainActVM by activityViewModels()
     private lateinit var binding: PlayMusicFragmentBinding
 
     private lateinit var mAdapter: MusicBindingAdapter
 
+    private lateinit var slideInLeftAnimationAdapter: SlideInLeftAnimationAdapter
+
     override fun onStart() {
         super.onStart()
+
+        val spacesItemDecoration = SpacesItemDecoration(5)
+        binding.localMusicRv.addItemDecoration(spacesItemDecoration)
 
         activity?.let {
             mainVM.getLocalMusicData().observe(it) { music ->
                 mAdapter = MusicBindingAdapter(music)
-                mAdapter.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener {
+                mAdapter.setOnItemClickListener(object :BaseBindingAdapter.OnItemClickListener {
                     override fun onItemClick(itemView: View?, pos: Int) {
                         mainVM.apply {
                             setCurrentPlayPos(pos)
@@ -47,12 +46,22 @@ class MusicPlayFragment : Fragment() {
                             PlayManager.playMusicInMusicBean(localMusicBean.id.toLong())
                         }
                     }
+
+                    override fun onItemClick(itemView: View?, pos: Int, itemId: Long) {
+
+                    }
                 })
                 val layoutManager =
                     LinearLayoutManager(AppUtils.context, LinearLayoutManager.VERTICAL, false)
+                slideInLeftAnimationAdapter = SlideInLeftAnimationAdapter(mAdapter)
+                slideInLeftAnimationAdapter.apply {
+                    setInterpolator(OvershootInterpolator())
+                    setDuration(800)
+                    setFirstOnly(false)
+                }
                 binding.localMusicRv.apply {
                     this.layoutManager = layoutManager
-                    this.adapter = mAdapter
+                    this.adapter = slideInLeftAnimationAdapter
                 }
             }
         }

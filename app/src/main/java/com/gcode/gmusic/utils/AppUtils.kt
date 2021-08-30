@@ -1,4 +1,4 @@
-package com.example.gmusic.utils
+package com.gcode.gmusic.utils
 
 import android.app.Application
 import android.content.Context

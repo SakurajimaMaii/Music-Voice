@@ -1,12 +1,11 @@
-package com.example.gmusic.manager
+package com.gcode.gmusic.manager
 
 import android.content.ContentUris
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.provider.MediaStore
 import android.util.Log
-import com.example.gmusic.MainActivity
-import com.example.gmusic.utils.AppUtils
+import com.gcode.gmusic.utils.AppUtils
 import java.io.IOException
 
 /**
@@ -45,7 +44,7 @@ object PlayManager {
             }
             playMusic()
         } catch (e: IOException) {
-            Log.e(MainActivity.ActTag, "Play error,function execution error",e)
+            Log.e(this.javaClass.simpleName, "Play error,function execution error",e)
             e.printStackTrace()
         }
     }
@@ -84,7 +83,7 @@ object PlayManager {
      */
     fun stopMusic() {
         if (isFirstRun) {
-            Log.d(MainActivity.ActTag, "stopMusic()")
+            Log.d(this.javaClass.simpleName, "stopMusic()")
             mediaPlayer.pause()
             mediaPlayer.seekTo(0)
             mediaPlayer.stop()

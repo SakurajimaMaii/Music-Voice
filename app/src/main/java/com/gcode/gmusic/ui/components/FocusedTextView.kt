@@ -1,10 +1,10 @@
-package com.example.gmusic.components
+package com.gcode.gmusic.ui.components
 
 import android.content.Context
 import android.util.AttributeSet
 
 /**
- *作者:created by HP on 2021/7/1 18:25
+ *作者:created by HP on 2021/8/29 18:40
  *邮箱:sakurajimamai2020@qq.com
  */
 class FocusedTextView : androidx.appcompat.widget.AppCompatTextView {

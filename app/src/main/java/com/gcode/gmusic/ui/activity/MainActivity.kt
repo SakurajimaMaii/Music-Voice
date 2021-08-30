@@ -1,4 +1,4 @@
-package com.example.gmusic
+package com.gcode.gmusic.ui.activity
 
 import android.Manifest
 import android.content.Intent
@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
@@ -15,41 +14,31 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.example.gmusic.R
 import com.example.gmusic.databinding.MainActivityBinding
-import com.example.gmusic.fragment.MusicPlayFragment
-import com.example.gmusic.fragment.SettingsFragment
-import com.example.gmusic.manager.PlayManager
-import com.example.gmusic.viewModel.MainActVM
-import com.gcode.gutils.adapter.BaseItem
-import com.gcode.gutils.utils.MsgWindowUtils
+import com.gcode.gmusic.manager.PlayManager
+import com.gcode.gmusic.ui.fragment.MusicPlayFragment
+import com.gcode.gmusic.ui.fragment.SettingsFragment
+import com.gcode.gmusic.viewModel.MainActVM
+import com.gcode.tools.utils.MsgWindowUtils
 import com.permissionx.guolindev.PermissionX
 import nl.joery.animatedbottombar.AnimatedBottomBar
-import java.util.*
-
-/**
- * Fragment页面的数量.
- */
-private const val NUM_PAGES = 2
 
 class MainActivity : FragmentActivity() {
 
-    companion object {
-        const val ActTag = "MainActivity"
-    }
+    /**
+     * Fragment页面的数量.
+     */
+    private val NUM_PAGES = 2
 
     /**
      * 获取binding对象
      */
     private lateinit var binding: MainActivityBinding
 
-    /**
-     * 搜索到的数据
-     */
-    var searchResultMusic: List<BaseItem> = ArrayList()
-
     private var vpAdapter: ScreenSlidePagerAdapter? = null
 
-    private val actVM:MainActVM by viewModels()
+    private val actVM: MainActVM by viewModels()
 
     private val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
@@ -67,11 +56,9 @@ class MainActivity : FragmentActivity() {
                 if (allGranted) {
                     Log.i(this.localClassName, "All permissions are granted")
                 } else {
-                    Toast.makeText(
+                    MsgWindowUtils.showShortMsg(
                         this,
-                        "These permissions are denied: $deniedList",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                        "These permissions are denied: $deniedList")
                 }
             }
 
@@ -86,7 +73,7 @@ class MainActivity : FragmentActivity() {
         binding.localMusicBottomIvLast.setOnClickListener {
             actVM.currentPlayPos.observe(this){
                 if (it == 0) {
-                    Toast.makeText(this, "已经是第一首了，没有上一曲！", Toast.LENGTH_SHORT).show()
+                    MsgWindowUtils.showShortMsg(this, "已经是第一首了，没有上一曲！")
                 }else{
                     val cpp = it - 1
                     actVM.setCurrentPlayPos(cpp)
@@ -99,7 +86,7 @@ class MainActivity : FragmentActivity() {
         binding.localMusicBottomIvPlay.setOnClickListener {
             actVM.currentPlayPos.observe(this){
                 if (it == -1) {
-                    Toast.makeText(this, "请选择想要播放的音乐", Toast.LENGTH_SHORT).show()
+                    MsgWindowUtils.showShortMsg(this, "请选择想要播放的音乐")
                 }
                 if (PlayManager.isPlaying()) {
                     PlayManager.pauseMusic()
@@ -111,7 +98,7 @@ class MainActivity : FragmentActivity() {
         binding.localMusicBottomIvNext.setOnClickListener {
             actVM.currentPlayPos.observe(this){
                 if (it == actVM.getMusicCount() - 1) {
-                    Toast.makeText(this, "已经是最后一首了，没有下一曲！", Toast.LENGTH_SHORT).show()
+                    MsgWindowUtils.showShortMsg(this, "已经是最后一首了，没有下一曲！")
                 }else{
                     val cpp = it + 1
                     actVM.setCurrentPlayPos(cpp)

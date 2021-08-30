@@ -1,6 +1,7 @@
-package com.example.gmusic
+package com.gcode.gmusic
 
-import com.gcode.gutils.adapter.BaseItem
+import com.gcode.gmusic.model.MusicBean
+import com.gcode.tools.adapter.BaseItem
 import java.util.*
 
 object SearchSong {
