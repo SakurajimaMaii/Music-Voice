@@ -65,7 +65,7 @@
                     android:orientation="vertical"
                     android:gravity="center_vertical">
 
-                    <TextView
+                    <com.gcode.gmusic.ui.components.FocusedTextView
                         android:id="@+id/local_music_bottom_tv_song"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -76,16 +76,20 @@
                         android:textStyle="bold"
                         android:textColor="#FFFFFF"
                         android:layout_gravity="bottom|start"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
                         tools:ignore="NestedWeights,RelativeOverlap,SmallSp" />
 
-                    <TextView
+                    <com.gcode.gmusic.ui.components.FocusedTextView
                         android:id="@+id/local_music_bottom_tv_singer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:text="@{item.singer}"
+                        android:text="@{item.album}"
                         android:textSize="12sp"
                         android:textColor="#FFFFFF"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
                         android:layout_gravity="top|start"/>
                 </LinearLayout>
 

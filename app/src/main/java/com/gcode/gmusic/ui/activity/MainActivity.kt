@@ -16,7 +16,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.gmusic.R
 import com.example.gmusic.databinding.MainActivityBinding
-import com.gcode.gmusic.manager.PlayManager
 import com.gcode.gmusic.ui.fragment.MusicPlayFragment
 import com.gcode.gmusic.ui.fragment.SettingsFragment
 import com.gcode.gmusic.viewModel.MainActVM
@@ -29,7 +28,7 @@ class MainActivity : FragmentActivity() {
     /**
      * Fragment页面的数量.
      */
-    private val NUM_PAGES = 2
+    private val numPages = 2
 
     /**
      * 获取binding对象
@@ -42,6 +41,8 @@ class MainActivity : FragmentActivity() {
 
     private val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+
+    //private val tag = this.javaClass.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,45 +72,52 @@ class MainActivity : FragmentActivity() {
 
         //设置每一项的点击事件
         binding.localMusicBottomIvLast.setOnClickListener {
-            actVM.currentPlayPos.observe(this){
-                if (it == 0) {
+            when(actVM.currentPlayPos){
+                0 ->
                     MsgWindowUtils.showShortMsg(this, "已经是第一首了，没有上一曲！")
-                }else{
-                    val cpp = it - 1
-                    actVM.setCurrentPlayPos(cpp)
-                    val lastBean = actVM.getMusicPyPos(cpp)
-                    actVM.setCurrentPlayMusic(lastBean)
-                    PlayManager.playMusicInMusicBean(lastBean.id.toLong())
+                -1 ->
+                    MsgWindowUtils.showShortMsg(this, "请选择想要播放的音乐")
+                else-> {
+                    val pos = actVM.currentPlayPos - 1
+                    actVM.apply {
+                        setCurrentPlayPos(pos)
+                        playMusicInMusicBean(actVM.getMusicPyPos(pos))
+                    }
                 }
             }
         }
         binding.localMusicBottomIvPlay.setOnClickListener {
-            actVM.currentPlayPos.observe(this){
-                if (it == -1) {
-                    MsgWindowUtils.showShortMsg(this, "请选择想要播放的音乐")
-                }
-                if (PlayManager.isPlaying()) {
-                    PlayManager.pauseMusic()
+            if (actVM.currentPlayPos == -1) {
+                MsgWindowUtils.showShortMsg(this, "请选择想要播放的音乐")
+            }else{
+                if (actVM.isPlaying()) {
+                    actVM.pauseMusic()
+                    binding.localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
                 } else {
-                    PlayManager.playMusic()
+                    actVM.playMusic()
+                    binding.localMusicBottomIvPlay.setImageResource(R.drawable.ic_pause)
                 }
             }
         }
+
         binding.localMusicBottomIvNext.setOnClickListener {
-            actVM.currentPlayPos.observe(this){
-                if (it == actVM.getMusicCount() - 1) {
+            when (actVM.currentPlayPos) {
+                actVM.getMusicCount() - 1 ->
                     MsgWindowUtils.showShortMsg(this, "已经是最后一首了，没有下一曲！")
-                }else{
-                    val cpp = it + 1
-                    actVM.setCurrentPlayPos(cpp)
-                    val nextBean = actVM.getMusicPyPos(cpp)
-                    actVM.setCurrentPlayMusic(nextBean)
-                    PlayManager.playMusicInMusicBean(nextBean.id.toLong())
+                -1 ->
+                    MsgWindowUtils.showShortMsg(this, "请选择想要播放的音乐")
+                else -> {
+                    val pos = actVM.currentPlayPos + 1
+                    actVM.apply {
+                        setCurrentPlayPos(pos)
+                        playMusicInMusicBean(actVM.getMusicPyPos(pos))
+                    }
                 }
             }
         }
 
         actVM.currentPlayMusic.observe(this){
+            binding.localMusicBottomIvPlay.setImageResource(R.drawable.ic_pause)
             binding.item = it
         }
 
@@ -141,7 +149,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        PlayManager.stopMusic()
+        actVM.releaseMediaPlayer()
     }
 
 
@@ -208,7 +216,7 @@ class MainActivity : FragmentActivity() {
      * sequence.
      */
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = NUM_PAGES
+        override fun getItemCount(): Int = numPages
 
         override fun createFragment(position: Int): Fragment = when(position){
             0-> MusicPlayFragment()

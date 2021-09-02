@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gmusic.databinding.PlayMusicFragmentBinding
-import com.gcode.gmusic.manager.PlayManager
 import com.gcode.gmusic.ui.adapter.MusicBindingAdapter
 import com.gcode.gmusic.ui.components.SpacesItemDecoration
 import com.gcode.gmusic.utils.AppUtils
@@ -40,8 +39,7 @@ class MusicPlayFragment : Fragment() {
                         mainVM.apply {
                             setCurrentPlayPos(pos)
                             val localMusicBean = getMusicPyPos(pos)
-                            setCurrentPlayMusic(localMusicBean)
-                            PlayManager.playMusicInMusicBean(localMusicBean.id.toLong())
+                            playMusicInMusicBean(localMusicBean)
                         }
                     }
 

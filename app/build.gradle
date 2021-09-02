@@ -75,7 +75,7 @@ dependencies {
     implementation 'nl.joery.animatedbottombar:library:1.1.0'
 
     implementation 'com.guolindev.permissionx:permissionx:1.5.1'
-    implementation 'com.github.SakurajimaMaii:Utils:2.1.0'
+    implementation 'com.github.SakurajimaMaii:Utils:2.2.0'
     implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
 }
 repositories {
