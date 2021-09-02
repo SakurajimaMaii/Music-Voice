@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gcode.gmusic.model.MusicBean
 import com.gcode.gmusic.utils.AppUtils
-import com.gcode.tools.adapter.BaseItem
+import com.gcode.tools.adapter.BaseUtilItem
 import com.gcode.tools.utils.MsgWindowUtils
 import java.util.ArrayList
 
@@ -26,18 +26,18 @@ class MainActVM:ViewModel() {
     private val cacheMusicData:MutableList<MusicBean> = ArrayList()
 
     //歌曲数据源
-    private val localMusicData: MutableLiveData<MutableList<BaseItem>> by lazy {
-        MutableLiveData<MutableList<BaseItem>>().also {
+    private val localMusicData: MutableLiveData<MutableList<BaseUtilItem>> by lazy {
+        MutableLiveData<MutableList<BaseUtilItem>>().also {
             it.postValue(loadLocalMusicData())
         }
     }
 
-    fun getLocalMusicData():LiveData<MutableList<BaseItem>>{
+    fun getLocalMusicData():LiveData<MutableList<BaseUtilItem>>{
         return localMusicData
     }
 
     //加载本地歌曲
-    private fun loadLocalMusicData() = ArrayList<BaseItem>().also {
+    private fun loadLocalMusicData() = ArrayList<BaseUtilItem>().also {
         val cursor: Cursor? = AppUtils.context.contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             null,

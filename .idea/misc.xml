@@ -8,12 +8,15 @@
         <entry key="..\:/Codes/AndroidStudioProject/MusicDemo/app/src/main/res/layout/activity_splash.xml" value="0.5354166666666667" />
         <entry key="..\:/Codes/AndroidStudioProject/MusicDemo/app/src/main/res/layout/item_local_music.xml" value="0.315625" />
         <entry key="..\:/Codes/AndroidStudioProject/MusicDemo/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3640625" />
+        <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/drawable/ic_next.xml" value="0.34375" />
         <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/drawable/rv_item_bk.xml" value="0.10555555555555556" />
+        <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/drawable/rv_item_local_music_bk.xml" value="0.34375" />
         <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/layout/fragment_music_play.xml" value="0.23020833333333332" />
         <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/layout/local_music_recycle_item.xml" value="0.1" />
         <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/layout/main_activity.xml" value="0.1" />
         <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/layout/music_item_activity.xml" value="0.1" />
         <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/layout/play_music_fragment.xml" value="0.1" />
+        <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/layout/rv_item_local_music.xml" value="0.32760416666666664" />
         <entry key="..\:/WorkSpace/GitSpaceAndroid/GMusic/app/src/main/res/layout/setting_fragment.xml" value="0.1" />
       </map>
     </option>
