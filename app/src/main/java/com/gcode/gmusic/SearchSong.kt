@@ -1,15 +1,15 @@
 package com.gcode.gmusic
 
 import com.gcode.gmusic.model.MusicBean
-import com.gcode.tools.adapter.BaseUtilItem
+import com.gcode.tools.adapter.BaseGcodeItem
 import java.util.*
 
 object SearchSong {
     fun searchSongByName(
-        musicBeans: List<BaseUtilItem>,
+        musicBeans: List<BaseGcodeItem>,
         searchName: CharSequence
-    ): List<BaseUtilItem> {
-        val searchResult: MutableList<BaseUtilItem> = ArrayList()
+    ): List<BaseGcodeItem> {
+        val searchResult: MutableList<BaseGcodeItem> = ArrayList()
         for (bean in musicBeans) {
             val item = bean as MusicBean
             if (item.song.contains(searchName)) {

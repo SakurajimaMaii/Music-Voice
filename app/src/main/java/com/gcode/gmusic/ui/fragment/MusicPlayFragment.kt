@@ -13,7 +13,7 @@ import com.gcode.gmusic.ui.adapter.MusicBindingAdapter
 import com.gcode.gmusic.ui.components.SpacesItemDecoration
 import com.gcode.gmusic.utils.AppUtils
 import com.gcode.gmusic.viewModel.MainActVM
-import com.gcode.tools.adapter.BaseUtilBindingAdapter
+import com.gcode.tools.adapter.BaseGcodeBindingAdapter
 import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
 
 class MusicPlayFragment : Fragment() {
@@ -34,17 +34,13 @@ class MusicPlayFragment : Fragment() {
         activity?.let {
             mainVM.getLocalMusicData().observe(it) { music ->
                 mAdapter = MusicBindingAdapter(music)
-                mAdapter.setOnItemClickListener(object : BaseUtilBindingAdapter.OnItemClickListener {
-                    override fun onItemClick(itemView: View?, pos: Int) {
+                mAdapter.setOnItemClickListener(object : BaseGcodeBindingAdapter.OnItemClickListener {
+                    override fun onItemClick(itemView: View?, pos: Int, itemId: Long) {
                         mainVM.apply {
                             setCurrentPlayPos(pos)
                             val localMusicBean = getMusicPyPos(pos)
                             playMusicInMusicBean(localMusicBean)
                         }
-                    }
-
-                    override fun onItemClick(itemView: View?, pos: Int, itemId: Long) {
-
                     }
                 })
                 val layoutManager =
