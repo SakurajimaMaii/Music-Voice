@@ -5,10 +5,12 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
-/**
- *作者:created by HP on 2021/8/29 18:13
- *邮箱:sakurajimamai2020@qq.com
- */
+// Author: Vast Gui
+// Email: guihy2019@gmail.com
+// Date: 2021/8/29 18:13
+// Description:
+// Documentation:
+
 class SpacesItemDecoration(private val space: Int) : ItemDecoration() {
     override fun getItemOffsets(
         outRect: Rect,

@@ -1,5 +1,6 @@
 package com.gcode.gmusic.viewModel
 
+import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.database.Cursor
 import android.media.AudioAttributes
@@ -11,15 +12,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gcode.gmusic.model.MusicBean
-import com.gcode.gmusic.utils.AppUtils
-import com.gcode.tools.utils.MsgWindowUtils
+import com.gcode.vastadapter.interfaces.VastBindAdapterItem
+import com.gcode.vasttools.extension.cast
+import com.gcode.vasttools.helper.ContextHelper
+import com.gcode.vasttools.utils.ToastUtils
 import java.io.IOException
-import java.util.*
 
-/**
- *作者:created by HP on 2021/7/3 14:48
- *邮箱:sakurajimamai2020@qq.com
- */
+// Author: Vast Gui
+// Email: guihy2019@gmail.com
+// Date: 2021/7/3 14:48
+// Description:
+// Documentation:
+
 class MainActVM:ViewModel() {
     private val tag = this.javaClass.simpleName
 
@@ -27,8 +31,8 @@ class MainActVM:ViewModel() {
     private val cacheMusicData:MutableList<MusicBean> = ArrayList()
 
     //歌曲数据源
-    private val localMusicData: MutableLiveData<MutableList<MusicBean>> by lazy {
-        MutableLiveData<MutableList<MusicBean>>().also {
+    private val localMusicData: MutableLiveData<MutableList<VastBindAdapterItem>> by lazy {
+        MutableLiveData<MutableList<VastBindAdapterItem>>().also {
             it.postValue(loadLocalMusicData())
         }
     }
@@ -40,11 +44,11 @@ class MainActVM:ViewModel() {
         private set
 
     //主要用于Fragment向Activity传递当前播放的歌曲
-    private val _currentPlayMusic:MutableLiveData<MusicBean> by lazy {
-        MutableLiveData<MusicBean>()
+    private val _currentPlayMusic:MutableLiveData<VastBindAdapterItem> by lazy {
+        MutableLiveData<VastBindAdapterItem>()
     }
 
-    val currentPlayMusic:LiveData<MusicBean>
+    val currentPlayMusic:LiveData<VastBindAdapterItem>
         get() = _currentPlayMusic
 
     /**
@@ -52,13 +56,14 @@ class MainActVM:ViewModel() {
      */
     private val mediaPlayer:MediaPlayer = MediaPlayer()
 
-    fun getLocalMusicData():LiveData<MutableList<MusicBean>>{
+    fun getLocalMusicData():LiveData<MutableList<VastBindAdapterItem>>{
         return localMusicData
     }
 
     //加载本地歌曲
-    private fun loadLocalMusicData() = ArrayList<MusicBean>().also {
-        val cursor: Cursor? = AppUtils.context.contentResolver.query(
+    @SuppressLint("Range")
+    private fun loadLocalMusicData() = ArrayList<VastBindAdapterItem>().also {
+        val cursor: Cursor? = ContextHelper.getAppContext().contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             null,
             MediaStore.Audio.Media.ARTIST+"!=?",
@@ -70,7 +75,7 @@ class MainActVM:ViewModel() {
                 Log.e(tag, "query failed, handle error.")
             }
             !cursor.moveToFirst() -> {
-                MsgWindowUtils.showShortMsg(AppUtils.context, "设备上没有歌曲")
+                ToastUtils.showShortMsg(ContextHelper.getAppContext(), "设备上没有歌曲")
             }
             else -> {
                 do {
@@ -101,7 +106,7 @@ class MainActVM:ViewModel() {
             }
         }
         //初始化后将第一首歌作为等待播放歌曲
-        initMediaPlayer(it[0],0)
+        initMediaPlayer(it[0])
         cursor?.close()
     }
 
@@ -131,7 +136,7 @@ class MainActVM:ViewModel() {
                         .build()
                 )
                 setDataSource(
-                    AppUtils.context,
+                    ContextHelper.getAppContext(),
                     ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.id.toLong())
                 )
             }
@@ -188,7 +193,7 @@ class MainActVM:ViewModel() {
      * 关于MediaPlayer生命周期参考
      * https://blog.csdn.net/ddna/article/details/5178864
      */
-    private fun initMediaPlayer(music: MusicBean,pos: Int){
+    private fun initMediaPlayer(music: VastBindAdapterItem){
         mediaPlayer.apply {
             setAudioAttributes(
                 AudioAttributes.Builder()
@@ -197,14 +202,14 @@ class MainActVM:ViewModel() {
                     .build()
             )
             setDataSource(
-                AppUtils.context,
-                ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.id.toLong())
+                ContextHelper.getAppContext(),
+                ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, cast<MusicBean>(music).id.toLong())
             )
             prepare()
             start()
             stop()
         }
-        setCurrentPlayPos(pos)
+        setCurrentPlayPos(0)
         _currentPlayMusic.postValue(music)
     }
 }

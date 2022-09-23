@@ -1,25 +1,23 @@
 package com.gcode.gmusic.ui.fragment
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gmusic.databinding.PlayMusicFragmentBinding
+import com.example.gmusic.databinding.FragmentPlayMusicBinding
 import com.gcode.gmusic.ui.adapter.MusicBindingAdapter
 import com.gcode.gmusic.ui.components.SpacesItemDecoration
-import com.gcode.gmusic.utils.AppUtils
 import com.gcode.gmusic.viewModel.MainActVM
-import com.gcode.tools.adapter.BaseGcodeBindingAdapter
+import com.gcode.vastadapter.base.VastBindAdapter
+import com.gcode.vasttools.fragment.VastVbVmFragment
 import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
 
-class MusicPlayFragment : Fragment() {
+// Author: Vast Gui
+// Email: guihy2019@gmail.com
+// Date: 2021/7/18 20:35
+// Description:
+// Documentation:
 
-    private val mainVM: MainActVM by activityViewModels()
-    private lateinit var binding: PlayMusicFragmentBinding
+class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding,MainActVM>() {
 
     private lateinit var mAdapter: MusicBindingAdapter
 
@@ -29,42 +27,34 @@ class MusicPlayFragment : Fragment() {
         super.onStart()
 
         val spacesItemDecoration = SpacesItemDecoration(5)
-        binding.localMusicRv.addItemDecoration(spacesItemDecoration)
+        getBinding().localMusicRv.addItemDecoration(spacesItemDecoration)
 
         activity?.let {
-            mainVM.getLocalMusicData().observe(it) { music ->
-                mAdapter = MusicBindingAdapter(music)
-                mAdapter.setOnItemClickListener(object : BaseGcodeBindingAdapter.OnItemClickListener {
-                    override fun onItemClick(itemView: View?, pos: Int, itemId: Long) {
-                        mainVM.apply {
-                            setCurrentPlayPos(pos)
-                            val localMusicBean = getMusicPyPos(pos)
+            getViewModel().getLocalMusicData().observe(it) { music ->
+                mAdapter = MusicBindingAdapter(requireActivity(), music)
+                mAdapter.setOnItemClickListener(object : VastBindAdapter.OnItemClickListener {
+                    override fun onItemClick(view: View, position: Int) {
+                        getViewModel().apply {
+                            setCurrentPlayPos(position)
+                            val localMusicBean = getMusicPyPos(position)
                             playMusicInMusicBean(localMusicBean)
                         }
                     }
                 })
                 val layoutManager =
-                    LinearLayoutManager(AppUtils.context, LinearLayoutManager.VERTICAL, false)
+                    LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
                 slideInLeftAnimationAdapter = SlideInLeftAnimationAdapter(mAdapter)
                 slideInLeftAnimationAdapter.apply {
                     setInterpolator(OvershootInterpolator())
                     setDuration(800)
                     setFirstOnly(false)
                 }
-                binding.localMusicRv.apply {
+                getBinding().localMusicRv.apply {
                     this.layoutManager = layoutManager
                     this.adapter = slideInLeftAnimationAdapter
                 }
             }
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = PlayMusicFragmentBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
 }

@@ -1,20 +1,19 @@
 package com.gcode.gmusic.utils
 
 import android.app.Application
-import android.content.Context
+import com.gcode.vasttools.ToolsConfig
 
-/**
- *作者:created by HP on 2021/7/3 15:01
- *邮箱:sakurajimamai2020@qq.com
- */
+// Author: Vast Gui
+// Email: guihy2019@gmail.com
+// Date: 2021/7/3 15:01
+// Description:
+// Documentation:
+
 class AppUtils:Application() {
-    companion object{
-        lateinit var context: Context
-    }
 
     override fun onCreate() {
         super.onCreate()
-
-        context = applicationContext
+        ToolsConfig.init(this)
     }
+
 }

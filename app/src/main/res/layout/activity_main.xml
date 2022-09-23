@@ -65,7 +65,7 @@
                     android:orientation="vertical"
                     android:gravity="center_vertical">
 
-                    <com.gcode.gmusic.ui.components.FocusedTextView
+                    <com.gcode.vasttools.view.FocusedTextView
                         android:id="@+id/local_music_bottom_tv_song"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                         android:singleLine="true"
                         tools:ignore="NestedWeights,RelativeOverlap,SmallSp" />
 
-                    <com.gcode.gmusic.ui.components.FocusedTextView
+                    <com.gcode.vasttools.view.FocusedTextView
                         android:id="@+id/local_music_bottom_tv_singer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
