@@ -6,7 +6,7 @@
     <data>
         <variable
             name="item"
-            type="com.gcode.gmusic.model.MusicBean" />
+            type="cn.govast.gmusic.model.MusicBean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -65,7 +65,7 @@
                     android:orientation="vertical"
                     android:gravity="center_vertical">
 
-                    <com.gcode.vasttools.view.FocusedTextView
+                    <cn.govast.vasttools.view.FocusedTextView
                         android:id="@+id/local_music_bottom_tv_song"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                         android:singleLine="true"
                         tools:ignore="NestedWeights,RelativeOverlap,SmallSp" />
 
-                    <com.gcode.vasttools.view.FocusedTextView
+                    <cn.govast.vasttools.view.FocusedTextView
                         android:id="@+id/local_music_bottom_tv_singer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navi_start">
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="cn.govast.gmusic.ui.activity.MainActivity"
+        android:label="MainActivity"
+        tools:layout="@layout/activity_main"/>
+    <navigation android:id="@+id/navigation"
+        app:startDestination="@id/loginCodeFragment">
+        <fragment
+            android:id="@+id/loginCodeFragment"
+            android:name="cn.govast.gmusic.ui.fragment.LoginCodeFragment"
+            android:label="@string/login_code_fragment"
+            tools:layout="@layout/fragment_login_code">
+            <action
+                android:id="@+id/action_loginCodeFragment_to_mainActivity"
+                app:destination="@id/mainActivity" />
+        </fragment>
+        <fragment
+            android:id="@+id/loginFragment"
+            android:name="cn.govast.gmusic.ui.fragment.LoginFragment"
+            android:label="@string/login_fragment"
+            tools:layout="@layout/fragment_login">
+            <action
+                android:id="@+id/action_loginFragment_to_loginCodeFragment2"
+                app:destination="@id/loginCodeFragment" />
+            <action
+                android:id="@+id/action_loginFragment_to_registerFragment"
+                app:destination="@id/registerFragment" />
+            <action
+                android:id="@+id/action_loginFragment_to_mainActivity"
+                app:destination="@id/mainActivity" />
+        </fragment>
+        <fragment
+            android:id="@+id/registerFragment"
+            android:name="cn.govast.gmusic.ui.fragment.RegisterFragment"
+            android:label="@string/register_fragment"
+            tools:layout="@layout/fragment_register">
+            <action
+                android:id="@+id/action_registerFragment_to_loginFragment2"
+                app:destination="@id/loginFragment" />
+        </fragment>
+    </navigation>
+</navigation>

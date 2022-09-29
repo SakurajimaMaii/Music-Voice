@@ -12,3 +12,6 @@
 /captures
 .externalNativeBuild
 .cxx
+
+# 常量
+/app/src/main/kotlin/com/govast/gmusic/Constant.kt

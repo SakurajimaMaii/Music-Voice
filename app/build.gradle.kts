@@ -1,15 +1,14 @@
-import com.gcode.plugin.version.AndroidX
-import com.gcode.plugin.version.Libraries
-import com.gcode.plugin.version.Version
+import cn.govast.plugin.version.*
 
 plugins{
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
-    id("com.gcode.plugin.version")
+    id("cn.govast.plugin.version")
 }
 
 android {
+    namespace = "cn.govast.gmusic"
     compileSdk = Version.compile_sdk_version
 
     defaultConfig {
@@ -31,6 +30,7 @@ android {
 
     buildFeatures {
         dataBinding = true
+        viewBinding = true
     }
 
     compileOptions {
@@ -41,26 +41,37 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    sourceSets["main"].java.srcDir("src/main/kotlin")
 }
 
 dependencies {
+    androidTestImplementation(AndroidX.espresso_core)
+    androidTestImplementation(AndroidX.junit)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar","*.aar"))))
-    implementation(AndroidX.lifecycle_viewmodel_ktx)
+    implementation(AndroidX.activity_ktx)
+    implementation(AndroidX.appcompat)
+    implementation(AndroidX.cardview)
+    implementation(AndroidX.constraintlayout)
+    implementation(AndroidX.core_ktx)
     implementation(AndroidX.lifecycle_livedata_ktx)
     implementation(AndroidX.lifecycle_runtime_ktx)
-    implementation(AndroidX.viewpager2)
-    implementation(AndroidX.appcompat)
-    implementation(AndroidX.constraintlayout)
-    implementation(AndroidX.activity_ktx)
+    implementation(AndroidX.lifecycle_viewmodel_ktx)
+    implementation(AndroidX.nav_dynamic_features_fragment)
+    implementation(AndroidX.nav_fragment_ktx)
+    implementation(AndroidX.nav_ui_ktx)
     implementation(AndroidX.preference_ktx)
-    testImplementation(Libraries.junit)
-    androidTestImplementation(AndroidX.junit)
-    androidTestImplementation(AndroidX.espresso_core)
     implementation(AndroidX.recyclerview)
-    implementation(AndroidX.cardview)
-    implementation(AndroidX.core_ktx)
+    implementation(AndroidX.viewpager2)
+    implementation(Squareup.okhttp3)
+    implementation(Squareup.retrofit2)
+    implementation(Squareup.retrofit2_adapter_rxjava3)
+    implementation(Squareup.retrofit2_converter_gson)
+    implementation(Google.material)
     implementation(Libraries.animatedbottombar)
     implementation(Libraries.permissionx)
     implementation(Libraries.recyclerview_animators)
     implementation(Libraries.vastadapter)
+    implementation(Libraries.zxing)
+    testImplementation(Libraries.junit)
 }
