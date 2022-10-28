@@ -1,11 +1,11 @@
-package cn.govast.gmusic.network.response
+package cn.govast.gmusic.model.qrcode
 
-import cn.govast.vasttools.base.BaseApiRsp
+import cn.govast.vasttools.network.base.BaseApiRsp
 
 data class QRCodeInfo(
     val code: Int,
     val data: QRCodeData
-):BaseApiRsp{
+): BaseApiRsp {
     override fun isEmpty(): Boolean {
         return data.qrimg == "" // 图片的base64码为空
     }

@@ -1,14 +1,17 @@
 package cn.govast.gmusic.ui.fragment
 
+import android.os.Bundle
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.govast.gmusic.adapter.MusicAdapter
 import cn.govast.gmusic.databinding.FragmentPlayMusicBinding
-import cn.govast.gmusic.ui.adapter.MusicBindingAdapter
+import cn.govast.gmusic.model.music.play.MusicQuality
+import cn.govast.gmusic.ui.base.UIStateListener
 import cn.govast.gmusic.ui.components.SpacesItemDecoration
-import cn.govast.gmusic.viewModel.MainActVM
+import cn.govast.gmusic.viewModel.MainSharedVM
+import cn.govast.vastadapter.AdapterClickListener
 import cn.govast.vasttools.fragment.VastVbVmFragment
-import com.gcode.vastadapter.base.VastBindAdapter
 import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
 
 // Author: Vast Gui
@@ -17,43 +20,53 @@ import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
 // Description:
 // Documentation:
 
-class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainActVM>() {
-
-    private lateinit var mAdapter: MusicBindingAdapter
+class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedVM>(),
+    UIStateListener {
 
     private lateinit var slideInLeftAnimationAdapter: SlideInLeftAnimationAdapter
 
-    override fun onStart() {
-        super.onStart()
+    // 歌曲适配器
+    private val mMusicAdapter by lazy {
+        MusicAdapter(requireContext())
+    }
 
-        val spacesItemDecoration = SpacesItemDecoration(5)
-        getBinding().localMusicRv.addItemDecoration(spacesItemDecoration)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initUI()
+        initUIState()
+    }
 
-        activity?.let {
-            getViewModel().getLocalMusicData().observe(it) { music ->
-                mAdapter = MusicBindingAdapter(requireActivity(), music)
-                mAdapter.setOnItemClickListener(object : VastBindAdapter.OnItemClickListener {
-                    override fun onItemClick(view: View, position: Int) {
-                        getViewModel().apply {
-                            setCurrentPlayPos(position)
-                            val localMusicBean = getMusicPyPos(position)
-                            playMusicInMusicBean(localMusicBean)
-                        }
-                    }
-                })
-                val layoutManager =
-                    LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
-                slideInLeftAnimationAdapter = SlideInLeftAnimationAdapter(mAdapter)
-                slideInLeftAnimationAdapter.apply {
-                    setInterpolator(OvershootInterpolator())
-                    setDuration(800)
-                    setFirstOnly(false)
-                }
-                getBinding().localMusicRv.apply {
-                    this.layoutManager = layoutManager
-                    this.adapter = slideInLeftAnimationAdapter
+    override fun initUIState() {
+        getViewModel().mMusicSearch.observe(requireActivity()) {
+            mMusicAdapter.submitList(it.result.songs)
+        }
+    }
+
+    override fun initUIObserver() {
+
+    }
+
+    override fun initUI() {
+        val layoutManager =
+            LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+        mMusicAdapter.registerClickEvent(object : AdapterClickListener {
+            override fun onItemClick(view: View, pos: Int) {
+                mMusicAdapter.getMusicByPos(pos).also {
+                    getViewModel().setCurrentMusic(it)
+                    getViewModel().getMusicUrl(it.id, MusicQuality.EXHIGH)
                 }
             }
+        })
+        slideInLeftAnimationAdapter = SlideInLeftAnimationAdapter(mMusicAdapter)
+        slideInLeftAnimationAdapter.apply {
+            setInterpolator(OvershootInterpolator())
+            setDuration(800)
+            setFirstOnly(false)
+        }
+        getBinding().localMusicRv.apply {
+            addItemDecoration(SpacesItemDecoration(5))
+            this.layoutManager = layoutManager
+            this.adapter = slideInLeftAnimationAdapter
         }
     }
 

@@ -12,7 +12,7 @@ android {
     compileSdk = Version.compile_sdk_version
 
     defaultConfig {
-        applicationId = "com.gcode.gmusic"
+        applicationId = "cn.govast.gmusic"
         minSdk = Version.min_sdk_version
         targetSdk = Version.target_sdk_version
         versionCode = Version.version_code
@@ -39,7 +39,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     sourceSets["main"].java.srcDir("src/main/kotlin")
@@ -48,7 +48,9 @@ android {
 dependencies {
     androidTestImplementation(AndroidX.espresso_core)
     androidTestImplementation(AndroidX.junit)
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar","*.aar"))))
+    annotationProcessor(AndroidX.room_compiler)
+    annotationProcessor(Libraries.glide_compiler)
+    implementation(project(":Music"))
     implementation(AndroidX.activity_ktx)
     implementation(AndroidX.appcompat)
     implementation(AndroidX.cardview)
@@ -62,16 +64,21 @@ dependencies {
     implementation(AndroidX.nav_ui_ktx)
     implementation(AndroidX.preference_ktx)
     implementation(AndroidX.recyclerview)
+    implementation(AndroidX.room_ktx)
+    implementation(AndroidX.room_runtime)
     implementation(AndroidX.viewpager2)
+    implementation(Google.material)
+    implementation(Libraries.animatedbottombar)
+    implementation(Libraries.glide)
+    implementation(Libraries.mmkv)
+    implementation(Libraries.permissionx)
+    implementation(Libraries.recyclerview_animators)
+    implementation(Libraries.zxing)
     implementation(Squareup.okhttp3)
     implementation(Squareup.retrofit2)
     implementation(Squareup.retrofit2_adapter_rxjava3)
     implementation(Squareup.retrofit2_converter_gson)
-    implementation(Google.material)
-    implementation(Libraries.animatedbottombar)
-    implementation(Libraries.permissionx)
-    implementation(Libraries.recyclerview_animators)
-    implementation(Libraries.vastadapter)
-    implementation(Libraries.zxing)
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar","*.aar"))))
+    kapt(AndroidX.room_compiler)
     testImplementation(Libraries.junit)
 }

@@ -25,7 +25,6 @@ class StartActivity: VastVbVmActivity<ActivityStartBinding, StartVM>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
 }

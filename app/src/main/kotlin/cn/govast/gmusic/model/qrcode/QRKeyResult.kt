@@ -1,6 +1,6 @@
-package cn.govast.gmusic.network.response
+package cn.govast.gmusic.model.qrcode
 
-import cn.govast.vasttools.base.BaseApiRsp
+import cn.govast.vasttools.network.base.BaseApiRsp
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -11,7 +11,7 @@ import cn.govast.vasttools.base.BaseApiRsp
 class QRCodeKey(
     val code: Int,
     val data: Data
-) : BaseApiRsp
+):BaseApiRsp
 
 data class Data(
     val code: Int,

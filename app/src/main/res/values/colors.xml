@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0097e6</color>
-    <color name="colorPrimaryDark">#0097e6</color>
-    <color name="colorAccent">#0097e6</color>
-    <color name="colorPink">#33f8a5c2</color>
-    <color name="white">#FFFFFF</color>
+    <color name="colorPrimary">#0096FF</color>
+    <color name="colorOnPrimary">#FEFEFE</color>
+    <color name="colorPrimaryContainer">#D1E3FE</color>
+    <color name="colorPrimaryContainer80">#CCD1E3FE</color>
+    <color name="colorOnPrimaryContainer">#001C37</color>
+    <color name="colorSecondary">#4E6078</color>
+    <color name="colorOnSecondary">#FEFEFE</color>
+    <color name="colorSecondaryContainer">#D1E3FE</color>
+    <color name="colorOnSecondaryContainer">#081C32</color>
+    <color name="colorTertiary">#705381</color>
+    <color name="colorOnTertiary">#FEFEFE</color>
+    <color name="colorTertiaryContainer">#F3D8FE</color>
+    <color name="colorOnTertiaryContainer">#290F3A</color>
+    <color name="colorError">#B91A1A</color>
+    <color name="colorOnError">#FEFEFE</color>
+    <color name="colorErrorContainer">#FED9D5</color>
+    <color name="colorOnErrorContainer">#410002</color>
+    <color name="colorBackground">#FCFBFE</color>
+    <color name="colorOnBackground">#1A1C1E</color>
+    <color name="colorSurface">#FCFBFE</color>
+    <color name="colorOnSurface">#1A1C1E</color>
+    <color name="colorSurfaceVariant">#DEE1EA</color>
+    <color name="colorOnSurfaceVariant">#43474E</color>
+    <color name="colorOutline">#73777F</color>
+
+    <color name="colorSurface1">#F0F4FB</color>
+    <color name="colorSurface2">#E8EFF7</color>
+    <color name="colorSurface3">#E0EAF4</color>
+    <color name="colorSurface4">#DEE8F3</color>
+    <color name="colorSurface5">#D9E5F2</color>
+
+    <color name="colorSurface6">#FFFFFF</color>
 </resources>

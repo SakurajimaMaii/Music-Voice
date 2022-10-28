@@ -1,6 +1,6 @@
-package cn.govast.gmusic.network.param
+package cn.govast.gmusic.model.qrcode
 
-import cn.govast.gmusic.network.service.UserService
+import cn.govast.gmusic.network.service.QRCodeService
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -10,10 +10,9 @@ import cn.govast.gmusic.network.service.UserService
 // Reference:
 
 /**
- * [UserService.getQRCode] 参数
+ * [QRCodeService.getQRCode] 参数
  *
- * @property key [UserService.generateQRCode] 获取的key
+ * @property key [QRCodeService.generateQRCode] 获取的key
  * @property qrimg true的话，会额外返回二维码图片 base64 编码
- * @since 0.0.9
  */
 data class GenQRCodeOption(val key:String,val qrimg:Boolean?)

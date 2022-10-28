@@ -1,144 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:context=".ui.activity.MainActivity">
 
     <data>
+
         <variable
-            name="item"
-            type="cn.govast.gmusic.model.MusicBean" />
+            name="song"
+            type="cn.govast.gmusic.viewModel.MainSharedVM.MusicInfo" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            android:background="@drawable/background" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
 
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/sv_bg"
-                android:iconifiedByDefault="false"
-                android:queryHint="请输入要搜索的歌名"
-                android:visibility="gone"/>
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/fragment_vp"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="12"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?colorSurface"
+                android:orientation="vertical">
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/topAppBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:navigationIcon="@drawable/ic_menu"
+                    app:title="@string/app_name" />
+
+                <SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/sv_bg"
+                    android:iconifiedByDefault="false"
+                    android:queryHint="请输入要搜索的歌名"
+                    android:visibility="gone" />
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/fragment_vp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/local_music_controlLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/control_bg"
                 android:padding="5dp"
-                android:baselineAligned="false">
+                app:layout_constraintBottom_toTopOf="@id/bottomBar">
 
-                <ImageView
-                    android:id="@+id/local_music_bottom_tv_albumArt"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="5sp"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/albumArt"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     android:contentDescription="@string/albumPicture"
-                    android:src="@drawable/ic_music" />
+                    android:src="@drawable/ic_music"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5sp"
-                    android:layout_weight="4"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical">
-
-                    <cn.govast.vasttools.view.FocusedTextView
-                        android:id="@+id/local_music_bottom_tv_song"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:maxLines="1"
-                        android:text="@{item.song}"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:layout_gravity="bottom|start"
-                        android:ellipsize="marquee"
-                        android:singleLine="true"
-                        tools:ignore="NestedWeights,RelativeOverlap,SmallSp" />
-
-                    <cn.govast.vasttools.view.FocusedTextView
-                        android:id="@+id/local_music_bottom_tv_singer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:text="@{item.album}"
-                        android:textSize="12sp"
-                        android:textColor="#FFFFFF"
-                        android:ellipsize="marquee"
-                        android:singleLine="true"
-                        android:layout_gravity="top|start"/>
-                </LinearLayout>
-
-                <LinearLayout
+                <cn.govast.vasttools.view.textview.FocusedTextView
+                    android:id="@+id/local_music_bottom_tv_song"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:layout_marginStart="10dp"
+                    android:text="@{song.name,default=测试文本}"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    app:layout_constraintBottom_toTopOf="@id/local_music_bottom_tv_singer"
+                    app:layout_constraintStart_toEndOf="@id/albumArt"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/local_music_bottom_iv_last"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="10sp"
-                        android:contentDescription="@string/last_button"
-                        android:src="@drawable/ic_last" />
+                <cn.govast.vasttools.view.textview.FocusedTextView
+                    android:id="@+id/local_music_bottom_tv_singer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:layout_marginStart="10dp"
+                    android:text="@{song.albumName,default=测试文本}"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/albumArt"
+                    app:layout_constraintTop_toBottomOf="@id/local_music_bottom_tv_song" />
 
-                    <ImageView
-                        android:id="@+id/local_music_bottom_iv_play"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="10sp"
-                        android:contentDescription="@string/play_button"
-                        android:src="@drawable/ic_play" />
-
-                    <ImageView
-                        android:id="@+id/local_music_bottom_iv_next"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="10sp"
-                        android:contentDescription="@string/next_button"
-                        android:src="@drawable/ic_next" />
-                </LinearLayout>
-            </LinearLayout>
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/local_music_bottom_iv_play"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10sp"
+                    android:contentDescription="@string/play_button"
+                    android:src="@drawable/ic_play"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <nl.joery.animatedbottombar.AnimatedBottomBar
-                android:id="@+id/bottom_bar"
+                android:id="@+id/bottomBar"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                app:abb_selectedTabType="text"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryContainer"
                 app:abb_indicatorAppearance="round"
-                app:abb_indicatorMargin="16dp"
                 app:abb_indicatorHeight="4dp"
-                app:abb_tabColor="@color/white"
+                app:abb_indicatorMargin="10dp"
+                app:abb_selectedIndex="0"
+                app:abb_selectedTabType="text"
+                app:abb_tabColor="?colorOnPrimaryContainer"
                 app:abb_tabs="@menu/main_bottom_menu"
-                app:abb_selectedIndex="0" />
-        </LinearLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:headerLayout="@layout/navigation_header_drawer"
+            app:menu="@menu/menu_nav" />
+    </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

@@ -1,14 +1,6 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorAccent</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowTranslucentNavigation">false</item>
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <style name="circleStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
-
 </resources>

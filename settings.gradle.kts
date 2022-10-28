@@ -1,3 +1,3 @@
 rootProject.name="GMusic"
-include(":app")
+include(":app",":Music")
 includeBuild("../PluginVersion")

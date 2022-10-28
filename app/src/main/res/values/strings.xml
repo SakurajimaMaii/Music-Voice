@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">韵礼音乐</string>
+    <string name="app_name">Vmusic</string>
     <string name="albumPicture">专辑图片</string>
     <string name="background">背景图</string>
     <string name="play_button">播放键</string>
@@ -18,4 +18,8 @@
     <string name="user_password">密码</string>
     <string name="register">注册</string>
     <string name="login_code_fragment">二维码登录页面</string>
+    <string name="welcome">欢迎</string>
+    <string name="setting">设置</string>
+    <string name="about">关于</string>
+    <string name="format_userid">用户ID:%1$s</string>
 </resources>
