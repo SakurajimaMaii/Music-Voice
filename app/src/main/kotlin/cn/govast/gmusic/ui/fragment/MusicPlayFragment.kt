@@ -6,8 +6,10 @@ import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.govast.gmusic.adapter.MusicAdapter
 import cn.govast.gmusic.databinding.FragmentPlayMusicBinding
-import cn.govast.gmusic.model.music.play.MusicQuality
+import cn.govast.gmusic.service.MusicBackgroundService
+import cn.govast.gmusic.ui.base.Order
 import cn.govast.gmusic.ui.base.UIStateListener
+import cn.govast.gmusic.ui.base.sendOrderIntent
 import cn.govast.gmusic.ui.components.SpacesItemDecoration
 import cn.govast.gmusic.viewModel.MainSharedVM
 import cn.govast.vastadapter.AdapterClickListener
@@ -37,8 +39,8 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
     }
 
     override fun initUIState() {
-        getViewModel().mMusicSearch.observe(requireActivity()) {
-            mMusicAdapter.submitList(it.result.songs)
+        getViewModel().mSongList.observe(requireActivity()) {
+            mMusicAdapter.submitList(it)
         }
     }
 
@@ -53,7 +55,9 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
             override fun onItemClick(view: View, pos: Int) {
                 mMusicAdapter.getMusicByPos(pos).also {
                     getViewModel().setCurrentMusic(it)
-                    getViewModel().getMusicUrl(it.id, MusicQuality.EXHIGH)
+                }
+                sendOrderIntent(Order.NOW) { intent ->
+                    intent.putExtra(MusicBackgroundService.NOW, pos)
                 }
             }
         })

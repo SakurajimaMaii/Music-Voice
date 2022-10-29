@@ -18,6 +18,8 @@
         android:theme="@style/Vmusic"
         android:exported="true"
         android:allowBackup="false">
+        <service android:name=".service.MusicBackgroundService"
+            android:exported="false"/>
         <activity android:name=".ui.activity.StartActivity"
             android:exported="true">
             <intent-filter>

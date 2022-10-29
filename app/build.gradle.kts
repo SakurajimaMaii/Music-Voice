@@ -69,6 +69,7 @@ dependencies {
     implementation(AndroidX.viewpager2)
     implementation(Google.material)
     implementation(Libraries.animatedbottombar)
+    implementation(Libraries.event_bus)
     implementation(Libraries.glide)
     implementation(Libraries.mmkv)
     implementation(Libraries.permissionx)

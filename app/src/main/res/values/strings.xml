@@ -22,4 +22,6 @@
     <string name="setting">设置</string>
     <string name="about">关于</string>
     <string name="format_userid">用户ID:%1$s</string>
+    <string name="finished">完成</string>
+    <string name="defaultText">开始</string>
 </resources>

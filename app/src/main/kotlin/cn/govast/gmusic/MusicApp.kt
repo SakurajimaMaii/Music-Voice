@@ -1,6 +1,7 @@
 package cn.govast.gmusic
 
 import android.app.Application
+import cn.govast.music.MusicPlayer
 import cn.govast.vasttools.config.ToolsConfig
 import com.tencent.mmkv.MMKV
 

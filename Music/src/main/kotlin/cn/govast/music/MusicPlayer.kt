@@ -1,12 +1,9 @@
 package cn.govast.music
 
-import android.content.ContentUris
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import java.io.IOException
 
 // Author: Vast Gui
@@ -21,7 +18,7 @@ class MusicPlayer(private val mContext:Context) {
     /**
      * @see MediaPlayer
      */
-    private val mediaPlayer by lazy {
+    val mediaPlayer by lazy {
         MediaPlayer()
     }
 
@@ -63,6 +60,20 @@ class MusicPlayer(private val mContext:Context) {
         }
     }
 
+    /** 重置音乐播放 */
+    fun resetMusic(){
+        mediaPlayer.reset()
+    }
+
+    /**
+     * 跳转到指定位置
+     *
+     * @param msec
+     */
+    fun seekTo(msec: Int){
+        mediaPlayer.seekTo(msec)
+    }
+
 
     /** 播放音乐的函数 */
     fun playMusic() {
@@ -81,4 +92,26 @@ class MusicPlayer(private val mContext:Context) {
             }
         }
     }
+
+    /**
+     * 获取文件持续时间
+     *
+     * @see MediaPlayer.getDuration
+     */
+    fun getDuration() = mediaPlayer.duration
+
+    /**
+     * 获取当前播放位置
+     *
+     * @see MediaPlayer.getCurrentPosition
+     */
+    fun getCurrentPosition() = mediaPlayer.currentPosition
+
+    /**
+     * 获取当前播放进度百分比
+     *
+     * @see getCurrentPosition
+     * @see getDuration
+     */
+    fun getProgressPercent() = getCurrentPosition().toFloat()/getDuration().toFloat()
 }

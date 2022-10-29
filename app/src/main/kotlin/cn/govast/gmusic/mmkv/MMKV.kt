@@ -12,5 +12,5 @@ import com.tencent.mmkv.MMKV
 
 object MMKV {
     // 获取存储用户的信息的mmkv
-    val userMMKV = MMKV.mmkvWithID(UserConstant.USER_FILE)
+    val userMMKV: MMKV = MMKV.mmkvWithID(UserConstant.USER_FILE)
 }

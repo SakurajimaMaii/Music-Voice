@@ -52,13 +52,21 @@
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/local_music_controlLayout"
+                android:id="@+id/musicControl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="65dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/control_bg"
                 android:padding="5dp"
                 app:layout_constraintBottom_toTopOf="@id/bottomBar">
+
+                <cn.govast.gmusic.ui.view.HorizontalProgressView
+                    android:id="@+id/musicProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/albumArt"
