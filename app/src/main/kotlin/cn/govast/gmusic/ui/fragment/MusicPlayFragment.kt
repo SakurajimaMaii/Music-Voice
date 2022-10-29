@@ -6,6 +6,7 @@ import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.govast.gmusic.adapter.MusicAdapter
 import cn.govast.gmusic.databinding.FragmentPlayMusicBinding
+import cn.govast.gmusic.model.music.search.Song
 import cn.govast.gmusic.service.MusicBackgroundService
 import cn.govast.gmusic.ui.base.Order
 import cn.govast.gmusic.ui.base.UIStateListener
@@ -40,6 +41,9 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
 
     override fun initUIState() {
         getViewModel().mSongList.observe(requireActivity()) {
+            if(mMusicAdapter.itemCount != 0){
+                mMusicAdapter.submitList(ArrayList<Song>())
+            }
             mMusicAdapter.submitList(it)
         }
     }

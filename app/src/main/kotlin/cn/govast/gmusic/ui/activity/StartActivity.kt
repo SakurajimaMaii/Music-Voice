@@ -6,6 +6,7 @@ import cn.govast.gmusic.databinding.ActivityStartBinding
 import cn.govast.gmusic.viewModel.StartVM
 import cn.govast.vasttools.activity.VastVbVmActivity
 import cn.govast.vasttools.extension.cast
+import cn.govast.vasttools.utils.ActivityUtils
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -25,6 +26,7 @@ class StartActivity: VastVbVmActivity<ActivityStartBinding, StartVM>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ActivityUtils.addActivity(this)
     }
 
 }

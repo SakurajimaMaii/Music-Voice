@@ -92,18 +92,19 @@ class MusicBackgroundService : VastService() {
         MusicPlayer(this)
     }
 
-
     /**
      * 用于通知页面更新音乐信息
      *
      * @property onMusicLoaded 用于通知页面获取默认数据
      * @property onMusicPlay 用于通知页面现在播放的歌曲
      * @property onProgress 用于通知页面现在的进度
+     * @property onPlayState 用于通知页面当前的播放状态
      */
     class MusicListener {
         var onMusicLoaded: ((songs: List<Song>) -> Unit) = {}
         var onMusicPlay: ((song: Song) -> Unit) = {}
         var onProgress: ((progress: Float) -> Unit) = {}
+        var onPlayState: ((play:PlayState)->Unit) = {}
     }
 
     /** @see MusicListener */
@@ -300,6 +301,7 @@ class MusicBackgroundService : VastService() {
                     } ?: ToastUtils.showShortMsg("未正确接收到查询的歌名")
                 }
             }
+            musicListener?.onPlayState?.invoke(status)
             // 当前是更新信息并非更新循环样式，循环样式要等到歌曲结束才更新信息
             if (flag) {
                 musicListener?.onMusicPlay?.invoke(music)
@@ -345,7 +347,6 @@ class MusicBackgroundService : VastService() {
         getRequestBuilder()
             .suspendWithListener({ MusicRepository.getMusicUrl(song.id, quality) }) {
                 onSuccess = {
-                    LogUtils.d(getDefaultTag(),it.data[0].getUrl())
                     mMusicPlayer.playMusic(it.data[0].getUrl())
                 }
             }

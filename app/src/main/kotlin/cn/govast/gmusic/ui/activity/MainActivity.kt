@@ -13,7 +13,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.core.os.BuildCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import cn.govast.gmusic.R
@@ -26,14 +29,10 @@ import cn.govast.gmusic.ui.base.UIStateListener
 import cn.govast.gmusic.ui.base.sendOrderIntent
 import cn.govast.gmusic.ui.fragment.MusicPlayFragment
 import cn.govast.gmusic.viewModel.MainSharedVM
-import cn.govast.music.MusicPlayState
 import cn.govast.vasttools.activity.VastVbVmActivity
 import cn.govast.vasttools.adapter.VastFragmentAdapter
 import cn.govast.vasttools.extension.cast
-import cn.govast.vasttools.utils.AppUtils
-import cn.govast.vasttools.utils.LogUtils
-import cn.govast.vasttools.utils.ResUtils
-import cn.govast.vasttools.utils.ToastUtils
+import cn.govast.vasttools.utils.*
 import com.bumptech.glide.Glide
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
@@ -62,7 +61,10 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             cast<MusicBackgroundService.MusicBinder>(service).mService.apply {
                 registerMusicListener {
                     onMusicLoaded = {
-                        getViewModel().updateMusicList(it)
+                        getViewModel().apply {
+                            updateMusicList(it)
+                            setCurrentMusic(it[0])
+                        }
                     }
                     onMusicPlay = {
                         getViewModel().setCurrentMusic(it)
@@ -70,6 +72,16 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                     onProgress = {
                         if (!it.isNaN()) {
                             getBinding().musicProgress.setCurrentNum((it * 100).toDouble())
+                        }
+                    }
+                    onPlayState = {state->
+                        when(state){
+                            MusicBackgroundService.PlayState.PLAYING ->
+                                getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_pause)
+                            MusicBackgroundService.PlayState.PAUSE ->
+                                getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
+                            MusicBackgroundService.PlayState.NOPLAY ->
+                                getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
                         }
                     }
                 }
@@ -87,6 +99,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ActivityUtils.addActivity(this)
         bindService(
             Intent(this, MusicBackgroundService::class.java),
             musicServiceConn,
@@ -121,16 +134,12 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_toolbar_menu, menu)
+        menuInflater.inflate(R.menu.menu_main_appbar, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.main_toolbar_setting -> {
-                ToastUtils.showShortMsg("Hello")
-            }
-
             R.id.main_toolbar_search -> {
                 if (getBinding().searchView.visibility == View.GONE) {
                     getBinding().searchView.visibility = View.VISIBLE
@@ -142,13 +151,28 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         return super.onOptionsItemSelected(item)
     }
 
+    @Deprecated("Deprecated in Java")
+    @androidx.annotation.OptIn(BuildCompat.PrereleaseSdkCheck::class)
     override fun onBackPressed() {
         if (getBinding().fragmentVp.currentItem == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed()
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                if (BuildCompat.isAtLeastT()) {
+                    onBackInvokedDispatcher.registerOnBackInvokedCallback(
+                        OnBackInvokedDispatcher.PRIORITY_DEFAULT
+                    ) {
+                        ActivityUtils.exitApp()
+                    }
+                } else {
+                    onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+                        override fun handleOnBackPressed() {
+                            ActivityUtils.exitApp()
+                        }
+                    })
+                }
+            } else {
+                ActivityUtils.exitApp()
+            }
         } else {
-            // Otherwise, select the previous step.
             getBinding().fragmentVp.currentItem = getBinding().fragmentVp.currentItem - 1
         }
     }
@@ -223,25 +247,15 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     }
 
     override fun initUIState() {
-        getViewModel().mPlayState.observe(this) { state ->
-            when (state) {
-                MusicPlayState.PLAY -> {
-                    getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_pause)
-                }
-                MusicPlayState.PAUSE -> {
-                    getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
-                }
-                else -> {}
-            }
-        }
+
     }
 
     override fun initUIObserver() {
         getViewModel().mCurrentMusic.observe(this) {
             getBinding().song = it
-//            Glide.with(this).load(it.albumUrl).into(
-//                getBinding().albumArt
-//            )
+            Glide.with(this).load(it.albumUrl).into(
+                getBinding().albumArt
+            )
         }
     }
 

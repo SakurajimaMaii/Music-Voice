@@ -136,7 +136,7 @@
                     app:abb_selectedIndex="0"
                     app:abb_selectedTabType="text"
                     app:abb_tabColor="?colorOnPrimaryContainer"
-                    app:abb_tabs="@menu/main_bottom_menu" />
+                    app:abb_tabs="@menu/menu_main_bottom_bar" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

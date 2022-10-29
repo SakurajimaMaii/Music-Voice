@@ -6,21 +6,28 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".MusicApp"
+        android:allowBackup="false"
+        android:exported="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Vmusic"
-        android:exported="true"
-        android:allowBackup="false">
-        <service android:name=".service.MusicBackgroundService"
-            android:exported="false"/>
-        <activity android:name=".ui.activity.StartActivity"
+        android:theme="@style/Vmusic">
+        <activity
+            android:name=".ui.activity.MusicActivity"
+            android:exported="true" />
+
+        <service
+            android:name=".service.MusicBackgroundService"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activity.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +35,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.MainActivity"
+        <activity
+            android:name=".ui.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
