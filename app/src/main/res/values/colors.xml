@@ -32,4 +32,6 @@
     <color name="colorSurface5">#D9E5F2</color>
 
     <color name="colorSurface6">#FFFFFF</color>
+
+    <color name="white">#FFFFFF</color>
 </resources>

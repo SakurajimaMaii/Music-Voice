@@ -1,6 +1,8 @@
 package cn.govast.gmusic.ui.activity
 
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.fragment.NavHostFragment
 import cn.govast.gmusic.databinding.ActivityStartBinding
 import cn.govast.gmusic.viewModel.StartVM
@@ -24,7 +26,10 @@ class StartActivity: VastVbVmActivity<ActivityStartBinding, StartVM>() {
         navHostFragment.navController
     }
 
+    private lateinit var splashScreen: SplashScreen
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         ActivityUtils.addActivity(this)
     }

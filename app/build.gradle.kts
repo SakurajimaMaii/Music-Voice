@@ -46,9 +46,6 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.5.1")
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     androidTestImplementation(AndroidX.espresso_core)
     androidTestImplementation(AndroidX.junit)
     annotationProcessor(AndroidX.room_compiler)
@@ -59,6 +56,7 @@ dependencies {
     implementation(AndroidX.cardview)
     implementation(AndroidX.constraintlayout)
     implementation(AndroidX.core_ktx)
+    implementation(AndroidX.core_splashscreen)
     implementation(AndroidX.lifecycle_livedata_ktx)
     implementation(AndroidX.lifecycle_runtime_ktx)
     implementation(AndroidX.lifecycle_viewmodel_ktx)
