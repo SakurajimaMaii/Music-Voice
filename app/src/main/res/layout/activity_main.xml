@@ -51,89 +51,93 @@
                     android:layout_weight="1" />
             </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/musicControl"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:layout_margin="10dp"
-                android:padding="5dp"
-                app:layout_constraintBottom_toTopOf="@id/bottomBar">
-
-                <cn.govast.gmusic.ui.view.HorizontalProgressView
-                    android:id="@+id/musicProgress"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/albumArt"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/albumPicture"
-                    android:src="@drawable/ic_music"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <cn.govast.vasttools.view.textview.FocusedTextView
-                    android:id="@+id/local_music_bottom_tv_song"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:layout_marginStart="10dp"
-                    android:text="@{song.name,default=测试文本}"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    app:layout_constraintBottom_toTopOf="@id/local_music_bottom_tv_singer"
-                    app:layout_constraintStart_toEndOf="@id/albumArt"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <cn.govast.vasttools.view.textview.FocusedTextView
-                    android:id="@+id/local_music_bottom_tv_singer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"
-                    android:layout_marginStart="10dp"
-                    android:text="@{song.albumName,default=测试文本}"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/albumArt"
-                    app:layout_constraintTop_toBottomOf="@id/local_music_bottom_tv_song" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/local_music_bottom_iv_play"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="10sp"
-                    android:contentDescription="@string/play_button"
-                    android:src="@drawable/ic_play"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <nl.joery.animatedbottombar.AnimatedBottomBar
-                android:id="@+id/bottomBar"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryContainer"
-                app:abb_indicatorAppearance="round"
-                app:abb_indicatorHeight="4dp"
-                app:abb_indicatorMargin="10dp"
-                app:abb_selectedIndex="0"
-                app:abb_selectedTabType="text"
-                app:abb_tabColor="?colorOnPrimaryContainer"
-                app:abb_tabs="@menu/main_bottom_menu"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                android:orientation="vertical"
+                android:background="@drawable/bk_control"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/musicControl"
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:padding="5dp"
+                    app:layout_constraintBottom_toTopOf="@id/bottomBar">
+
+                    <cn.govast.gmusic.ui.view.HorizontalProgressView
+                        android:id="@+id/musicProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:progress_line_max="100"
+                        app:progress_line_inColor="?colorSurfaceVariant"
+                        app:progress_line_outColor="?colorPrimary" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/albumArt"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/albumPicture"
+                        android:src="@drawable/ic_music"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <cn.govast.vasttools.view.textview.FocusedTextView
+                        android:id="@+id/local_music_bottom_tv_song"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:ellipsize="marquee"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="@{song.name,default=测试文本}"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        app:layout_constraintBottom_toTopOf="@id/local_music_bottom_tv_singer"
+                        app:layout_constraintStart_toEndOf="@id/albumArt"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <cn.govast.vasttools.view.textview.FocusedTextView
+                        android:id="@+id/local_music_bottom_tv_singer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:text="@{song.albumName,default=测试文本}"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/albumArt"
+                        app:layout_constraintTop_toBottomOf="@id/local_music_bottom_tv_song" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/local_music_bottom_iv_play"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="10sp"
+                        android:contentDescription="@string/play_button"
+                        android:src="@drawable/ic_play"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <nl.joery.animatedbottombar.AnimatedBottomBar
+                    android:id="@+id/bottomBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:abb_indicatorAppearance="round"
+                    app:abb_indicatorHeight="4dp"
+                    app:abb_indicatorMargin="10dp"
+                    app:abb_selectedIndex="0"
+                    app:abb_selectedTabType="text"
+                    app:abb_tabColor="?colorOnPrimaryContainer"
+                    app:abb_tabs="@menu/main_bottom_menu" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.navigation.NavigationView

@@ -68,7 +68,9 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                         getViewModel().setCurrentMusic(it)
                     }
                     onProgress = {
-                        getBinding().musicProgress.setProgress(it)
+                        if (!it.isNaN()) {
+                            getBinding().musicProgress.setCurrentNum((it * 100).toDouble())
+                        }
                     }
                 }
             }
@@ -216,7 +218,6 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                 return false
             }
         })
-        getBinding().musicProgress.setProgress(0.7f)
         initUIObserver()
         updateUserProfile()
     }
@@ -238,9 +239,9 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     override fun initUIObserver() {
         getViewModel().mCurrentMusic.observe(this) {
             getBinding().song = it
-            Glide.with(this).load(it.albumUrl).into(
-                getBinding().albumArt
-            )
+//            Glide.with(this).load(it.albumUrl).into(
+//                getBinding().albumArt
+//            )
         }
     }
 

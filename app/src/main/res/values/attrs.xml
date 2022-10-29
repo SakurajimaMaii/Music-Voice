@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="HorizontalProgressView">
+        <attr name="progress_line_max" format="integer"/> //最大值
+        <attr name="progress_line_progress" format="integer"/> //当前进度值
+        <attr name="progress_line_outSize" format="dimension"/> //进度条 外层大小
+        <attr name="progress_line_inColor" format="color"/> //进度条 内层颜色
+        <attr name="progress_line_outColor" format="color"/> //进度条 外层颜色
+        <attr name="progress_line_inDrawable" format="reference"/> //进度条 内层图片(可选)
+        <attr name="progress_line_outDrawable" format="reference"/> //进度条 外层图片(可选)
+    </declare-styleable>
+</resources>

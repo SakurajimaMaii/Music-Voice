@@ -7,151 +7,191 @@ package cn.govast.gmusic.ui.view
 // Description: 
 // Documentation:
 // Reference: https://www.jb51.net/article/235251.html
+// Reference: https://www.jianshu.com/p/868a7a4668ad
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import androidx.annotation.FloatRange
 import cn.govast.gmusic.R
-import cn.govast.vasttools.utils.LogUtils
-import cn.govast.vasttools.utils.ResUtils
-import kotlin.math.ceil
 
 class HorizontalProgressView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-    private lateinit var mPaint: Paint
-    private lateinit var mPaintRoundRect: Paint
-    private lateinit var mPaintText: Paint
-    private var mWidth = 0
-    private var mHeight = 0
-    private var padding = 5
-    private var strokeWidth = 8
-    private var textSize = 15
-    private var progress: Float = 0f
-    private var round = 0
-    private var process = 0f
+    private var mMaxNum = 100.0 //最大值
+    private var mCurrentNum = 0.0 //当前的值
+    private var mInLineColor = 0 //内线颜色
+    private var mOutLineColor = 0 //外线颜色
+    private var mInLineDrawable: Drawable? = null //内线图片
+    private var mOutLineDrawable: Drawable? = null //外线图片
+    private var mOutLineSize //外线 大小 单位sp
+            : Int
+    private var mWidth //宽
+            = 0
+    private var mHeight //高
+            = 0
 
-    //初始化画笔
-    private fun initPaint() {
-        //圆角矩形
-        mPaintRoundRect = Paint().also {
-            it.color = context.getColor(R.color.colorPrimaryContainer) //圆角矩形颜色
-            it.isAntiAlias = true // 抗锯齿效果
-            it.style = Paint.Style.STROKE //设置画笔样式
-            it.strokeWidth = strokeWidth.toFloat() //设置画笔宽度
-        }
-        mPaint = Paint().also {
-            it.color = context.getColor(R.color.colorPrimary)
-            it.style = Paint.Style.FILL_AND_STROKE
-            it.isAntiAlias = true
-            it.strokeWidth = strokeWidth.toFloat()
-        }
-        mPaintText = Paint().also {
-            it.isAntiAlias = true
-            it.style = Paint.Style.FILL
-            it.color = context.getColor(R.color.colorPrimary)
-            it.textSize = textSize.toFloat()
-        }
+    //画笔
+    private var mInPaint: Paint? = null
+    private var mOutPaint: Paint? = null
+    private val mPaint = Paint() //绘制图片
+
+    init {
+
+
+        // 获取自定义属性
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.HorizontalProgressView)
+        mCurrentNum =
+            typedArray.getInteger(R.styleable.HorizontalProgressView_progress_line_progress, 0)
+                .toDouble()
+        mMaxNum = typedArray.getInteger(R.styleable.HorizontalProgressView_progress_line_max, 100)
+            .toDouble()
+
+        //颜色
+        mInLineColor =
+            typedArray.getColor(R.styleable.HorizontalProgressView_progress_line_inColor, 0)
+        mOutLineColor =
+            typedArray.getColor(R.styleable.HorizontalProgressView_progress_line_outColor, 0)
+
+        //图片
+        mInLineDrawable =
+            typedArray.getDrawable(R.styleable.HorizontalProgressView_progress_line_inDrawable)
+        mOutLineDrawable =
+            typedArray.getDrawable(R.styleable.HorizontalProgressView_progress_line_outDrawable)
+
+        //大小
+        mOutLineSize = typedArray.getDimensionPixelSize(
+            R.styleable.HorizontalProgressView_progress_line_outSize,
+            0
+        )
+        typedArray.recycle()
+        setInPaint()
+        setOutPaint()
     }
 
-    fun setPadding(padding: Int) {
-        this.padding = padding
+    /**
+     * 内线画笔
+     */
+    private fun setInPaint() {
+        mInPaint = Paint()
+        mInPaint!!.isAntiAlias = true
+        mInPaint!!.color = mInLineColor
+        mInPaint!!.strokeWidth = mHeight.toFloat() //大小
+        mInPaint!!.strokeCap = Paint.Cap.ROUND // 结束位置圆角
     }
 
-    fun setStrokeWidth(strokeWidth: Int) {
-        this.strokeWidth = strokeWidth
-    }
-
-    fun setTextSize(textSize: Int) {
-        this.textSize = textSize
-    }
-
-    fun setProgress(@FloatRange(from = 0.0, to = 1.0) progress: Float) {
-        this.progress = progress
-        invalidate()
+    /**
+     * 外线画笔
+     */
+    private fun setOutPaint() {
+        mOutPaint = Paint()
+        mOutPaint!!.isAntiAlias = true
+        mOutPaint!!.color = mOutLineColor
+        mOutPaint!!.strokeWidth = mOutLineSize.toFloat() //大小
+        mOutPaint!!.strokeCap = Paint.Cap.ROUND // 结束位置圆角
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val widthSpecMode = MeasureSpec.getMode(widthMeasureSpec)
-        val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
-        val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
-        //MeasureSpec.EXACTLY，精确尺寸
-        mWidth = if (widthSpecMode == MeasureSpec.EXACTLY || widthSpecMode == MeasureSpec.AT_MOST) {
-            widthSpecSize
-        } else {
-            0
+        //1. 获取宽
+        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) { //具体值
+            mWidth = MeasureSpec.getSize(widthMeasureSpec)
         }
-        //MeasureSpec.AT_MOST，最大尺寸，只要不超过父控件允许的最大尺寸即可，MeasureSpec.UNSPECIFIED未指定尺寸
-        mHeight =
-            if (heightSpecMode == MeasureSpec.AT_MOST || heightSpecMode == MeasureSpec.UNSPECIFIED) {
-                defaultHeight()
-            } else {
-                heightSpecSize
-            }
-        //设置控件实际大小
-        round = mHeight / 2 //圆角半径
+        //2.获取高
+        if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) { //具体值
+            mHeight = MeasureSpec.getSize(heightMeasureSpec)
+        }
+        if (mOutLineSize == 0) {
+            mOutLineSize = mHeight
+        }
+        //2. 确定宽高
         setMeasuredDimension(mWidth, mHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        initPaint()
-        drawBackground(canvas) //绘制背景矩形
-        drawProgress(canvas) //绘制进度
-        // updateText(canvas) //处理文字
+
+        //内层
+        if (mInLineColor != 0) {
+            drawInLine(canvas, 0, mWidth, mHeight, mInPaint) //画内线
+        }
+        if (mInLineDrawable != null) {
+            val bitmap: Bitmap = (mInLineDrawable as BitmapDrawable).bitmap
+            canvas.drawBitmap(bitmap, null, Rect(0, 0, mWidth, mHeight), mPaint)
+        }
+
+        //外层
+        val left = (mHeight - mOutLineSize) / 2
+        val width = ((mWidth - left) * (mCurrentNum / mMaxNum)).toInt()
+        if (mOutLineColor != 0) {
+            drawOutLine(canvas, left, width, mOutLineSize, mOutPaint) //画外线
+        }
+        if (mOutLineDrawable != null) {
+            val bitmap: Bitmap = (mOutLineDrawable as BitmapDrawable).bitmap
+            canvas.drawBitmap(
+                bitmap,
+                null,
+                Rect(left, (mHeight - mOutLineSize) / 2, width, mOutLineSize),
+                mPaint
+            )
+        }
     }
 
-    private fun drawBackground(canvas: Canvas) {
+    private fun drawInLine(canvas: Canvas, left: Int, width: Int, height: Int, paint: Paint?) {
         val rectF = RectF(
-            padding.toFloat(),
-            padding.toFloat(),
-            (mWidth - padding).toFloat(),
-            (mHeight - padding).toFloat()
-        ) //圆角矩形
-        canvas.drawRoundRect(rectF, round.toFloat(), round.toFloat(), mPaintRoundRect)
+            left.toFloat(),
+            (mHeight - height).toFloat(),
+            width.toFloat(),
+            mHeight.toFloat()
+        ) // 设置个新的长方形
+        canvas.drawRoundRect(
+            rectF,
+            (height / 2).toFloat(),
+            (height / 2).toFloat(),
+            paint!!
+        ) //第二个参数是x半径，第三个参数是y半径
     }
 
-    private fun drawProgress(canvas: Canvas) {
-        if (process != 0f) {
-            val rectProgress = RectF(
-                (padding + strokeWidth).toFloat(),
-                (padding + strokeWidth).toFloat(),
-                process * (mWidth - padding - strokeWidth),
-                (mHeight - padding - strokeWidth).toFloat()
-            ) //内部进度条
-            LogUtils.d("1111111",(process * (mWidth - padding - strokeWidth)).toString())
-            canvas.drawRoundRect(rectProgress, round.toFloat(), round.toFloat(), mPaint)
+    /**
+     * 进度前进方向为圆角
+     */
+    private fun drawOutLine(canvas: Canvas, left: Int, width: Int, height: Int, paint: Paint?) {
+        val top = (mHeight - height) / 2
+        if (width - left >= height) { //绘制圆角方式
+            val rectF = RectF(
+                left.toFloat(),
+                top.toFloat(),
+                width.toFloat(),
+                (mHeight - top).toFloat()
+            ) // 设置个新的长方形
+            canvas.drawRoundRect(
+                rectF,
+                (height / 2).toFloat(),
+                (height / 2).toFloat(),
+                paint!!
+            ) //第二个参数是x半径，第三个参数是y半径
         }
+        //绘制前面圆
+        val rectF = RectF(left.toFloat(), top.toFloat(), width.toFloat(), (mHeight - top).toFloat())
+        canvas.clipRect(rectF)
+        val r = height / 2
+        canvas.drawCircle((left + r).toFloat(), (top + r).toFloat(), r.toFloat(), paint!!)
     }
 
-    private fun updateText(canvas: Canvas) {
-        val finishedText = ResUtils.getString(R.string.finished)
-        val defaultText = ResUtils.getString(R.string.defaultText)
-        val percent = (process / (mWidth - padding - strokeWidth) * 100).toInt()
-        val fm = mPaintText!!.fontMetrics
-        val mTxtWidth = mPaintText!!.measureText(finishedText, 0, defaultText.length).toInt()
-        val mTxtHeight = ceil((fm.descent - fm.ascent).toDouble()).toInt()
-        val x = width / 2 - mTxtWidth / 2 //文字在画布中的x坐标
-        val y = height / 2 + mTxtHeight / 4 //文字在画布中的y坐标
-        if (percent < 100) {
-            canvas.drawText("$percent%", x.toFloat(), y.toFloat(), mPaintText)
-        } else {
-            canvas.drawText(finishedText, x.toFloat(), y.toFloat(), mPaintText)
+    fun setMax(max: Double) {
+        mMaxNum = max
+        invalidate()
+    }
+
+    fun setCurrentNum(currentNum: Double) {
+        mCurrentNum = currentNum
+        if (mCurrentNum > mMaxNum) {
+            mCurrentNum = mMaxNum
         }
-    }
-
-    //进度条默认高度，未设置高度时使用
-    private fun defaultHeight(): Int {
-        val scale = context.resources.displayMetrics.density
-        return (20 * scale + 0.5f * if (20 >= 0) 1 else -1).toInt()
+        invalidate()
     }
 }
