@@ -1,8 +1,8 @@
 package cn.govast.gmusic.network.repository
 
 import cn.govast.gmusic.model.qrcode.QRCodeCheck
-import cn.govast.gmusic.network.service.QRCodeService
-import cn.govast.gmusic.network.service.UserService
+import cn.govast.gmusic.network.service.QRCodeNetService
+import cn.govast.gmusic.network.service.UserNetService
 import cn.govast.gmusic.model.user.LoginStateRes
 import cn.govast.gmusic.network.ServiceCreator
 
@@ -16,11 +16,11 @@ import cn.govast.gmusic.network.ServiceCreator
 object UserRepository {
 
     private val mQRCodeService by lazy {
-        ServiceCreator.create(QRCodeService::class.java)
+        ServiceCreator.create(QRCodeNetService::class.java)
     }
 
     private val mUserService by lazy {
-        ServiceCreator.create(UserService::class.java)
+        ServiceCreator.create(UserNetService::class.java)
     }
 
     suspend fun checkQRCode(key: String): QRCodeCheck {

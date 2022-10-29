@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cn.govast.gmusic.adapter.MusicAdapter
 import cn.govast.gmusic.databinding.FragmentPlayMusicBinding
 import cn.govast.gmusic.model.music.search.Song
-import cn.govast.gmusic.service.MusicBackgroundService
-import cn.govast.gmusic.ui.base.Order
+import cn.govast.gmusic.service.MusicService
+import cn.govast.gmusic.constant.Order
 import cn.govast.gmusic.ui.base.UIStateListener
 import cn.govast.gmusic.ui.base.sendOrderIntent
 import cn.govast.gmusic.ui.components.SpacesItemDecoration
@@ -61,7 +61,7 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
                     getViewModel().setCurrentMusic(it)
                 }
                 sendOrderIntent(Order.NOW) { intent ->
-                    intent.putExtra(MusicBackgroundService.NOW, pos)
+                    intent.putExtra(MusicService.NOW, pos)
                 }
             }
         })

@@ -15,7 +15,7 @@ import retrofit2.http.Query
 // Description: 
 // Documentation:
 
-interface QRCodeService {
+interface QRCodeNetService {
 
     /**
      * 创建二维码Key

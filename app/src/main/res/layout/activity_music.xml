@@ -6,4 +6,83 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.MusicActivity">
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/musicAlbum"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@id/musicProgress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <cn.govast.gmusic.ui.view.HorizontalProgressView
+        android:id="@+id/musicProgress"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:progress_line_max="100"
+        app:progress_line_inColor="?colorSurfaceVariant"
+        app:progress_line_outColor="?colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/musicControl"
+        app:layout_constraintTop_toBottomOf="@id/musicAlbum" />
+
+    <LinearLayout
+        android:id="@+id/musicControl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/musicPlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/musicProgress">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/musicDownload"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_fill_0_music_downloadsvg" />
+    </LinearLayout>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/musicPlayLast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="10sp"
+        android:contentDescription="@string/last_button"
+        android:src="@drawable/ic_last"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/musicPlay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/musicControl" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/musicPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="10sp"
+        android:contentDescription="@string/play_button"
+        android:src="@drawable/ic_play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/musicPlayNext"
+        app:layout_constraintStart_toEndOf="@id/musicPlayLast"
+        app:layout_constraintTop_toBottomOf="@id/musicControl" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/musicPlayNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="10sp"
+        android:contentDescription="@string/next_button"
+        android:src="@drawable/ic_next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/musicPlay"
+        app:layout_constraintTop_toBottomOf="@id/musicControl" />
 </androidx.constraintlayout.widget.ConstraintLayout>

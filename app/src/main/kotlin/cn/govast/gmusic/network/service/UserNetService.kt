@@ -2,7 +2,6 @@ package cn.govast.gmusic.network.service
 
 import cn.govast.gmusic.model.user.LoginStateRes
 import retrofit2.http.POST
-import retrofit2.http.Query
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -11,7 +10,7 @@ import retrofit2.http.Query
 // Documentation:
 // Reference:
 
-interface UserService {
+interface UserNetService {
 
     @POST("/login/status")
     suspend fun loginState(): LoginStateRes

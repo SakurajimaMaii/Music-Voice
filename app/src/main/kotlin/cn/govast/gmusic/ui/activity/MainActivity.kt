@@ -1,13 +1,9 @@
 package cn.govast.gmusic.ui.activity
 
 import android.Manifest
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -18,13 +14,21 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.os.BuildCompat
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import cn.govast.gmusic.R
+import cn.govast.gmusic.broadcast.BConstant
+import cn.govast.gmusic.broadcast.MusicBroadcast
+import cn.govast.gmusic.constant.Order
+import cn.govast.gmusic.constant.UpdateKey.LOAD_MUSIC_KEY
+import cn.govast.gmusic.constant.UpdateKey.MUSIC_PLAY_KEY
+import cn.govast.gmusic.constant.UpdateKey.PLAY_STATE_KEY
+import cn.govast.gmusic.constant.UpdateKey.PROGRESS_KEY
 import cn.govast.gmusic.databinding.ActivityMainBinding
+import cn.govast.gmusic.manager.MusicMgr
 import cn.govast.gmusic.network.repository.UserRepository
-import cn.govast.gmusic.service.MusicBackgroundService
+import cn.govast.gmusic.service.MusicService
 import cn.govast.gmusic.sharedpreferences.UserSp
-import cn.govast.gmusic.ui.base.Order
 import cn.govast.gmusic.ui.base.UIStateListener
 import cn.govast.gmusic.ui.base.sendOrderIntent
 import cn.govast.gmusic.ui.fragment.MusicPlayFragment
@@ -50,60 +54,66 @@ import java.util.*
 
 class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UIStateListener {
 
-    companion object {
-        val ACTION_CONTROL = "${AppUtils.getPackageName()}.control" //控制播放、暂停
-        val ACTION_UPDATE = "${AppUtils.getPackageName()}.update" //更新界面显示
-    }
-
-    /** 用于和 [MusicBackgroundService] 交流 */
-    private inner class MusicServiceConn : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            cast<MusicBackgroundService.MusicBinder>(service).mService.apply {
-                registerMusicListener {
-                    onMusicLoaded = {
+    /** 监听Service发送的广播 */
+    private inner class MainReceiver : MusicBroadcast() {
+        override fun onMusicLoaded(intent:Intent) {
+            intent.getStringExtra(LOAD_MUSIC_KEY)?.also {
+                MusicMgr.searchMusic(it){
+                    onSuccess = {
                         getViewModel().apply {
-                            updateMusicList(it)
-                            setCurrentMusic(it[0])
+                            updateMusicList(it.result.songs)
+                            setCurrentMusic(it.result.songs[0])
                         }
                     }
-                    onMusicPlay = {
-                        getViewModel().setCurrentMusic(it)
-                    }
-                    onProgress = {
-                        if (!it.isNaN()) {
-                            getBinding().musicProgress.setCurrentNum((it * 100).toDouble())
-                        }
-                    }
-                    onPlayState = {state->
-                        when(state){
-                            MusicBackgroundService.PlayState.PLAYING ->
-                                getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_pause)
-                            MusicBackgroundService.PlayState.PAUSE ->
-                                getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
-                            MusicBackgroundService.PlayState.NOPLAY ->
-                                getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
-                        }
-                    }
+                }
+            } ?: getSnackbar().setText("未获取到歌曲名称").show()
+        }
+
+        override fun onMusicPlay(intent:Intent) {
+            intent.getIntExtra(MUSIC_PLAY_KEY,0).apply {
+                getViewModel().setCurrentMusic(this)
+            }
+        }
+
+        override fun onProgress(intent:Intent) {
+            intent.getFloatExtra(PROGRESS_KEY,0f).apply {
+                if (!this.isNaN()) {
+                    getBinding().musicProgress.setCurrentNum((this * 100).toDouble())
+                    getViewModel().currentProgress = this
                 }
             }
         }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            LogUtils.e("MainActivity", "$name 连接失败")
+        override fun onPlayState(intent:Intent) {
+            val state = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.extras?.getSerializable(PLAY_STATE_KEY, MusicService.PlayState::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                cast(intent.extras?.getSerializable(PLAY_STATE_KEY))
+            }
+            state?.also {
+                when (it) {
+                    MusicService.PlayState.PLAYING ->
+                        getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_pause)
+                    MusicService.PlayState.PAUSE ->
+                        getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
+                    MusicService.PlayState.NOPLAY ->
+                        getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
+                }
+            } ?: getSnackbar().setText("未获取到播放状态").show()
         }
     }
 
-    private val musicServiceConn by lazy {
-        MusicServiceConn()
+    private val mMainReceiver by lazy {
+        MainReceiver()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityUtils.addActivity(this)
-        bindService(
-            Intent(this, MusicBackgroundService::class.java),
-            musicServiceConn,
-            Context.BIND_AUTO_CREATE
+        startService(Intent(this, MusicService::class.java).setType(getDefaultTag()))
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMainReceiver,
+            IntentFilter(BConstant.ACTION_UPDATE)
         )
         // 设置状态栏
         setSupportActionBar(getBinding().topAppBar)
@@ -130,7 +140,8 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
 
     override fun onDestroy() {
         super.onDestroy()
-        unbindService(musicServiceConn)
+        stopService(Intent(this, MusicService::class.java).setType(getDefaultTag()))
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMainReceiver)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -155,7 +166,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     @androidx.annotation.OptIn(BuildCompat.PrereleaseSdkCheck::class)
     override fun onBackPressed() {
         if (getBinding().fragmentVp.currentItem == 0) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (BuildCompat.isAtLeastT()) {
                     onBackInvokedDispatcher.registerOnBackInvokedCallback(
                         OnBackInvokedDispatcher.PRIORITY_DEFAULT
@@ -231,7 +242,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                 query?.apply {
                     // 发送查询广播
                     sendOrderIntent(Order.SEARCH) {
-                        it.putExtra(MusicBackgroundService.NAME, this)
+                        it.putExtra(MusicService.NAME, this)
                     }
                 }
                 return false
@@ -242,6 +253,19 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                 return false
             }
         })
+        getBinding().musicControl.setOnClickListener {
+            val intent = Intent(this, MusicActivity::class.java).also {
+                val bundle = Bundle().also { bundle ->
+                    bundle.putSerializable(
+                        MusicActivity.CURRENT_MUSIC_KEY,
+                        getViewModel().mCurrentMusic.value
+                    )
+                }
+                it.putExtras(bundle)
+                it.putExtra(PROGRESS_KEY,getViewModel().currentProgress)
+            }
+            startActivity(intent)
+        }
         initUIObserver()
         updateUserProfile()
     }

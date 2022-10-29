@@ -12,7 +12,7 @@ import retrofit2.http.Query
 // Documentation:
 // Reference:
 
-interface MusicService {
+interface MusicNetService {
     /**
      * [根据name搜索歌曲](https://neteasecloudmusicapi.vercel.app/#/?id=%e6%90%9c%e7%b4%a2)
      *

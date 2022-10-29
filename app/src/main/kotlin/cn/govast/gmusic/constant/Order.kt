@@ -1,4 +1,4 @@
-package cn.govast.gmusic.ui.base
+package cn.govast.gmusic.constant
 
 
 // Author: Vast Gui
@@ -11,7 +11,7 @@ package cn.govast.gmusic.ui.base
 /**
  * 界面向服务发送的控制信号
  *
- * @see [cn.govast.gmusic.service.MusicBackgroundService]
+ * @see [cn.govast.gmusic.service.MusicService]
  */
 enum class Order {
     PLAY_OR_PAUSE,
@@ -23,17 +23,17 @@ enum class Order {
     LOOP_ALL,
     /**
      * 数据索引
-     * @see [cn.govast.gmusic.service.MusicBackgroundService.PROGRESS]
+     * @see [cn.govast.gmusic.service.MusicService.PROGRESS]
      */
     PROGRESS,
     /**
      * 数据索引
-     * @see [cn.govast.gmusic.service.MusicBackgroundService.NOW]
+     * @see [cn.govast.gmusic.service.MusicService.NOW]
      */
     NOW,
     /**
      * 数据索引
-     * @see [cn.govast.gmusic.service.MusicBackgroundService.NAME]
+     * @see [cn.govast.gmusic.service.MusicService.NAME]
      */
     SEARCH
 }

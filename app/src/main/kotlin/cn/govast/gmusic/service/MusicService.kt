@@ -6,13 +6,20 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Binder
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import cn.govast.gmusic.broadcast.BConstant
+import cn.govast.gmusic.constant.Order
+import cn.govast.gmusic.constant.Update
+import cn.govast.gmusic.constant.UpdateKey.LOAD_MUSIC_KEY
+import cn.govast.gmusic.constant.UpdateKey.MUSIC_PLAY_KEY
+import cn.govast.gmusic.constant.UpdateKey.PLAY_STATE_KEY
+import cn.govast.gmusic.constant.UpdateKey.PROGRESS_KEY
+import cn.govast.gmusic.manager.MusicMgr
 import cn.govast.gmusic.model.music.play.MusicQuality
 import cn.govast.gmusic.model.music.search.Song
-import cn.govast.gmusic.network.repository.MusicRepository
-import cn.govast.gmusic.ui.activity.MainActivity
-import cn.govast.gmusic.ui.base.Order
+import cn.govast.gmusic.ui.base.sendUpdateIntent
 import cn.govast.music.MusicPlayer
 import cn.govast.vasttools.service.VastService
 import cn.govast.vasttools.utils.LogUtils
@@ -26,7 +33,7 @@ import cn.govast.vasttools.utils.ToastUtils
 // Documentation:
 // Reference: https://blog.csdn.net/qq_45744856/article/details/121897063
 
-class MusicBackgroundService : VastService() {
+class MusicService : VastService() {
 
     companion object {
         /** 默认加载歌曲页面 */
@@ -35,15 +42,10 @@ class MusicBackgroundService : VastService() {
         /** 传递当前播放歌曲的index */
         const val NOW = "now"
 
-        /** 界面发送控制信号 */
-        const val CONTROL = "control"
-
         /** 页面传递当前播放进度 */
         const val PROGRESS = "progress"
 
-        /**
-         * 查询歌名索引
-         */
+        /** 查询歌名索引 */
         const val NAME = "name"
     }
 
@@ -60,8 +62,8 @@ class MusicBackgroundService : VastService() {
     }
 
     inner class MusicBinder : Binder() {
-        val mService: MusicBackgroundService
-            get() = this@MusicBackgroundService
+        val mService: MusicService
+            get() = this@MusicService
     }
 
 
@@ -69,11 +71,9 @@ class MusicBackgroundService : VastService() {
     private var status = PlayState.NOPLAY
 
     /** 带播放音乐列表 */
-    private val songList:MutableList<Song> = ArrayList()
+    private val songList: MutableList<Song> = ArrayList()
 
-    /**
-     * 歌曲循环模式
-     */
+    /** 歌曲循环模式 */
     private var loopType: Loop = Loop.LIST
 
     /** 记录当前正在播放的音乐 */
@@ -92,24 +92,6 @@ class MusicBackgroundService : VastService() {
         MusicPlayer(this)
     }
 
-    /**
-     * 用于通知页面更新音乐信息
-     *
-     * @property onMusicLoaded 用于通知页面获取默认数据
-     * @property onMusicPlay 用于通知页面现在播放的歌曲
-     * @property onProgress 用于通知页面现在的进度
-     * @property onPlayState 用于通知页面当前的播放状态
-     */
-    class MusicListener {
-        var onMusicLoaded: ((songs: List<Song>) -> Unit) = {}
-        var onMusicPlay: ((song: Song) -> Unit) = {}
-        var onProgress: ((progress: Float) -> Unit) = {}
-        var onPlayState: ((play:PlayState)->Unit) = {}
-    }
-
-    /** @see MusicListener */
-    private var musicListener: MusicListener? = null
-
     override fun onBind(intent: Intent): IBinder {
         return MusicBinder()
     }
@@ -118,9 +100,10 @@ class MusicBackgroundService : VastService() {
         // 创建BroadcastReceiver
         serviceReceiver = ServiceReceiver()
         // 创建IntentFilter，MainActivity.CONTROL代表接收信息来源
-        LocalBroadcastManager.getInstance(this).registerReceiver(serviceReceiver, IntentFilter(MainActivity.ACTION_CONTROL))
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(serviceReceiver, IntentFilter(BConstant.ACTION_CONTROL))
         // 加载默认数据
-        initMusicList()
+        searchMusic(DEFAULT_MUSIC_NAME)
         // 更新状态
         status = PlayState.PLAYING
         // 为MediaPlayer播放完成事件绑定监听器
@@ -140,7 +123,9 @@ class MusicBackgroundService : VastService() {
                 }
             }
             status = PlayState.PLAYING
-            musicListener?.onMusicPlay?.invoke(songList[current])
+            sendUpdateIntent(Update.ON_MUSIC_PLAY) { intent ->
+                intent.putExtra(MUSIC_PLAY_KEY, current)
+            }
         }
         super.onCreate()
         // 设置线程循环控制变量为真
@@ -155,8 +140,9 @@ class MusicBackgroundService : VastService() {
             while (isRunning) {
                 // 判断音乐是否在播放
                 if (mMusicPlayer.mediaPlayer.isPlaying) {
-                    // 创建意图 ：更新播放进度
-                    musicListener?.onProgress?.invoke(mMusicPlayer.getProgressPercent())
+                    sendUpdateIntent(Update.ON_PROGRESS) { intent ->
+                        intent.putExtra(PROGRESS_KEY, mMusicPlayer.getProgressPercent())
+                    }
                 }
                 // 让线程睡眠500毫秒
                 try {
@@ -171,26 +157,10 @@ class MusicBackgroundService : VastService() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         // 后台重启时更新页面，恢复到退出之前的状态
         status = PlayState.PLAYING
-        musicListener?.onMusicPlay?.invoke(songList[current])
+        sendUpdateIntent(Update.ON_MUSIC_PLAY) { t ->
+            t.putExtra(MUSIC_PLAY_KEY, current)
+        }
         return super.onStartCommand(intent, flags, startId)
-    }
-
-    /**
-     * 加载默认音乐播放列表
-     *
-     * @see DEFAULT_MUSIC_NAME
-     */
-    private fun initMusicList() {
-        getRequestBuilder()
-            .suspendWithListener({ MusicRepository.searchMusic(DEFAULT_MUSIC_NAME) }) {
-                onSuccess = {
-                    songList.clear()
-                    it.result.songs.forEach { music->
-                        songList.add(music)
-                    }
-                    musicListener?.onMusicLoaded?.invoke(songList)
-                }
-            }
     }
 
     // 下一首更新标记即可，溢出清零
@@ -209,16 +179,14 @@ class MusicBackgroundService : VastService() {
         }
     }
 
-    inner class ServiceReceiver : BroadcastReceiver() {
+    private inner class ServiceReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            // 更新音乐 control代表更新播放音乐，update代表更新图片以及音乐信息
             val control = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.extras?.getSerializable(CONTROL, Order::class.java)
+                intent.extras?.getSerializable(BConstant.CONTROL_KEY, Order::class.java)
             } else {
                 @Suppress("DEPRECATION")
-                intent.extras?.getSerializable(CONTROL)
+                intent.extras?.getSerializable(BConstant.CONTROL_KEY)
             }
-            LogUtils.d(getDefaultTag(),control.toString())
             // 获取当前音乐
             val music = songList[current]
             // 标记当前是更新循环格式还是更新状态 false代表循环格式
@@ -297,16 +265,25 @@ class MusicBackgroundService : VastService() {
                 Order.SEARCH -> {
                     intent.getStringExtra(NAME)?.also {
                         searchMusic(it)
-                        LogUtils.d(getDefaultTag(),it)
+                        LogUtils.d(getDefaultTag(), it)
                     } ?: ToastUtils.showShortMsg("未正确接收到查询的歌名")
                 }
             }
-            musicListener?.onPlayState?.invoke(status)
+            sendUpdateIntent(Update.ON_PLAY_STATE) { mIntent->
+                val bundle = Bundle().also { bundle ->
+                    bundle.putSerializable(PLAY_STATE_KEY, status)
+                }
+                mIntent.putExtras(bundle)
+            }
             // 当前是更新信息并非更新循环样式，循环样式要等到歌曲结束才更新信息
             if (flag) {
-                musicListener?.onMusicPlay?.invoke(music)
+                sendUpdateIntent(Update.ON_MUSIC_PLAY) { mIntent ->
+                    mIntent.putExtra(MUSIC_PLAY_KEY, current)
+                }
                 if (status == PlayState.PLAYING || status == PlayState.PAUSE) {
-                    musicListener?.onProgress?.invoke(mMusicPlayer.getProgressPercent())
+                    sendUpdateIntent(Update.ON_PROGRESS) { mIntent ->
+                        mIntent.putExtra(PROGRESS_KEY, mMusicPlayer.getProgressPercent())
+                    }
                 }
             }
         }
@@ -329,27 +306,18 @@ class MusicBackgroundService : VastService() {
     }
 
     /**
-     * 注册一个数据加载完成监听
-     *
-     * @param listener
-     */
-    fun registerMusicListener(listener: MusicListener.() -> Unit) {
-        musicListener = MusicListener().also(listener)
-    }
-
-    /**
      * 获取音乐Url并播放
      *
      * @param song 音乐
      * @param quality 音乐播放质量
      */
+    @Suppress("SameParameterValue")
     private fun getMusicUrl(song: Song, quality: MusicQuality) {
-        getRequestBuilder()
-            .suspendWithListener({ MusicRepository.getMusicUrl(song.id, quality) }) {
-                onSuccess = {
-                    mMusicPlayer.playMusic(it.data[0].getUrl())
-                }
+        MusicMgr.getMusicUrl(song, quality) {
+            onSuccess = {
+                mMusicPlayer.playMusic(it.data[0].getUrl())
             }
+        }
     }
 
     /**
@@ -358,19 +326,20 @@ class MusicBackgroundService : VastService() {
      * @param name
      */
     fun searchMusic(name: String) {
-        getRequestBuilder()
-            .suspendWithListener({ MusicRepository.searchMusic(name) }) {
-                onSuccess = {
-                    songList.clear()
-                    for (song in it.result.songs) {
-                        songList.add(song)
-                    }
-                    musicListener?.onMusicLoaded?.invoke(songList)
+        MusicMgr.searchMusic(name) {
+            onSuccess = {
+                songList.clear()
+                for (song in it.result.songs) {
+                    songList.add(song)
                 }
-                onError = {
-                    LogUtils.e(getDefaultTag(), it?.message ?: "歌曲搜索失败")
+                sendUpdateIntent(Update.ON_MUSIC_LOADED) { intent ->
+                    intent.putExtra(LOAD_MUSIC_KEY, name)
                 }
             }
+            onError = {
+                LogUtils.e(getDefaultTag(), it?.message ?: "歌曲搜索失败")
+            }
+        }
     }
 
 

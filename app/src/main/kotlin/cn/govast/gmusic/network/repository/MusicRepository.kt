@@ -4,7 +4,7 @@ import cn.govast.gmusic.model.music.play.MusicQuality
 import cn.govast.gmusic.model.music.play.MusicUrl
 import cn.govast.gmusic.model.music.search.MusicSearch
 import cn.govast.gmusic.network.ServiceCreator
-import cn.govast.gmusic.network.service.MusicService
+import cn.govast.gmusic.network.service.MusicNetService
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -15,19 +15,19 @@ import cn.govast.gmusic.network.service.MusicService
 
 object MusicRepository {
 
-    private val mMusicService by lazy {
-        ServiceCreator.create(MusicService::class.java)
+    private val mMusicNetService by lazy {
+        ServiceCreator.create(MusicNetService::class.java)
     }
 
     suspend fun searchMusic(name: String): MusicSearch {
-        return mMusicService.searchMusic(name)
+        return mMusicNetService.searchMusic(name)
     }
 
     /**
-     * @see MusicService.getMusicUrl
+     * @see MusicNetService.getMusicUrl
      */
     suspend fun getMusicUrl(id: Int, quality: MusicQuality): MusicUrl {
-        return mMusicService.getMusicUrl(id, quality.value)
+        return mMusicNetService.getMusicUrl(id, quality.value)
     }
 
 }
