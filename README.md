@@ -7,7 +7,10 @@ App采用VastUtils框架，详情请访问[VastUtils](https://github.com/Sakuraj
 
 ## 界面预览
 
-
+<div align="center">
+<img src="https://github.com/SakurajimaMaii/Music-Voice/blob/master/mdResource/preview_2.jpg" width="20%"/>
+<img src="https://github.com/SakurajimaMaii/Music-Voice/blob/master/mdResource/preview_1.jpg" width="20%"/>
+</div>
 
 ## 功能支持
 
