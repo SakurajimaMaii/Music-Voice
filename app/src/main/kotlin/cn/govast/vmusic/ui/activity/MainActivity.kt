@@ -16,6 +16,10 @@ import androidx.core.os.BuildCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import cn.govast.vasttools.activity.VastVbVmActivity
+import cn.govast.vasttools.adapter.VastFragmentAdapter
+import cn.govast.vasttools.extension.cast
+import cn.govast.vasttools.utils.*
 import cn.govast.vmusic.R
 import cn.govast.vmusic.broadcast.BConstant
 import cn.govast.vmusic.broadcast.MusicBroadcast
@@ -33,12 +37,9 @@ import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.ui.base.sendOrderIntent
 import cn.govast.vmusic.ui.fragment.MusicPlayFragment
 import cn.govast.vmusic.viewModel.MainSharedVM
-import cn.govast.vasttools.activity.VastVbVmActivity
-import cn.govast.vasttools.adapter.VastFragmentAdapter
-import cn.govast.vasttools.extension.cast
-import cn.govast.vasttools.utils.*
 import com.bumptech.glide.Glide
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.textview.MaterialTextView
 import com.permissionx.guolindev.PermissionX
 import nl.joery.animatedbottombar.AnimatedBottomBar
@@ -56,9 +57,10 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
 
     /** 监听Service发送的广播 */
     private inner class MainReceiver : MusicBroadcast() {
-        override fun onMusicLoaded(intent:Intent) {
-            intent.getStringExtra(LOAD_MUSIC_KEY)?.also {
-                MusicMgr.searchMusic(it){
+
+        override fun onMusicInitLoaded(intent: Intent) {
+            intent.getStringExtra(LOAD_MUSIC_KEY)?.also { name ->
+                MusicMgr.searchMusic(name) {
                     onSuccess = {
                         getViewModel().apply {
                             updateMusicList(it.result.songs)
@@ -69,14 +71,26 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             } ?: getSnackbar().setText("未获取到歌曲名称").show()
         }
 
-        override fun onMusicPlay(intent:Intent) {
-            intent.getIntExtra(MUSIC_PLAY_KEY,0).apply {
+        override fun onMusicLoaded(intent: Intent) {
+            intent.getStringExtra(LOAD_MUSIC_KEY)?.also { name ->
+                MusicMgr.searchMusic(name) {
+                    onSuccess = {
+                        getViewModel().apply {
+                            updateMusicList(it.result.songs)
+                        }
+                    }
+                }
+            } ?: getSnackbar().setText("未获取到歌曲名称").show()
+        }
+
+        override fun onMusicPlay(intent: Intent) {
+            intent.getIntExtra(MUSIC_PLAY_KEY, 0).apply {
                 getViewModel().setCurrentMusic(this)
             }
         }
 
-        override fun onProgress(intent:Intent) {
-            intent.getFloatExtra(PROGRESS_KEY,0f).apply {
+        override fun onProgress(intent: Intent) {
+            intent.getFloatExtra(PROGRESS_KEY, 0f).apply {
                 if (!this.isNaN()) {
                     getBinding().musicProgress.setCurrentNum((this * 100).toDouble())
                     getViewModel().currentProgress = this
@@ -84,7 +98,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             }
         }
 
-        override fun onPlayState(intent:Intent) {
+        override fun onPlayState(intent: Intent) {
             val state = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 intent.extras?.getSerializable(PLAY_STATE_KEY, MusicService.PlayState::class.java)
             } else {
@@ -94,12 +108,13 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             state?.also {
                 when (it) {
                     MusicService.PlayState.PLAYING ->
-                        getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_pause)
+                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_pause)
                     MusicService.PlayState.PAUSE ->
-                        getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
-                    MusicService.PlayState.NOPLAY ->
-                        getBinding().localMusicBottomIvPlay.setImageResource(R.drawable.ic_play)
+                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_play)
+                    MusicService.PlayState.NOPLAYING ->
+                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_play)
                 }
+                getViewModel().currentPlayState = it
             } ?: getSnackbar().setText("未获取到播放状态").show()
         }
     }
@@ -112,7 +127,8 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         super.onCreate(savedInstanceState)
         ActivityUtils.addActivity(this)
         startService(Intent(this, MusicService::class.java).setType(getDefaultTag()))
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMainReceiver,
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            mMainReceiver,
             IntentFilter(BConstant.ACTION_UPDATE)
         )
         // 设置状态栏
@@ -152,10 +168,10 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.main_toolbar_search -> {
-                if (getBinding().searchView.visibility == View.GONE) {
-                    getBinding().searchView.visibility = View.VISIBLE
+                if (getBinding().musicSearch.visibility == View.GONE) {
+                    getBinding().musicSearch.visibility = View.VISIBLE
                 } else {
-                    getBinding().searchView.visibility = View.GONE
+                    getBinding().musicSearch.visibility = View.GONE
                 }
             }
         }
@@ -209,7 +225,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         getBinding().fragmentVp.adapter = VastFragmentAdapter(this, ArrayList<Fragment>().apply {
             add(MusicPlayFragment())
         })
-        getBinding().localMusicBottomIvPlay.setOnClickListener {
+        getBinding().musicPlayBtn.setOnClickListener {
             sendOrderIntent(Order.PLAY_OR_PAUSE)
         }
         getBinding().bottomBar.setOnTabSelectListener(object :
@@ -237,13 +253,14 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                 getBinding().drawerlayout.open()
             }
         }
-        getBinding().searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        getBinding().musicSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.apply {
                     // 发送查询广播
                     sendOrderIntent(Order.SEARCH) {
                         it.putExtra(MusicService.NAME, this)
                     }
+                    getBinding().musicLoading.show()
                 }
                 return false
             }
@@ -262,24 +279,35 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                     )
                 }
                 it.putExtras(bundle)
-                it.putExtra(PROGRESS_KEY,getViewModel().currentProgress)
+                it.putExtra(PROGRESS_KEY, getViewModel().currentProgress)
             }
             startActivity(intent)
         }
-        initUIObserver()
+        // 设置进度指示器
+        // https://github.com/material-components/material-components-android/blob/master/docs/components/ProgressIndicator.md
+        getBinding().musicLoading.apply {
+            showAnimationBehavior = BaseProgressIndicator.SHOW_INWARD
+            hideAnimationBehavior = BaseProgressIndicator.HIDE_INWARD
+            setVisibilityAfterHide(View.GONE)
+        }
+        initUIState()
         updateUserProfile()
     }
 
     override fun initUIState() {
-
-    }
-
-    override fun initUIObserver() {
         getViewModel().mCurrentMusic.observe(this) {
             getBinding().song = it
             Glide.with(this).load(it.albumUrl).into(
-                getBinding().albumArt
+                getBinding().musicAlbum
             )
+        }
+
+        getViewModel().mProgressState.observe(this) {
+            if (it == MainSharedVM.ProgressState.HIDE) {
+                getBinding().musicLoading.apply {
+                    hide()
+                }
+            }
         }
     }
 

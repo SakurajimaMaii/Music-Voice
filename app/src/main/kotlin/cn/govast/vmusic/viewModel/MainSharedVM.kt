@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.govast.vmusic.model.music.search.Song
 import cn.govast.vasttools.viewModel.VastViewModel
+import cn.govast.vmusic.service.MusicService
 import java.io.Serializable
 
 // Author: Vast Gui
@@ -16,6 +17,10 @@ class MainSharedVM : VastViewModel() {
 
     data class MusicInfo(val name: String, val albumName: String, val albumUrl: String):
         Serializable
+
+    enum class ProgressState{
+        SHOW,HIDE
+    }
 
     /** 当前页面的Music */
     private val _mCurrentMusic = MutableLiveData<MusicInfo>()
@@ -33,6 +38,18 @@ class MainSharedVM : VastViewModel() {
      * 当前播放的进度
      */
     var currentProgress:Float = 0f
+
+    /**
+     * 当前播放器状态
+     */
+    var currentPlayState: MusicService.PlayState = MusicService.PlayState.NOPLAYING
+
+    /**
+     * 进度条状态
+     */
+    private val _mProgressState = MutableLiveData<ProgressState>()
+    val mProgressState: LiveData<ProgressState>
+        get() = _mProgressState
 
     /** 设置 [cn.govast.vmusic.databinding.ActivityMainBinding] 页面的音乐信息 */
     fun setCurrentMusic(song: Song) {
@@ -53,6 +70,15 @@ class MainSharedVM : VastViewModel() {
      */
     fun updateMusicList(list:List<Song>){
         _mSongList.postValue(list)
+    }
+
+    /**
+     * 更新Progress状态
+     *
+     * @param state
+     */
+    fun updateProgressState(state: ProgressState){
+        _mProgressState.postValue(state)
     }
 
 }

@@ -1,11 +1,10 @@
 package cn.govast.vmusic.ui.fragment
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
-import cn.govast.vmusic.adapter.MusicAdapter
+import cn.govast.vmusic.ui.adapter.MusicAdapter
 import cn.govast.vmusic.databinding.FragmentPlayMusicBinding
 import cn.govast.vmusic.model.music.search.Song
 import cn.govast.vmusic.service.MusicService
@@ -16,7 +15,6 @@ import cn.govast.vmusic.ui.components.SpacesItemDecoration
 import cn.govast.vmusic.viewModel.MainSharedVM
 import cn.govast.vastadapter.AdapterClickListener
 import cn.govast.vasttools.fragment.VastVbVmFragment
-import com.google.android.material.progressindicator.BaseProgressIndicator
 import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
 
 // Author: Vast Gui
@@ -39,25 +37,16 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
         super.onViewCreated(view, savedInstanceState)
         initUI()
         initUIState()
-        initUIObserver()
     }
 
     override fun initUIState() {
-
-    }
-
-    override fun initUIObserver() {
         getViewModel().mSongList.observe(requireActivity()) {
             if(mMusicAdapter.itemCount != 0){
                 mMusicAdapter.submitList(ArrayList<Song>())
             }
             mMusicAdapter.submitList(it)
             getBinding().musicRecycler.visibility = View.VISIBLE
-            // 设置进度指示器
-            // https://github.com/material-components/material-components-android/blob/master/docs/components/ProgressIndicator.md
-            getBinding().musicLoading.apply {
-                hide()
-            }
+            getViewModel().updateProgressState(MainSharedVM.ProgressState.HIDE)
         }
     }
 
@@ -84,11 +73,6 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
             addItemDecoration(SpacesItemDecoration(5))
             this.layoutManager = layoutManager
             this.adapter = slideInLeftAnimationAdapter
-        }
-        // 设置进度指示器
-        getBinding().musicLoading.apply {
-            hideAnimationBehavior = BaseProgressIndicator.HIDE_INWARD
-            setVisibilityAfterHide(View.GONE)
         }
     }
 

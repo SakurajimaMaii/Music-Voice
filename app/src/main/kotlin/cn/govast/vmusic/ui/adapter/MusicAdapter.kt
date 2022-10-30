@@ -1,4 +1,4 @@
-package cn.govast.vmusic.adapter
+package cn.govast.vmusic.ui.adapter
 
 import android.content.Context
 import androidx.recyclerview.widget.DiffUtil
@@ -28,7 +28,7 @@ class SongDiffUtil:DiffUtil.ItemCallback<Song>(){
  *
  * @param context
  */
-class MusicAdapter(context: Context):VastBindListAdapter<Song>(context,SongDiffUtil()) {
+class MusicAdapter(context: Context):VastBindListAdapter<Song>(context, SongDiffUtil()) {
     override fun setVariableId(): Int {
         return BR.song
     }

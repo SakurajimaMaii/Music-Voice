@@ -9,16 +9,11 @@ package cn.govast.vmusic.ui.base
 
 interface UIStateListener {
     /**
-     * 监听UI状态变化
+     * 监听UI状态变化，初始化VieModel监听
      *
      * @see cn.govast.vasttools.livedata.base.State
      */
     fun initUIState()
-
-    /**
-     * 初始化VieModel监听
-     */
-    fun initUIObserver()
 
     /** 初始化UI */
     fun initUI()

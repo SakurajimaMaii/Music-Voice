@@ -34,8 +34,17 @@
                     app:navigationIcon="@drawable/ic_menu"
                     app:title="@string/app_name" />
 
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/musicLoading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    app:indicatorColor="@array/linearProgressIndicatorColor"
+                    app:trackThickness="5dp"
+                    app:indeterminateAnimationType="contiguous" />
+
                 <SearchView
-                    android:id="@+id/searchView"
+                    android:id="@+id/musicSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
@@ -74,7 +83,7 @@
                         app:progress_line_outColor="?colorPrimary" />
 
                     <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/albumArt"
+                        android:id="@+id/musicAlbum"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginStart="5dp"
@@ -87,7 +96,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <cn.govast.vasttools.view.textview.FocusedTextView
-                        android:id="@+id/local_music_bottom_tv_song"
+                        android:id="@+id/musicName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -96,12 +105,12 @@
                         android:singleLine="true"
                         android:text="@{song.name,default=测试文本}"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
-                        app:layout_constraintBottom_toTopOf="@id/local_music_bottom_tv_singer"
-                        app:layout_constraintStart_toEndOf="@id/albumArt"
+                        app:layout_constraintBottom_toTopOf="@id/musicSinger"
+                        app:layout_constraintStart_toEndOf="@id/musicAlbum"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <cn.govast.vasttools.view.textview.FocusedTextView
-                        android:id="@+id/local_music_bottom_tv_singer"
+                        android:id="@+id/musicSinger"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -110,11 +119,11 @@
                         android:text="@{song.albumName,default=测试文本}"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/albumArt"
-                        app:layout_constraintTop_toBottomOf="@id/local_music_bottom_tv_song" />
+                        app:layout_constraintStart_toEndOf="@id/musicAlbum"
+                        app:layout_constraintTop_toBottomOf="@id/musicName" />
 
                     <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/local_music_bottom_iv_play"
+                        android:id="@+id/musicPlayBtn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center_vertical"

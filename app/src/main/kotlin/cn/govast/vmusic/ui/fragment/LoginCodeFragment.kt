@@ -64,7 +64,6 @@ class LoginCodeFragment : VastVbVmFragment<FragmentLoginCodeBinding, StartVM>(),
                     }
                 }
         }
-        initUIObserver()
         initUIState()
     }
 
@@ -73,10 +72,6 @@ class LoginCodeFragment : VastVbVmFragment<FragmentLoginCodeBinding, StartVM>(),
     }
 
     override fun initUIState() {
-
-    }
-
-    override fun initUIObserver() {
         getViewModel().qrCodeCheck.observe(viewLifecycleOwner) {
             if (it.code == QRCodeCheckState.SURE.code) {
                 userMMKV.encode(UserConstant.USER_COOKIE, setOf(it.cookie))

@@ -26,15 +26,6 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
     }
 
     private inner class MusicReceiver : MusicBroadcast() {
-        override fun onMusicLoaded(intent: Intent) {
-            // 无需为加载做任何操作
-            nothing_to_do()
-        }
-
-        override fun onMusicPlay(intent: Intent) {
-            // 由MainActivity传递
-            nothing_to_do()
-        }
 
         override fun onProgress(intent: Intent) {
             intent.getFloatExtra(UpdateKey.PROGRESS_KEY, 0f).apply {
@@ -60,7 +51,7 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
                         getBinding().musicPlay.setImageResource(R.drawable.ic_pause)
                     MusicService.PlayState.PAUSE ->
                         getBinding().musicPlay.setImageResource(R.drawable.ic_play)
-                    MusicService.PlayState.NOPLAY ->
+                    MusicService.PlayState.NOPLAYING ->
                         getBinding().musicPlay.setImageResource(R.drawable.ic_play)
                 }
             }
@@ -76,7 +67,7 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(mMusicReceiver, IntentFilter(BConstant.ACTION_UPDATE))
         initUI()
-        initUIObserver()
+        initUIState()
     }
 
     override fun onDestroy() {
@@ -85,10 +76,6 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
     }
 
     override fun initUIState() {
-
-    }
-
-    override fun initUIObserver() {
         // 更新音乐专辑
         getViewModel().mCurrentMusic.observe(this) {
             Glide.with(this).load(it.albumUrl).into(
