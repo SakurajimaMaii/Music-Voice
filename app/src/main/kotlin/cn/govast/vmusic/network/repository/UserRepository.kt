@@ -1,7 +1,9 @@
 package cn.govast.vmusic.network.repository
 
 import cn.govast.vmusic.model.qrcode.QRCodeCheck
-import cn.govast.vmusic.network.service.QRCodeNetService
+import cn.govast.vmusic.model.captcha.Captcha
+import cn.govast.vmusic.model.captcha.CaptchaResult
+import cn.govast.vmusic.network.service.LoginNetService
 import cn.govast.vmusic.network.service.UserNetService
 import cn.govast.vmusic.model.user.LoginStateRes
 import cn.govast.vmusic.network.ServiceCreator
@@ -15,8 +17,8 @@ import cn.govast.vmusic.network.ServiceCreator
 
 object UserRepository {
 
-    private val mQRCodeService by lazy {
-        ServiceCreator.create(QRCodeNetService::class.java)
+    private val mLoginService by lazy {
+        ServiceCreator.create(LoginNetService::class.java)
     }
 
     private val mUserService by lazy {
@@ -24,11 +26,19 @@ object UserRepository {
     }
 
     suspend fun checkQRCode(key: String): QRCodeCheck {
-        return mQRCodeService.checkQRCode(key)
+        return mLoginService.checkQRCode(key)
     }
 
     suspend fun checkLoginState(): LoginStateRes {
         return mUserService.loginState()
+    }
+
+    suspend fun getCaptcha(phone: String): Captcha {
+        return mLoginService.getCaptcha(phone)
+    }
+
+    suspend fun phoneLogin(phone: String, captcha: String): CaptchaResult {
+        return mLoginService.phoneLogin(phone, captcha)
     }
 
 }

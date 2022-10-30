@@ -34,4 +34,9 @@ object BConstant {
      * @see ACTION_UPDATE
      */
     val UPDATE_KEY = "update_key"
+
+    /**
+     * 登出信息
+     */
+    val LOGIN_OUT = "${AppUtils.getPackageName()}.login.out"
 }

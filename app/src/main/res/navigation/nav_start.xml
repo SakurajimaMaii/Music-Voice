@@ -10,7 +10,7 @@
         android:label="MainActivity"
         tools:layout="@layout/activity_main"/>
     <navigation android:id="@+id/navigation"
-        app:startDestination="@id/loginCodeFragment">
+        app:startDestination="@id/loginFragment">
         <fragment
             android:id="@+id/loginCodeFragment"
             android:name="cn.govast.vmusic.ui.fragment.LoginCodeFragment"

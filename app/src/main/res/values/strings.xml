@@ -25,4 +25,10 @@
     <string name="finished">完成</string>
     <string name="defaultText">开始</string>
     <string name="main_toolbar_home">主页</string>
+    <string name="user_setting_login">用户登录设置</string>
+    <string name="user_login_out">用户登出</string>
+    <string name="captcha">验证码</string>
+    <string name="cor_info_captcha">请查看验证码</string>
+    <string name="err_info_phone">电话号码输入错误</string>
+    <string name="err_info_get_captcha">验证码获取失败</string>
 </resources>

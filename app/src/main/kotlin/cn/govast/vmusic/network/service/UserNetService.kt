@@ -12,6 +12,11 @@ import retrofit2.http.POST
 
 interface UserNetService {
 
+    /**
+     * 获取登录状态
+     *
+     * @return
+     */
     @POST("/login/status")
     suspend fun loginState(): LoginStateRes
 

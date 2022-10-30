@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import cn.govast.vasttools.broadcastreceiver.VastBroadcastReceiver
 import cn.govast.vmusic.constant.Update
 import cn.govast.vasttools.extension.cast
 import cn.govast.vasttools.nothing_to_do
@@ -34,7 +35,7 @@ interface StateListener{
 }
 
 /** 用于活动页面监听 [cn.govast.vmusic.service.MusicService] 内发送的广播 */
-abstract class MusicBroadcast: BroadcastReceiver(),StateListener {
+abstract class MusicBroadcast: VastBroadcastReceiver(),StateListener {
     override fun onReceive(context: Context, intent: Intent) {
         val update = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.extras?.getSerializable(BConstant.UPDATE_KEY, Update::class.java)

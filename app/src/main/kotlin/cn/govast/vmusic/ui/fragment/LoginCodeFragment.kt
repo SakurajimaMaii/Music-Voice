@@ -11,7 +11,7 @@ import cn.govast.vmusic.databinding.FragmentLoginCodeBinding
 import cn.govast.vmusic.network.ServiceCreator
 import cn.govast.vmusic.model.qrcode.GenQRCodeOption
 import cn.govast.vmusic.model.qrcode.QRCodeCheckState
-import cn.govast.vmusic.network.service.QRCodeNetService
+import cn.govast.vmusic.network.service.LoginNetService
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.utils.BitmapUtils
 import cn.govast.vmusic.viewModel.StartVM
@@ -29,7 +29,7 @@ class LoginCodeFragment : VastVbVmFragment<FragmentLoginCodeBinding, StartVM>(),
 
     // 获取用户Service
     private val mQRCodeService by lazy {
-        ServiceCreator.create(QRCodeNetService::class.java)
+        ServiceCreator.create(LoginNetService::class.java)
     }
 
     // 获取QRCode key

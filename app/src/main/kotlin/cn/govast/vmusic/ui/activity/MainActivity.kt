@@ -126,7 +126,6 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityUtils.addActivity(this)
-        startService(Intent(this, MusicService::class.java).setType(getDefaultTag()))
         LocalBroadcastManager.getInstance(this).registerReceiver(
             mMainReceiver,
             IntentFilter(BConstant.ACTION_UPDATE)
@@ -156,7 +155,6 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
 
     override fun onDestroy() {
         super.onDestroy()
-        stopService(Intent(this, MusicService::class.java).setType(getDefaultTag()))
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMainReceiver)
     }
 
@@ -289,6 +287,17 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             showAnimationBehavior = BaseProgressIndicator.SHOW_INWARD
             hideAnimationBehavior = BaseProgressIndicator.HIDE_INWARD
             setVisibilityAfterHide(View.GONE)
+        }
+        getBinding().navigationView.apply {
+            setNavigationItemSelectedListener {
+                when(it.itemId){
+                    R.id.app_setting -> {
+                        val intent = Intent(this@MainActivity,SettingActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+                return@setNavigationItemSelectedListener true
+            }
         }
         initUIState()
         updateUserProfile()

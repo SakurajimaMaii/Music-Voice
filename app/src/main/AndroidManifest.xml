@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".MusicApp"
+        android:name=".VMusicApp"
         android:allowBackup="false"
         android:exported="true"
         android:icon="@mipmap/ic_launcher"
@@ -47,6 +47,16 @@
 
         <activity
             android:name=".ui.activity.MusicActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.activity.SettingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

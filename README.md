@@ -17,6 +17,7 @@ App采用VastUtils框架，详情请访问[VastUtils](https://github.com/Sakuraj
 ### 用户
 
 - [x] 二维码登录
+- [x] 手机验证码登录
 
 ### 歌曲
 
