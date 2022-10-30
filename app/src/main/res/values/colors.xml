@@ -34,4 +34,6 @@
     <color name="colorSurface6">#FFFFFF</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="red_amour">#ee5253</color>
+    <color name="yellow_casandora">#feca57</color>
 </resources>

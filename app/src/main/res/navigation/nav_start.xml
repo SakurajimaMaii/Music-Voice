@@ -6,14 +6,14 @@
     app:startDestination="@id/navigation">
     <activity
         android:id="@+id/mainActivity"
-        android:name="cn.govast.gmusic.ui.activity.MainActivity"
+        android:name="cn.govast.vmusic.ui.activity.MainActivity"
         android:label="MainActivity"
         tools:layout="@layout/activity_main"/>
     <navigation android:id="@+id/navigation"
         app:startDestination="@id/loginCodeFragment">
         <fragment
             android:id="@+id/loginCodeFragment"
-            android:name="cn.govast.gmusic.ui.fragment.LoginCodeFragment"
+            android:name="cn.govast.vmusic.ui.fragment.LoginCodeFragment"
             android:label="@string/login_code_fragment"
             tools:layout="@layout/fragment_login_code">
             <action
@@ -22,7 +22,7 @@
         </fragment>
         <fragment
             android:id="@+id/loginFragment"
-            android:name="cn.govast.gmusic.ui.fragment.LoginFragment"
+            android:name="cn.govast.vmusic.ui.fragment.LoginFragment"
             android:label="@string/login_fragment"
             tools:layout="@layout/fragment_login">
             <action
@@ -37,7 +37,7 @@
         </fragment>
         <fragment
             android:id="@+id/registerFragment"
-            android:name="cn.govast.gmusic.ui.fragment.RegisterFragment"
+            android:name="cn.govast.vmusic.ui.fragment.RegisterFragment"
             android:label="@string/register_fragment"
             tools:layout="@layout/fragment_register">
             <action

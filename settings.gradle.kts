@@ -1,3 +1,3 @@
-rootProject.name="GMusic"
+rootProject.name="VMusic"
 include(":app",":Music")
 includeBuild("../PluginVersion")

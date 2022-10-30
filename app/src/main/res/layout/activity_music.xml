@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?colorSurface"
     tools:context=".ui.activity.MusicActivity">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -17,10 +18,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <cn.govast.gmusic.ui.view.HorizontalProgressView
+    <cn.govast.vmusic.ui.view.HorizontalProgressView
         android:id="@+id/musicProgress"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="5dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:progress_line_max="100"

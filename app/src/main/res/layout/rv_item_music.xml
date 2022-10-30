@@ -4,7 +4,7 @@
     <data>
         <variable
             name="song"
-            type="cn.govast.gmusic.model.music.search.Song" />
+            type="cn.govast.vmusic.model.music.search.Song" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

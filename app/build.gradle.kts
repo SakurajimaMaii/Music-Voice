@@ -8,15 +8,15 @@ plugins{
 }
 
 android {
-    namespace = "cn.govast.gmusic"
+    namespace = "cn.govast.vmusic"
     compileSdk = Version.compile_sdk_version
 
     defaultConfig {
-        applicationId = "cn.govast.gmusic"
+        applicationId = "cn.govast.vmusic"
         minSdk = Version.min_sdk_version
         targetSdk = Version.target_sdk_version
-        versionCode = Version.version_code
-        versionName = Version.version_name
+        versionCode = 1
+        versionName = "1.0.22.20221030"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
