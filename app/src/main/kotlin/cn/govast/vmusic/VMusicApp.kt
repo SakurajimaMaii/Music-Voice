@@ -17,12 +17,9 @@
 package cn.govast.vmusic
 
 import android.app.Application
-import android.content.Intent
 import cn.govast.city.db.AreaDatabase
 import cn.govast.vasttools.config.ToolsConfig
 import cn.govast.vasttools.helper.ContextHelper
-import cn.govast.vmusic.manager.MusicMgr.getDefaultTag
-import cn.govast.vmusic.service.MusicService
 import com.tencent.mmkv.MMKV
 
 // Author: Vast Gui

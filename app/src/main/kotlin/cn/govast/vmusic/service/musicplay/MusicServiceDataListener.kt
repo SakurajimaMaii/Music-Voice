@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package cn.govast.vmusic.constant
+package cn.govast.vmusic.service.musicplay
+
+import cn.govast.vmusic.model.music.search.Song
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
-// Date: 2022/10/29
+// Date: 2022/10/31
 // Description: 
 // Documentation:
 // Reference:
 
-/**
- * [cn.govast.vmusic.service.MusicService] 更新广播通知
- *
- * @property ON_MUSIC_INIT_LOADED 这条指令尽量不要由用户发送，这个专门用来初次启动应用更新的
- * @property ON_PROGRESS 通知界面更新播放进度百分比
- */
-enum class Update {
-    ON_MUSIC_INIT_LOADED,
-    ON_MUSIC_LOADED,
-    ON_MUSIC_PLAY,
-    ON_PROGRESS,
-    ON_PLAY_STATE
+/** 用于 Service 和 Activity 进行数据交互 */
+class MusicServiceDataListener {
+    /** 用于监听歌曲列表更新，播放状态用于你判断某些控件是否需要更新信息 */
+    var updateCurrentMusicList: ((songs: List<Song>, currentPlayState: MusicService.PlayState) -> Unit) =
+        { _, _ -> }
+
+    /**
+     * 用于通知界面现在等待播放的歌曲
+     */
+    var updateCurrentMusic: ((song: Song) -> Unit) = {}
 }

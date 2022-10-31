@@ -20,6 +20,7 @@ import android.Manifest
 import android.content.*
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -40,14 +41,14 @@ import cn.govast.vmusic.R
 import cn.govast.vmusic.broadcast.BConstant
 import cn.govast.vmusic.broadcast.MusicBroadcast
 import cn.govast.vmusic.constant.Order
-import cn.govast.vmusic.constant.UpdateKey.LOAD_MUSIC_KEY
+import cn.govast.vmusic.constant.UpdateKey.DURATION_KEY
 import cn.govast.vmusic.constant.UpdateKey.MUSIC_PLAY_KEY
 import cn.govast.vmusic.constant.UpdateKey.PLAY_STATE_KEY
 import cn.govast.vmusic.constant.UpdateKey.PROGRESS_KEY
 import cn.govast.vmusic.databinding.ActivityMainBinding
-import cn.govast.vmusic.manager.MusicMgr
+import cn.govast.vmusic.model.music.search.Album
 import cn.govast.vmusic.network.repository.UserRepository
-import cn.govast.vmusic.service.MusicService
+import cn.govast.vmusic.service.musicplay.MusicService
 import cn.govast.vmusic.sharedpreferences.UserSp
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.ui.base.sendOrderIntent
@@ -59,8 +60,10 @@ import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.textview.MaterialTextView
 import com.permissionx.guolindev.PermissionX
 import nl.joery.animatedbottombar.AnimatedBottomBar
+import java.io.Serializable
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.time.Duration
 
 
 // Author: Vast Gui
@@ -71,45 +74,20 @@ import java.util.*
 
 class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UIStateListener {
 
+    /** 用于向 [cn.govast.vmusic.ui.activity.MusicActivity] 传递必要信息 */
+    data class MusicInfo(val name: String,val albumUrl:String,val currentProgress:Int,val duration: Int):Serializable
+
     /** 监听Service发送的广播 */
     private inner class MainReceiver : MusicBroadcast() {
 
-        override fun onMusicInitLoaded(intent: Intent) {
-            intent.getStringExtra(LOAD_MUSIC_KEY)?.also { name ->
-                MusicMgr.searchMusic(name) {
-                    onSuccess = {
-                        getViewModel().apply {
-                            updateMusicList(it.result.songs)
-                            setCurrentMusic(it.result.songs[0])
-                        }
-                    }
-                }
-            } ?: getSnackbar().setText("未获取到歌曲名称").show()
-        }
-
-        override fun onMusicLoaded(intent: Intent) {
-            intent.getStringExtra(LOAD_MUSIC_KEY)?.also { name ->
-                MusicMgr.searchMusic(name) {
-                    onSuccess = {
-                        getViewModel().apply {
-                            updateMusicList(it.result.songs)
-                        }
-                    }
-                }
-            } ?: getSnackbar().setText("未获取到歌曲名称").show()
-        }
-
-        override fun onMusicPlay(intent: Intent) {
-            intent.getIntExtra(MUSIC_PLAY_KEY, 0).apply {
-                getViewModel().setCurrentMusic(this)
-            }
-        }
-
         override fun onProgress(intent: Intent) {
+            intent.getIntExtra(DURATION_KEY, 0).apply {
+                getViewModel().mCurrentDuration = this
+            }
             intent.getFloatExtra(PROGRESS_KEY, 0f).apply {
                 if (!this.isNaN()) {
                     getBinding().musicProgress.setCurrentNum((this * 100).toDouble())
-                    getViewModel().currentProgress = this
+                    getViewModel().mCurrentProgress = this
                 }
             }
         }
@@ -125,18 +103,47 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                 when (it) {
                     MusicService.PlayState.PLAYING ->
                         getBinding().musicPlayBtn.setImageResource(R.drawable.ic_pause)
+
                     MusicService.PlayState.PAUSE ->
                         getBinding().musicPlayBtn.setImageResource(R.drawable.ic_play)
+
                     MusicService.PlayState.NOPLAYING ->
                         getBinding().musicPlayBtn.setImageResource(R.drawable.ic_play)
                 }
-                getViewModel().currentPlayState = it
+                getViewModel().mCurrentPlayState = it
             } ?: getSnackbar().setText("未获取到播放状态").show()
+        }
+    }
+
+    /** 用于和 [MusicService] 交流 */
+    private inner class MusicServiceConn : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            cast<MusicService.MusicBinder>(service).getService().apply {
+                registerMusicListener {
+                    updateCurrentMusicList = { songs, playState ->
+                        getViewModel().apply {
+                            updateMusicList(songs, playState)
+                        }
+                    }
+
+                    updateCurrentMusic = {
+                        getViewModel().setCurrentMusic(it)
+                    }
+                }
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            LogUtils.e(getDefaultTag(), "$name 连接失败")
         }
     }
 
     private val mMainReceiver by lazy {
         MainReceiver()
+    }
+
+    private val mMusicServiceConn by lazy {
+        MusicServiceConn()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,6 +153,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             mMainReceiver,
             IntentFilter(BConstant.ACTION_UPDATE)
         )
+        bindService(Intent(this,MusicService::class.java).setType(getDefaultTag()),MusicServiceConn(),Context.BIND_AUTO_CREATE)
         // 设置状态栏
         setSupportActionBar(getBinding().topAppBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -172,6 +180,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     override fun onDestroy() {
         super.onDestroy()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMainReceiver)
+        unbindService(mMusicServiceConn)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -222,7 +231,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         getRequestBuilder()
             .suspendWithListener({ UserRepository.checkLoginState() }) {
                 onSuccess = {
-                    it.data.profile?.also { userProfile->
+                    it.data.profile?.also { userProfile ->
                         UserSp.writeUser(userProfile)
                     }
                 }
@@ -286,14 +295,12 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         })
         getBinding().musicControl.setOnClickListener {
             val intent = Intent(this, MusicActivity::class.java).also {
-                val bundle = Bundle().also { bundle ->
-                    bundle.putSerializable(
-                        MusicActivity.CURRENT_MUSIC_KEY,
-                        getViewModel().mCurrentMusic.value
-                    )
+                val currentMusic = getViewModel().mCurrentMusic.value?.apply {
+                    it.putExtra(MusicActivity.CURRENT_MUSIC_NAME_KEY,this.name)
+                    it.putExtra(MusicActivity.CURRENT_MUSIC_ALBUM_KEY,this.album.getPicUrl())
                 }
-                it.putExtras(bundle)
-                it.putExtra(PROGRESS_KEY, getViewModel().currentProgress)
+                it.putExtra(MusicActivity.CURRENT_PROGRESS_KEY, getViewModel().mCurrentProgress)
+                it.putExtra(MusicActivity.CURRENT_DURATION_KEY, getViewModel().mCurrentDuration)
             }
             startActivity(intent)
         }
@@ -306,9 +313,9 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         }
         getBinding().navigationView.apply {
             setNavigationItemSelectedListener {
-                when(it.itemId){
+                when (it.itemId) {
                     R.id.app_setting -> {
-                        val intent = Intent(this@MainActivity,SettingActivity::class.java)
+                        val intent = Intent(this@MainActivity, SettingActivity::class.java)
                         startActivity(intent)
                     }
                 }
@@ -322,16 +329,14 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     override fun initUIState() {
         getViewModel().mCurrentMusic.observe(this) {
             getBinding().song = it
-            Glide.with(this).load(it.albumUrl).into(
+            Glide.with(this).load(it.album.getPicUrl()).into(
                 getBinding().musicAlbum
             )
         }
 
         getViewModel().mProgressState.observe(this) {
             if (it == MainSharedVM.ProgressState.HIDE) {
-                getBinding().musicLoading.apply {
-                    hide()
-                }
+                getBinding().musicLoading.hide()
             }
         }
     }

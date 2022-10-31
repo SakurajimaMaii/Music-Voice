@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cn.govast.vmusic.ui.adapter.MusicAdapter
 import cn.govast.vmusic.databinding.FragmentPlayMusicBinding
 import cn.govast.vmusic.model.music.search.Song
-import cn.govast.vmusic.service.MusicService
+import cn.govast.vmusic.service.musicplay.MusicService
 import cn.govast.vmusic.constant.Order
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.ui.base.sendOrderIntent
@@ -56,7 +56,7 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
     }
 
     override fun initUIState() {
-        getViewModel().mSongList.observe(requireActivity()) {
+        getViewModel().mCurrentMusicList.observe(requireActivity()) {
             if(mMusicAdapter.itemCount != 0){
                 mMusicAdapter.submitList(ArrayList<Song>())
             }

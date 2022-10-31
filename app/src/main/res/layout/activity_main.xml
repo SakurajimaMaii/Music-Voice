@@ -24,7 +24,7 @@
 
         <variable
             name="song"
-            type="cn.govast.vmusic.viewModel.MainSharedVM.MusicInfo" />
+            type="cn.govast.vmusic.model.music.search.Song" />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -132,7 +132,7 @@
                         android:layout_marginStart="10dp"
                         android:ellipsize="marquee"
                         android:singleLine="true"
-                        android:text="@{song.albumName,default=测试文本}"
+                        android:text="@{song.album.name,default=测试文本}"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/musicAlbum"

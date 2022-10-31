@@ -37,7 +37,7 @@
         android:theme="@style/Vmusic">
 
         <service
-            android:name=".service.MusicService"
+            android:name=".service.musicplay.MusicService"
             android:exported="false" />
 
         <activity

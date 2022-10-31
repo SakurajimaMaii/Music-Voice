@@ -32,7 +32,7 @@ import cn.govast.vasttools.network.ApiRspStateListener
 // Reference:
 
 /** 主要用于当Service,Activity接收到指令时候的数据更新 */
-object MusicMgr : BaseActive {
+object MusicRequestMgr : BaseActive {
 
     /**
      * 搜索歌曲

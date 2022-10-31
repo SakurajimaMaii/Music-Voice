@@ -31,24 +31,14 @@ import cn.govast.vasttools.viewModel.VastViewModel
 class MusicVM : VastViewModel() {
 
     /** 当前页面的Music */
-    private val _mCurrentMusic = MutableLiveData<MainSharedVM.MusicInfo>()
+    private val _mCurrentMusic = MutableLiveData<Song>()
 
-    val mCurrentMusic: LiveData<MainSharedVM.MusicInfo>
+    val mCurrentMusic: LiveData<Song>
         get() = _mCurrentMusic
 
     /** 设置 [cn.govast.vmusic.databinding.ActivityMusicBinding] 页面的音乐信息 */
     fun setCurrentMusic(song: Song) {
-        _mCurrentMusic.postValue(
-            MainSharedVM.MusicInfo(
-                song.name,
-                song.album.name,
-                song.album.getPicUrl()
-            )
-        )
+        _mCurrentMusic.postValue(song)
     }
 
-    /** 设置 [cn.govast.vmusic.databinding.ActivityMusicBinding] 页面的音乐信息 */
-    fun setCurrentMusic(musicInfo: MainSharedVM.MusicInfo) {
-        _mCurrentMusic.postValue(musicInfo)
-    }
 }

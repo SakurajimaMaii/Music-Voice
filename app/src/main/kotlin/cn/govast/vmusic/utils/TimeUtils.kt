@@ -33,8 +33,8 @@ object TimeUtils {
      * @param duration 音乐时长
      * @return
      */
-    fun timeParse(duration: Long): String? {
-        var time: String? = ""
+    fun timeParse(duration: Long): String {
+        var time: String = ""
         val minute = duration / 60000
         val seconds = duration % 60000
         val second = (seconds.toFloat() / 1000).roundToInt().toLong()

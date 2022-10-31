@@ -43,6 +43,11 @@ object UpdateKey {
     const val PROGRESS_KEY = "progress_key"
 
     /**
+     * 广播会携带当前歌曲播放时长
+     */
+    const val DURATION_KEY = "duration_key"
+
+    /**
      * 广播会携带当前歌曲播放状态
      */
     const val PLAY_STATE_KEY = "play_state_key"

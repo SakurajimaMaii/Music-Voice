@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2022 Vast Gui guihy2019@gmail.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="54dp"
+    android:height="54dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <group android:scaleX="0.51944447"
+        android:scaleY="0.51944447"
+        android:translateX="248.50699"
+        android:translateY="246.04445">
+        <path
+            android:pathData="M511.8,131.7a446.1,446.1 0,1 0,446.1 446.1,446.1 446.1,0 0,0 -446.1,-446.1zM511.8,651.5A71.8,71.8 0,1 1,583.6 580.5,72.3 72.3,0 0,1 511.8,651.5z"
+            android:fillColor="?colorPrimary"/>
+        <path
+            android:pathData="M802.2,0.5l-168.2,37a67.8,67.8 0,0 0,-53.1 66V223.6l3.6,349.8h114.2V223.6h108.9a26.3,26.3 0,0 0,26.8 -26.3V26.9a26.8,26.8 0,0 0,-32.1 -26.3z"
+            android:fillColor="?colorOnPrimaryContainer"/>
+        <path
+            android:pathData="M511.8,386.5a186.9,186.9 0,1 0,186.9 186.5A186.9,186.9 0,0 0,511.8 386.5zM511.8,651a71.4,71.4 0,1 1,71.4 -71.4,71.4 71.4,0 0,1 -71.4,71.4z"
+            android:fillColor="?colorOnPrimaryContainer"/>
+    </group>
+</vector>

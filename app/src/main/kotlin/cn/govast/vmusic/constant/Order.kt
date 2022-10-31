@@ -34,22 +34,19 @@ enum class Order {
     STOP,
     NEXT,
     PREVIOUS,
-    LOOP,
-    RANDOM,
-    LOOP_ALL,
-    /**
-     * 数据索引
-     * @see [cn.govast.vmusic.service.MusicService.PROGRESS]
-     */
-    PROGRESS,
-    /**
-     * 数据索引
-     * @see [cn.govast.vmusic.service.MusicService.NOW]
-     */
+
+    /** 单曲循环 */
+    LOOP_ONE,
+
+    /** 随机循环 */
+    LOOP_RANDOM,
+
+    /** 列表循环 */
+    LOOP_LIST,
+
+    /** 播放当前点击的歌曲 */
     NOW,
-    /**
-     * 数据索引
-     * @see [cn.govast.vmusic.service.MusicService.NAME]
-     */
+
+    /** 搜索歌曲 */
     SEARCH
 }

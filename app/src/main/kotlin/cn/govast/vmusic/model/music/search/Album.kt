@@ -20,7 +20,7 @@ package cn.govast.vmusic.model.music.search
  * 歌曲专辑信息
  *
  * @property id
- * @property name
+ * @property name 专辑名称
  * @property pic
  * @property picUrl 专辑照片链接
  * @property pic_str

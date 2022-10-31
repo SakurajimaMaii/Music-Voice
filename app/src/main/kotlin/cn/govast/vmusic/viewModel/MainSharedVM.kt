@@ -20,7 +20,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.govast.vmusic.model.music.search.Song
 import cn.govast.vasttools.viewModel.VastViewModel
-import cn.govast.vmusic.service.MusicService
+import cn.govast.vmusic.service.musicplay.MusicService
 import java.io.Serializable
 
 // Author: Vast Gui
@@ -31,61 +31,58 @@ import java.io.Serializable
 
 class MainSharedVM : VastViewModel() {
 
-    data class MusicInfo(val name: String, val albumName: String, val albumUrl: String):
-        Serializable
-
-    enum class ProgressState{
-        SHOW,HIDE
+    enum class ProgressState {
+        HIDE
     }
 
     /** 当前页面的Music */
-    private val _mCurrentMusic = MutableLiveData<MusicInfo>()
-    val mCurrentMusic: LiveData<MusicInfo>
+    private val _mCurrentMusic = MutableLiveData<Song>()
+    val mCurrentMusic: LiveData<Song>
         get() = _mCurrentMusic
 
-    /**
-     * 音乐播放列表
-     */
-    private val _mSongList = MutableLiveData<List<Song>>()
-    val mSongList: LiveData<List<Song>>
-        get() = _mSongList
+    /** 当前音乐播放列表 */
+    private val _mCurrentMusicList = MutableLiveData<List<Song>>()
+    val mCurrentMusicList: LiveData<List<Song>>
+        get() = _mCurrentMusicList
 
-    /**
-     * 当前播放的进度
-     */
-    var currentProgress:Float = 0f
+    /** 当前播放的进度 */
+    var mCurrentProgress: Float = 0f
 
-    /**
-     * 当前播放器状态
-     */
-    var currentPlayState: MusicService.PlayState = MusicService.PlayState.NOPLAYING
+    /** 当前播放器状态 */
+    var mCurrentPlayState: MusicService.PlayState = MusicService.PlayState.NOPLAYING
 
-    /**
-     * 进度条状态
-     */
+    /** 进度条状态，在搜索时会打开，搜索结束列表更新完成后会关闭 */
     private val _mProgressState = MutableLiveData<ProgressState>()
     val mProgressState: LiveData<ProgressState>
         get() = _mProgressState
 
+    /** 当前播放歌曲的进度 */
+    var mCurrentDuration = 0
+
     /** 设置 [cn.govast.vmusic.databinding.ActivityMainBinding] 页面的音乐信息 */
     fun setCurrentMusic(song: Song) {
-        _mCurrentMusic.postValue(MusicInfo(song.name, song.album.name, song.album.getPicUrl()))
+        _mCurrentMusic.postValue(song)
     }
 
     /** 设置 [cn.govast.vmusic.databinding.ActivityMainBinding] 页面的音乐信息 */
-    fun setCurrentMusic(index:Int){
-        _mSongList.value?.get(index)?.apply {
+    fun setCurrentMusic(index: Int) {
+        _mCurrentMusicList.value?.get(index)?.apply {
             setCurrentMusic(this)
         }
     }
 
     /**
-     * 更新播放列表
+     * 更新播放列表，如果 [playState] 为 [MusicService.PlayState.NOPLAYING]
+     * 则会将当前列表的第一个作为当前的播放歌曲
      *
      * @param list
      */
-    fun updateMusicList(list:List<Song>){
-        _mSongList.postValue(list)
+    fun updateMusicList(list: List<Song>,playState: MusicService.PlayState) {
+        _mCurrentMusicList.postValue(list)
+        if(playState == MusicService.PlayState.NOPLAYING){
+            _mCurrentMusic.postValue(list[0])
+            mCurrentDuration = list[0].duration
+        }
     }
 
     /**
@@ -93,7 +90,7 @@ class MainSharedVM : VastViewModel() {
      *
      * @param state
      */
-    fun updateProgressState(state: ProgressState){
+    fun updateProgressState(state: ProgressState) {
         _mProgressState.postValue(state)
     }
 

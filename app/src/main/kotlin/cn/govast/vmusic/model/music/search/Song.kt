@@ -20,6 +20,7 @@ import cn.govast.vmusic.R
 import cn.govast.vmusic.utils.TimeUtils
 import cn.govast.vastadapter.AdapterItem
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * 歌曲专辑信息
@@ -83,7 +84,7 @@ data class Song(
     val cp: Int,
     val crbt: Any,
     val djId: Int,
-    @SerializedName("dt") private val duration: Int,
+    @SerializedName("dt") val duration: Int,
     val entertainmentTags: Any,
     val fee: Int,
     val ftype: Int,
@@ -120,9 +121,9 @@ data class Song(
     val tns: List<String>,
     val v: Int,
     val version: Int
-):AdapterItem{
+) : AdapterItem, Serializable {
 
-    fun getDuration() = TimeUtils.timeParse(duration.toLong())
+    fun getDurationStr() = TimeUtils.timeParse(duration.toLong())
 
     override fun getBindType(): Int {
         return R.layout.rv_item_music
