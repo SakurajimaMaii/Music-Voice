@@ -1,10 +1,29 @@
+/*
+ * Copyright 2022 Vast Gui guihy2019@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package cn.govast.vmusic.ui.fragment
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import cn.govast.vmusic.databinding.FragmentRegisterBinding
 import cn.govast.vmusic.viewModel.StartVM
 import cn.govast.vasttools.fragment.VastVbVmFragment
+import cn.govast.vmusic.R
+import cn.govast.vmusic.ui.base.UIStateListener
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -12,10 +31,22 @@ import cn.govast.vasttools.fragment.VastVbVmFragment
 // Description: 
 // Documentation:
 
-class RegisterFragment: VastVbVmFragment<FragmentRegisterBinding, StartVM>() {
+class RegisterFragment : VastVbVmFragment<FragmentRegisterBinding, StartVM>(), UIStateListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initUI()
+        initUIState()
+    }
+
+    override fun initUIState() {
+
+    }
+
+    override fun initUI() {
+        getBinding().loginBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment2)
+        }
     }
 
 }

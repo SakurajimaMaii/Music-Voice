@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright 2022 Vast Gui guihy2019@gmail.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <vector android:height="40dp" android:viewportHeight="1024"
     android:viewportWidth="1024" android:width="40dp" xmlns:android="http://schemas.android.com/apk/res/android">
     <path android:fillColor="#0984e3" android:pathData="M817,160h38c30.93,0 56,25.07 56,56v593c0,30.93 -25.07,56 -56,56h-38c-30.93,0 -56,-25.07 -56,-56V216c0,-30.93 25.07,-56 56,-56zM648.31,546.19l-422.3,303.4c-32.29,23.2 -77.28,15.83 -100.48,-16.46A72,72 0,0 1,112 791.12V232.06c0,-39.76 32.24,-72 72,-72a72,72 0,0 1,39.95 12.1l422.76,281.96c25.73,17.16 32.68,51.93 15.52,77.66a56,56 0,0 1,-13.91 14.41z"/>

@@ -1,8 +1,26 @@
+/*
+ * Copyright 2022 Vast Gui guihy2019@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package cn.govast.vmusic
 
 import android.app.Application
 import android.content.Intent
+import cn.govast.city.db.AreaDatabase
 import cn.govast.vasttools.config.ToolsConfig
+import cn.govast.vasttools.helper.ContextHelper
 import cn.govast.vmusic.manager.MusicMgr.getDefaultTag
 import cn.govast.vmusic.service.MusicService
 import com.tencent.mmkv.MMKV
@@ -16,21 +34,19 @@ import com.tencent.mmkv.MMKV
 
 class VMusicApp: Application() {
 
+    companion object{
+        /**
+         * 获取城市数据库
+         */
+        val areaDao by lazy {
+            AreaDatabase.getDatabase(ContextHelper.getAppContext()).AreaDao()
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         ToolsConfig.init(this)
         MMKV.initialize(this)
-        startService(Intent(this, MusicService::class.java).setType(getDefaultTag()))
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        stopService(Intent(this, MusicService::class.java).setType(getDefaultTag()))
-    }
-
-    override fun onTrimMemory(level: Int) {
-        super.onTrimMemory(level)
-        stopService(Intent(this, MusicService::class.java).setType(getDefaultTag()))
     }
 
 }

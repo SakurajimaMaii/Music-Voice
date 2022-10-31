@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Vast Gui guihy2019@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package cn.govast.vmusic.ui.fragment
 
 import android.os.Bundle
@@ -8,6 +24,7 @@ import cn.govast.vmusic.R
 import cn.govast.vmusic.databinding.FragmentLoginBinding
 import cn.govast.vmusic.viewModel.StartVM
 import cn.govast.vasttools.fragment.VastVbVmFragment
+import cn.govast.vasttools.utils.ToastUtils
 import cn.govast.vmusic.constant.UserConstant
 import cn.govast.vmusic.mmkv.MMKV
 import cn.govast.vmusic.ui.base.UIStateListener
@@ -18,20 +35,19 @@ import cn.govast.vmusic.ui.base.UIStateListener
 // Description: 
 // Documentation:
 
-/** 用户验证码登录 */
+/** 用户手机验证码登录 */
 class LoginFragment : VastVbVmFragment<FragmentLoginBinding, StartVM>(), UIStateListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (null != MMKV.userMMKV.decodeStringSet(UserConstant.USER_COOKIE)) {
-            findNavController().navigate(R.id.mainActivity)
-        }
         initUI()
+        initUIState()
     }
 
     override fun initUIState() {
-        getViewModel().cellphoneLogin.observe(this){
+        getViewModel().cellphoneLogin.observe(requireActivity()){
             MMKV.userMMKV.encode(UserConstant.USER_COOKIE, setOf(it.cookie))
+            findNavController().navigate(R.id.action_loginFragment_to_mainActivity)
         }
     }
 
@@ -45,7 +61,7 @@ class LoginFragment : VastVbVmFragment<FragmentLoginBinding, StartVM>(), UIState
         }
         getBinding().loginBtn.setOnClickListener {
             val phone = getBinding().phoneEdit.text?.trim().toString()
-            val captcha = getBinding().phoneEdit.text?.trim().toString()
+            val captcha = getBinding().captchaEdit.text?.trim().toString()
             getViewModel().phoneLogin(phone, captcha)
         }
     }

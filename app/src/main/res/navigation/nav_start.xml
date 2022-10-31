@@ -1,48 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!--
+  ~ Copyright 2022 Vast Gui guihy2019@gmail.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<navigation xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navi_start"
-    app:startDestination="@id/navigation">
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="cn.govast.vmusic.ui.activity.MainActivity"
-        android:label="MainActivity"
-        tools:layout="@layout/activity_main"/>
-    <navigation android:id="@+id/navigation"
-        app:startDestination="@id/loginFragment">
-        <fragment
-            android:id="@+id/loginCodeFragment"
-            android:name="cn.govast.vmusic.ui.fragment.LoginCodeFragment"
-            android:label="@string/login_code_fragment"
-            tools:layout="@layout/fragment_login_code">
-            <action
-                android:id="@+id/action_loginCodeFragment_to_mainActivity"
-                app:destination="@id/mainActivity" />
-        </fragment>
-        <fragment
-            android:id="@+id/loginFragment"
-            android:name="cn.govast.vmusic.ui.fragment.LoginFragment"
-            android:label="@string/login_fragment"
-            tools:layout="@layout/fragment_login">
-            <action
-                android:id="@+id/action_loginFragment_to_loginCodeFragment2"
-                app:destination="@id/loginCodeFragment" />
-            <action
-                android:id="@+id/action_loginFragment_to_registerFragment"
-                app:destination="@id/registerFragment" />
-            <action
-                android:id="@+id/action_loginFragment_to_mainActivity"
-                app:destination="@id/mainActivity" />
-        </fragment>
-        <fragment
-            android:id="@+id/registerFragment"
-            android:name="cn.govast.vmusic.ui.fragment.RegisterFragment"
-            android:label="@string/register_fragment"
-            tools:layout="@layout/fragment_register">
-            <action
-                android:id="@+id/action_registerFragment_to_loginFragment2"
-                app:destination="@id/loginFragment" />
-        </fragment>
-    </navigation>
+    android:id="@+id/nav_start"
+    app:startDestination="@id/initFragment">
+    <fragment
+        android:id="@+id/initFragment"
+        android:name="cn.govast.vmusic.ui.fragment.InitFragment"
+        android:label="@string/init_fragment"
+        tools:layout="@layout/fragment_init">
+        <action
+            android:id="@+id/action_initFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginCodeFragment"
+        android:name="cn.govast.vmusic.ui.fragment.LoginCodeFragment"
+        android:label="@string/login_code_fragment"
+        tools:layout="@layout/fragment_login_code">
+        <action
+            android:id="@+id/action_loginCodeFragment_to_mainActivity"
+            app:destination="@id/nav_main" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="cn.govast.vmusic.ui.fragment.LoginFragment"
+        android:label="@string/login_fragment"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_loginCodeFragment2"
+            app:destination="@id/loginCodeFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_mainActivity"
+            app:destination="@id/nav_main" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="cn.govast.vmusic.ui.fragment.RegisterFragment"
+        android:label="@string/register_fragment"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment2"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <include app:graph="@navigation/nav_main" />
 </navigation>

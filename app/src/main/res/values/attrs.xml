@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022 Vast Gui guihy2019@gmail.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <resources>
     <declare-styleable name="HorizontalProgressView">
         <attr name="progress_line_max" format="integer"/> //最大值
@@ -8,5 +24,24 @@
         <attr name="progress_line_outColor" format="color"/> //进度条 外层颜色
         <attr name="progress_line_inDrawable" format="reference"/> //进度条 内层图片(可选)
         <attr name="progress_line_outDrawable" format="reference"/> //进度条 外层图片(可选)
+    </declare-styleable>
+
+    <!-- 波纹进度条 -->
+    <declare-styleable name="WaveProgressView">
+        <attr name="progress_max" format="integer" />
+        <attr name="progress" format="integer" />
+        <attr name="speed" format="float" />
+        <attr name="wave_width" format="float" />
+        <attr name="wave_height" format="float" />
+        <attr name="wave_color" format="color" />
+        <attr name="wave_bg_color" format="color" />
+        <attr name="stroke_color" format="color" />
+        <attr name="main_text" format="string" />
+        <attr name="main_text_color" format="color" />
+        <attr name="main_text_size" format="dimension" />
+        <attr name="hint_text" format="string" />
+        <attr name="hint_color" format="color" />
+        <attr name="hint_size" format="dimension" />
+        <attr name="text_space" format="dimension" />
     </declare-styleable>
 </resources>
