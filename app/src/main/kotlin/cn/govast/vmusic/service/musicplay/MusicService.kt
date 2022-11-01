@@ -38,8 +38,8 @@ import cn.govast.vmusic.constant.UpdateKey.PLAY_STATE_KEY
 import cn.govast.vmusic.constant.UpdateKey.PROGRESS_KEY
 import cn.govast.vmusic.manager.MusicRequestMgr
 import cn.govast.vmusic.manager.CurrentPlayMusicMgr
-import cn.govast.vmusic.model.music.play.MusicQuality
-import cn.govast.vmusic.model.music.search.Song
+import cn.govast.vmusic.model.net.music.play.MusicQuality
+import cn.govast.vmusic.model.net.music.search.Song
 import cn.govast.vmusic.ui.activity.MainActivity
 import cn.govast.vmusic.ui.base.sendUpdateIntent
 

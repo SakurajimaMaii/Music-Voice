@@ -16,13 +16,13 @@
 
 package cn.govast.vmusic.manager
 
-import cn.govast.vmusic.model.music.play.MusicQuality
-import cn.govast.vmusic.model.music.play.MusicUrl
-import cn.govast.vmusic.model.music.search.MusicSearch
-import cn.govast.vmusic.model.music.search.Song
 import cn.govast.vmusic.network.repository.MusicRepository
 import cn.govast.vasttools.base.BaseActive
 import cn.govast.vasttools.network.ApiRspStateListener
+import cn.govast.vmusic.model.net.music.play.MusicQuality
+import cn.govast.vmusic.model.net.music.play.MusicUrl
+import cn.govast.vmusic.model.net.music.search.MusicSearch
+import cn.govast.vmusic.model.net.music.search.Song
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com

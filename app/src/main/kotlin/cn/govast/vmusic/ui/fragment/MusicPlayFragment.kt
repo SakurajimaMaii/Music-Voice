@@ -22,7 +22,6 @@ import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.govast.vmusic.ui.adapter.MusicAdapter
 import cn.govast.vmusic.databinding.FragmentPlayMusicBinding
-import cn.govast.vmusic.model.music.search.Song
 import cn.govast.vmusic.service.musicplay.MusicService
 import cn.govast.vmusic.constant.Order
 import cn.govast.vmusic.ui.base.UIStateListener
@@ -31,6 +30,7 @@ import cn.govast.vmusic.ui.components.SpacesItemDecoration
 import cn.govast.vmusic.viewModel.MainSharedVM
 import cn.govast.vastadapter.AdapterClickListener
 import cn.govast.vasttools.fragment.VastVbVmFragment
+import cn.govast.vmusic.model.net.music.search.Song
 import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
 
 // Author: Vast Gui

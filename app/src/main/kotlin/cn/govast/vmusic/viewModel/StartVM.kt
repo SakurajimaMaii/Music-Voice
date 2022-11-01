@@ -18,12 +18,7 @@ package cn.govast.vmusic.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import cn.govast.city.db.AreaDatabase
 import cn.govast.city.model.Area
-import cn.govast.vasttools.helper.ContextHelper
-import cn.govast.vmusic.network.repository.UserRepository
-import cn.govast.vmusic.model.qrcode.QRCodeCheck
 import cn.govast.vasttools.livedata.NetStateLiveData
 import cn.govast.vasttools.utils.LogUtils
 import cn.govast.vasttools.utils.RegexUtils
@@ -32,16 +27,15 @@ import cn.govast.vasttools.utils.ToastUtils
 import cn.govast.vasttools.viewModel.VastViewModel
 import cn.govast.vmusic.R
 import cn.govast.vmusic.VMusicApp
-import cn.govast.vmusic.model.captcha.CaptchaResult
+import cn.govast.vmusic.model.net.captcha.CaptchaResult
+import cn.govast.vmusic.model.net.qrcode.QRCodeCheck
+import cn.govast.vmusic.network.repository.UserRepository
 import cn.govast.vmusic.sharedpreferences.UserSp
 import cn.govast.vmusic.utils.JsonUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.lang.reflect.Type
-import java.util.concurrent.atomic.AtomicBoolean
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com

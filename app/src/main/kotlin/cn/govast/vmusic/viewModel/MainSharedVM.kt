@@ -18,8 +18,8 @@ package cn.govast.vmusic.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import cn.govast.vmusic.model.music.search.Song
 import cn.govast.vasttools.viewModel.VastViewModel
+import cn.govast.vmusic.model.net.music.search.Song
 import cn.govast.vmusic.service.musicplay.MusicService
 import java.io.Serializable
 

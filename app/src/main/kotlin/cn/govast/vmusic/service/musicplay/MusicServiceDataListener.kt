@@ -16,7 +16,7 @@
 
 package cn.govast.vmusic.service.musicplay
 
-import cn.govast.vmusic.model.music.search.Song
+import cn.govast.vmusic.model.net.music.search.Song
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com

@@ -16,13 +16,12 @@
 
 package cn.govast.vmusic.network.service
 
-
-import cn.govast.vmusic.model.qrcode.GenQRCodeOption
-import cn.govast.vmusic.model.qrcode.QRCodeCheck
-import cn.govast.vmusic.model.qrcode.QRCodeInfo
-import cn.govast.vmusic.model.qrcode.QRCodeKey
-import cn.govast.vmusic.model.captcha.Captcha
-import cn.govast.vmusic.model.captcha.CaptchaResult
+import cn.govast.vmusic.model.net.captcha.Captcha
+import cn.govast.vmusic.model.net.captcha.CaptchaResult
+import cn.govast.vmusic.model.net.qrcode.GenQRCodeOption
+import cn.govast.vmusic.model.net.qrcode.QRCodeCheck
+import cn.govast.vmusic.model.net.qrcode.QRCodeInfo
+import cn.govast.vmusic.model.net.qrcode.QRCodeKey
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Query

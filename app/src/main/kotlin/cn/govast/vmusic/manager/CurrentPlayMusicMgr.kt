@@ -16,8 +16,7 @@
 
 package cn.govast.vmusic.manager
 
-import androidx.room.Index
-import cn.govast.vmusic.model.music.search.Song
+import cn.govast.vmusic.model.net.music.search.Song
 import cn.govast.vmusic.service.musicplay.MusicService
 
 

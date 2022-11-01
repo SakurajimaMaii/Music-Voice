@@ -16,14 +16,12 @@
 
 package cn.govast.vmusic.network.repository
 
-import cn.govast.vmusic.model.qrcode.QRCodeCheck
-import cn.govast.vmusic.model.captcha.Captcha
-import cn.govast.vmusic.model.captcha.CaptchaResult
-import cn.govast.vmusic.model.user.LoginOutRes
+import cn.govast.vmusic.model.net.qrcode.QRCodeCheck
+import cn.govast.vmusic.model.net.user.LoginOutRes
+import cn.govast.vmusic.model.net.user.LoginStateRes
+import cn.govast.vmusic.model.net.user.UserAccount
 import cn.govast.vmusic.network.service.LoginNetService
 import cn.govast.vmusic.network.service.UserNetService
-import cn.govast.vmusic.model.user.LoginStateRes
-import cn.govast.vmusic.model.user.UserAccount
 import cn.govast.vmusic.network.ServiceCreator
 
 // Author: Vast Gui
@@ -51,11 +49,11 @@ object UserRepository {
         return mUserService.loginState()
     }
 
-    suspend fun getCaptcha(phone: String): Captcha {
+    suspend fun getCaptcha(phone: String): cn.govast.vmusic.model.net.captcha.Captcha {
         return mLoginService.getCaptcha(phone)
     }
 
-    suspend fun phoneLogin(phone: String, captcha: String): CaptchaResult {
+    suspend fun phoneLogin(phone: String, captcha: String): cn.govast.vmusic.model.net.captcha.CaptchaResult {
         return mLoginService.phoneLogin(phone, captcha)
     }
 
@@ -63,7 +61,7 @@ object UserRepository {
         return mUserService.getUserAccount()
     }
 
-    suspend fun loginOut():LoginOutRes{
+    suspend fun loginOut(): LoginOutRes {
         return mUserService.loginOut()
     }
 

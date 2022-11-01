@@ -18,9 +18,9 @@ package cn.govast.vmusic.sharedpreferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import cn.govast.vmusic.extension.toFields
-import cn.govast.vmusic.model.user.UserProfile
 import cn.govast.vasttools.helper.ContextHelper
+import cn.govast.vmusic.extension.toFields
+import cn.govast.vmusic.model.net.user.UserProfile
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com

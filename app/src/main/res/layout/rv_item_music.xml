@@ -20,7 +20,7 @@
     <data>
         <variable
             name="song"
-            type="cn.govast.vmusic.model.music.search.Song" />
+            type="cn.govast.vmusic.model.net.music.search.Song" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,11 +33,11 @@
             android:id="@+id/item_local_music_song"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8sp"
+            android:layout_margin="8dp"
             android:text="@{song.name,default=歌曲名称}"
-            android:textColor="#130f40"
-            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="?colorOnPrimaryContainer"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,8 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="@{song.artist.get(0).name,default=歌手}"
-            android:textColor="#30336b"
-            android:textSize="12sp"
+            android:textColor="?colorOnPrimaryContainer"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             app:layout_constraintLeft_toLeftOf="@id/item_local_music_song"
             app:layout_constraintTop_toBottomOf="@id/item_local_music_song" />
 
@@ -56,13 +56,13 @@
             android:id="@+id/item_local_music_album"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5sp"
+            android:layout_marginStart="5dp"
             android:text="@{song.album.name,default=专辑名称}"
-            android:textColor="#30336b"
-            android:textSize="12sp"
             android:singleLine="true"
             android:ellipsize="end"
             android:maxEms="20"
+            android:textColor="?colorOnPrimaryContainer"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             app:layout_constraintBottom_toBottomOf="@id/item_local_music_singer"
             app:layout_constraintLeft_toRightOf="@id/item_local_music_singer"
             app:layout_constraintTop_toTopOf="@id/item_local_music_singer" />
@@ -71,10 +71,11 @@
             android:id="@+id/item_local_music_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10sp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="8dp"
             android:text="@{song.durationStr}"
-            android:textColor="#30336b"
-            android:textSize="12sp"
+            android:textColor="?colorOnPrimaryContainer"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/item_local_music_album" />

@@ -16,9 +16,9 @@
 
 package cn.govast.vmusic.network.service
 
-import cn.govast.vmusic.model.user.LoginOutRes
-import cn.govast.vmusic.model.user.LoginStateRes
-import cn.govast.vmusic.model.user.UserAccount
+import cn.govast.vmusic.model.net.user.LoginOutRes
+import cn.govast.vmusic.model.net.user.LoginStateRes
+import cn.govast.vmusic.model.net.user.UserAccount
 import retrofit2.http.POST
 
 // Author: Vast Gui

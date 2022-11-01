@@ -22,6 +22,11 @@ App采用VastUtils框架，详情请访问[VastUtils](https://github.com/Sakuraj
 ### 歌曲
 
 - [x] 按照名字搜索
+- [x] 加载本地歌曲
+
+### 额外信息
+
+- [x] 中国城市省份信息，详情[Administrative-divisions-of-China](https://github.com/SakurajimaMaii/Administrative-divisions-of-China)
 
 ## 问题咨询
 

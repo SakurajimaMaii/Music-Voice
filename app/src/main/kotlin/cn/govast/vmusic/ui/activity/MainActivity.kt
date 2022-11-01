@@ -42,16 +42,15 @@ import cn.govast.vmusic.broadcast.BConstant
 import cn.govast.vmusic.broadcast.MusicBroadcast
 import cn.govast.vmusic.constant.Order
 import cn.govast.vmusic.constant.UpdateKey.DURATION_KEY
-import cn.govast.vmusic.constant.UpdateKey.MUSIC_PLAY_KEY
 import cn.govast.vmusic.constant.UpdateKey.PLAY_STATE_KEY
 import cn.govast.vmusic.constant.UpdateKey.PROGRESS_KEY
 import cn.govast.vmusic.databinding.ActivityMainBinding
-import cn.govast.vmusic.model.music.search.Album
 import cn.govast.vmusic.network.repository.UserRepository
 import cn.govast.vmusic.service.musicplay.MusicService
 import cn.govast.vmusic.sharedpreferences.UserSp
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.ui.base.sendOrderIntent
+import cn.govast.vmusic.ui.fragment.DownloadFragment
 import cn.govast.vmusic.ui.fragment.MusicPlayFragment
 import cn.govast.vmusic.viewModel.MainSharedVM
 import com.bumptech.glide.Glide
@@ -63,7 +62,6 @@ import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.io.Serializable
 import java.text.DecimalFormat
 import java.util.*
-import kotlin.time.Duration
 
 
 // Author: Vast Gui
@@ -247,6 +245,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     override fun initUI() {
         getBinding().fragmentVp.adapter = VastFragmentAdapter(this, ArrayList<Fragment>().apply {
             add(MusicPlayFragment())
+            add(DownloadFragment())
         })
         getBinding().musicPlayBtn.setOnClickListener {
             sendOrderIntent(Order.PLAY_OR_PAUSE)

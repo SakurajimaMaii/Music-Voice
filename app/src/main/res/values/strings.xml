@@ -60,4 +60,6 @@
     <string name="user_setting_login">用户登录设置</string>
     <string name="welcome">欢迎</string>
     <string name="musicPlayDuration">歌曲播放进度</string>
+    <string name="main_bottom_bar_home">主页</string>
+    <string name="main_bottom_bar_local_download">下载</string>
 </resources>

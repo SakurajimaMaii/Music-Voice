@@ -16,9 +16,9 @@
 
 package cn.govast.vmusic.network.repository
 
-import cn.govast.vmusic.model.music.play.MusicQuality
-import cn.govast.vmusic.model.music.play.MusicUrl
-import cn.govast.vmusic.model.music.search.MusicSearch
+import cn.govast.vmusic.model.net.music.play.MusicQuality
+import cn.govast.vmusic.model.net.music.play.MusicUrl
+import cn.govast.vmusic.model.net.music.search.MusicSearch
 import cn.govast.vmusic.network.ServiceCreator
 import cn.govast.vmusic.network.service.MusicNetService
 
