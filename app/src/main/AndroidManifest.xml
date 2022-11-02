@@ -41,6 +41,10 @@
             android:name=".service.musicplay.MusicService"
             android:exported="false" />
 
+        <service
+            android:name=".service.musicdownload.MusicDownloadService"
+            android:exported="false" />
+
         <activity
             android:name=".ui.activity.StartActivity"
             android:exported="true"

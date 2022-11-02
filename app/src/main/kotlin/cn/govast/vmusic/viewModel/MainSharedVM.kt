@@ -59,6 +59,11 @@ class MainSharedVM : VastViewModel() {
     /** 当前播放歌曲的进度 */
     var mCurrentDuration = 0
 
+    /**
+     * 当前播放歌曲的Url
+     */
+    var mCurrentMusicUrl:String = ""
+
     /** 设置 [cn.govast.vmusic.databinding.ActivityMainBinding] 页面的音乐信息 */
     fun setCurrentMusic(song: Song) {
         _mCurrentMusic.postValue(song)

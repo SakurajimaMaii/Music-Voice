@@ -16,12 +16,17 @@
 
 package cn.govast.vmusic.ui.activity
 
+import android.annotation.SuppressLint
 import android.content.*
+import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import cn.govast.vasttools.activity.VastVbVmActivity
 import cn.govast.vasttools.extension.cast
+import cn.govast.vasttools.helper.ContextHelper
+import cn.govast.vasttools.utils.LogUtils
 import cn.govast.vasttools.utils.ResUtils
 import cn.govast.vasttools.utils.ToastUtils
 import cn.govast.vmusic.R
@@ -30,25 +35,28 @@ import cn.govast.vmusic.broadcast.MusicBroadcast
 import cn.govast.vmusic.constant.Order
 import cn.govast.vmusic.constant.UpdateKey
 import cn.govast.vmusic.databinding.ActivityMusicBinding
+import cn.govast.vmusic.service.musicdownload.MusicDownloadService
 import cn.govast.vmusic.service.musicplay.MusicService
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.ui.base.sendOrderIntent
 import cn.govast.vmusic.utils.TimeUtils
 import cn.govast.vmusic.viewModel.MusicVM
 import com.bumptech.glide.Glide
+import java.io.Serializable
 
 class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIStateListener {
 
+    data class DownloadInfo(val name: String, val url: String) : Serializable
+
     companion object {
         /** 接受来自 [MainActivity] 传递的数据 */
-        const val CURRENT_MUSIC_NAME_KEY = "current_music_name_key"
-        const val CURRENT_MUSIC_ALBUM_KEY = "current_music_album_key"
-        const val CURRENT_PROGRESS_KEY = "progress_key"
         const val CURRENT_DURATION_KEY = "current_duration_key"
+        const val CURRENT_MUSIC_ALBUM_KEY = "current_music_album_key"
+        const val CURRENT_MUSIC_NAME_KEY = "current_music_name_key"
+        const val CURRENT_MUSIC_URL = "current_music_url"
+        const val CURRENT_PROGRESS_KEY = "progress_key"
 
-        /**
-         * 确保 musicProgressSlider 起点小于终点
-         */
+        /** 确保 musicProgressSlider 起点小于终点 */
         const val DURATION_OFFSET = 0.0001
     }
 
@@ -71,7 +79,8 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
                 Glide.with(getContext()).load(this.albumUrl).into(
                     getBinding().musicAlbum
                 )
-                getBinding().musicProgressSlider.value = (this.currentProgress * mDuration).toFloat()
+                getBinding().musicProgressSlider.value =
+                    (this.currentProgress * mDuration).toFloat()
             } ?: ToastUtils.showShortMsg("更新失败")
         }
 
@@ -124,6 +133,7 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
         super.onCreate(savedInstanceState)
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(mMusicReceiver, IntentFilter(BConstant.ACTION_UPDATE))
+        startService(Intent(this, MusicDownloadService::class.java))
         initUI()
         initUIState()
     }
@@ -131,16 +141,19 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
     override fun onDestroy() {
         super.onDestroy()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMusicReceiver)
+        stopService(Intent(this, MusicDownloadService::class.java))
     }
 
     override fun initUIState() {
 
     }
 
+    @SuppressLint("Range")
     override fun initUI() {
         setSupportActionBar(getBinding().topAppBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         intent.getStringExtra(CURRENT_MUSIC_NAME_KEY)?.apply {
+            getViewModel().mCurrentMusicName = this
             getBinding().topAppBar.title = this
         }
         intent.getStringExtra(CURRENT_MUSIC_ALBUM_KEY)?.apply {
@@ -148,9 +161,12 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
                 getBinding().musicAlbum
             )
         }
+        intent.getStringExtra(CURRENT_MUSIC_URL)?.apply {
+            getViewModel().mCurrentMusicUrl = this
+        }
         val initProgress = intent.getFloatExtra(CURRENT_PROGRESS_KEY, 0f)
         mDuration = intent.getIntExtra(CURRENT_DURATION_KEY, 0).apply {
-            if(0 != this){
+            if (0 != this) {
                 getBinding().musicProgressSlider.apply {
                     valueTo = (mDuration + DURATION_OFFSET).toFloat()
                     value = (initProgress * mDuration)
@@ -175,6 +191,49 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
         getBinding().musicPlayNext.setOnClickListener {
             sendOrderIntent(Order.NEXT)
         }
+        // 下载按钮
+        getBinding().musicDownload.setOnClickListener {
+            ToastUtils.showShortMsg(ResUtils.getString(R.string.start_download), this)
+            val bundle = Bundle().also {
+                it.putSerializable(
+                    BConstant.DOWNLOAD_KEY,
+                    DownloadInfo(getViewModel().mCurrentMusicName, getViewModel().mCurrentMusicUrl)
+                )
+            }
+            val intent = Intent(BConstant.ACTION_DOWNLOAD).putExtras(bundle)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        }
+//        contentResolver.delete(
+//            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+//            MediaStore.Audio.Media.TITLE + "=?",
+//            arrayOf("crossing field")
+//        )
+        val cursor: Cursor? = contentResolver.query(
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            null,
+            null,
+            null,
+            null
+        )
+//        MediaStore.Audio.Media.ARTIST + "!=?",
+//        arrayOf("<unknown>"),
+        when {
+            cursor == null -> {
+                LogUtils.e(getDefaultTag(), "查询失败，处理错误。")
+            }
+
+            !cursor.moveToFirst() -> {
+                ToastUtils.showShortMsg("设备上没有歌曲")
+            }
+
+            else -> {
+                do {
+                    val song = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                    LogUtils.d(getDefaultTag(), song)
+                } while (cursor.moveToNext())
+            }
+        }
+        cursor?.close()
     }
 
 }

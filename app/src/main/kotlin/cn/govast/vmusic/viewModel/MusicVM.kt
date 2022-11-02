@@ -30,15 +30,14 @@ import cn.govast.vmusic.model.net.music.search.Song
 
 class MusicVM : VastViewModel() {
 
-    /** 当前页面的Music */
-    private val _mCurrentMusic = MutableLiveData<Song>()
+    /**
+     * 当前播放歌曲的Url
+     */
+    var mCurrentMusicName:String = ""
 
-    val mCurrentMusic: LiveData<Song>
-        get() = _mCurrentMusic
-
-    /** 设置 [cn.govast.vmusic.databinding.ActivityMusicBinding] 页面的音乐信息 */
-    fun setCurrentMusic(song: Song) {
-        _mCurrentMusic.postValue(song)
-    }
+    /**
+     * 当前播放歌曲的Url
+     */
+    var mCurrentMusicUrl:String = ""
 
 }

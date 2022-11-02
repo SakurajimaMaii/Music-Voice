@@ -153,7 +153,6 @@ class MusicService : VastService() {
             mCurrentPlayStatus = PlayState.PLAYING
             val music = mCurrentPlayMusicMgr.getIndexAfterUpdateLoop(mCurrentLoopMode)
             playMusic(music, MusicQuality.EXHIGH)
-            mMusicServiceDataListener?.updateCurrentMusic?.invoke(music)
         }
         super.onCreate()
         // 设置线程循环控制变量为真
@@ -299,7 +298,7 @@ class MusicService : VastService() {
         MusicRequestMgr.getMusicUrl(song, quality) {
             onSuccess = {
                 mMusicPlayer.playMusic(it.data[0].getUrl())
-                mMusicServiceDataListener?.updateCurrentMusic?.invoke(song)
+                mMusicServiceDataListener?.updateCurrentMusic?.invoke(song, it.data[0].getUrl())
                 // 通知页面更新
                 sendUpdateIntent(Update.ON_MUSIC_PLAY) {
                     val bundle = Bundle().also {

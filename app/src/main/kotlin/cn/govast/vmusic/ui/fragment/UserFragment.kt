@@ -43,7 +43,7 @@ class UserFragment : VastVbFragment<FragmentUserLoginSettingBinding>() {
         super.onViewCreated(view, savedInstanceState)
         getBinding().userLoginOutBtn.setOnClickListener {
             userMMKV.encode(UserConstant.USER_COOKIE,emptyCookie) // 清空用户Cookie数据
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(Intent(BConstant.LOGIN_OUT)) // 发送退出广播
+            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(Intent(BConstant.ACTION_LOGIN_OUT)) // 发送退出广播
             getRequestBuilder()
                 .suspendWithListener({UserRepository.loginOut()}){
                     onSuccess = {

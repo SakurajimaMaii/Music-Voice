@@ -14,19 +14,24 @@ App采用VastUtils框架，详情请访问[VastUtils](https://github.com/Sakuraj
 
 ## 功能支持
 
+✅ 意为已经通过测试
+🧪 代表基本功能已经实现但还在测试中
+🔨 代表将在未来进行更新
+
 ### 用户
 
-- [x] 二维码登录
-- [x] 手机验证码登录
+- [x] ✅二维码登录
+- [x] ✅手机验证码登录
 
 ### 歌曲
 
-- [x] 按照名字搜索
-- [x] 加载本地歌曲
+- [x] ✅按照名字搜索
+- [x] ✅加载本地歌曲
+- [x] 🧪下载音乐到本地
 
 ### 额外信息
 
-- [x] 中国城市省份信息，详情[Administrative-divisions-of-China](https://github.com/SakurajimaMaii/Administrative-divisions-of-China)
+- [x] 🔨中国城市省份信息，详情[Administrative-divisions-of-China](https://github.com/SakurajimaMaii/Administrative-divisions-of-China)
 
 ## 问题咨询
 

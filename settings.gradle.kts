@@ -15,5 +15,5 @@
  */
 
 rootProject.name="VMusic"
-include(":app",":Music",":City")
+include(":app", ":music", ":city")
 includeBuild("../PluginVersion")

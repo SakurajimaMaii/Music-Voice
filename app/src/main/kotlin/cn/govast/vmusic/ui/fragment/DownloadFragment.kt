@@ -53,7 +53,7 @@ class DownloadFragment : VastVbVmFragment<FragmentDownloadBinding, MusicDownload
 
     override fun initUIState() {
         getViewModel().mCurrentDownloadList.observe(viewLifecycleOwner) {
-            LogUtils.d(getDefaultTag(),it.size.toString())
+            LogUtils.d(getDefaultTag(), it[0].path)
             localMusicAdapter.submitList(it)
         }
     }

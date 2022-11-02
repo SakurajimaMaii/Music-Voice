@@ -62,7 +62,7 @@ class SettingActivity: VastVbActivity<ActivitySettingBinding>(),UIStateListener 
         super.onCreate(savedInstanceState)
         ActivityUtils.addActivity(this)
         LocalBroadcastManager.getInstance(this).registerReceiver(mForceOfflineBroadcast,
-            IntentFilter(BConstant.LOGIN_OUT)
+            IntentFilter(BConstant.ACTION_LOGIN_OUT)
         )
         // 定义标签栏
         setSupportActionBar(getBinding().topAppBar)

@@ -54,5 +54,17 @@ object BConstant {
     /**
      * 登出信息
      */
-    val LOGIN_OUT = "${AppUtils.getPackageName()}.login.out"
+    val ACTION_LOGIN_OUT = "${AppUtils.getPackageName()}.login.out"
+
+    /**
+     * 下载广播
+     */
+    val ACTION_DOWNLOAD = "${AppUtils.getPackageName()}.download"
+
+    /**
+     * [ACTION_DOWNLOAD] 广播的指令Key
+     *
+     * @see ACTION_UPDATE
+     */
+    val DOWNLOAD_KEY = "download_key"
 }

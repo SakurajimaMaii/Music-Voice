@@ -31,8 +31,6 @@ class MusicServiceDataListener {
     var updateCurrentMusicList: ((songs: List<Song>, currentPlayState: MusicService.PlayState) -> Unit) =
         { _, _ -> }
 
-    /**
-     * 用于通知界面现在等待播放的歌曲
-     */
-    var updateCurrentMusic: ((song: Song) -> Unit) = {}
+    /** 用于通知界面现在等待播放的歌曲 */
+    var updateCurrentMusic: ((song: Song, songUrl: String) -> Unit) = { _, _ -> }
 }

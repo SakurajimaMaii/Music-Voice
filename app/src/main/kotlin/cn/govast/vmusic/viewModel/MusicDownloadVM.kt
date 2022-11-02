@@ -37,13 +37,11 @@ import cn.govast.vmusic.model.LocalMusic
 // Documentation:
 // Reference:
 
-class MusicDownloadVM: VastViewModel() {
+class MusicDownloadVM : VastViewModel() {
 
-    /**
-     * 当前下载的音乐
-     */
+    /** 当前下载的音乐 */
     private val _mCurrentDownloadList = MutableLiveData<MutableList<LocalMusic>>()
-    val mCurrentDownloadList:LiveData<MutableList<LocalMusic>>
+    val mCurrentDownloadList: LiveData<MutableList<LocalMusic>>
         get() = _mCurrentDownloadList
 
     @SuppressLint("Range")
@@ -51,17 +49,19 @@ class MusicDownloadVM: VastViewModel() {
         val cursor: Cursor? = ContextHelper.getAppContext().contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             null,
-            MediaStore.Audio.Media.ARTIST+"!=?",
+            MediaStore.Audio.Media.ARTIST + "!=?",
             arrayOf("<unknown>"),
             null
         )
         when {
             cursor == null -> {
-                LogUtils.e(getDefaultTag(), "query failed, handle error.")
+                LogUtils.e(getDefaultTag(), "查询失败，处理错误。")
             }
+
             !cursor.moveToFirst() -> {
                 ToastUtils.showShortMsg("设备上没有歌曲")
             }
+
             else -> {
                 val list = ArrayList<LocalMusic>()
                 do {
@@ -75,17 +75,23 @@ class MusicDownloadVM: VastViewModel() {
                         album =
                             cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
                     } else {
-                        Log.w(getDefaultTag(), "当前版本的手机不支持查找singer和album,MIN VERSION_CODE R")
+                        Log.w(
+                            getDefaultTag(),
+                            "当前版本的手机不支持查找singer和album,MIN VERSION_CODE R"
+                        )
                     }
                     var duration: Long? = null
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         duration =
                             cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                     } else {
-                        Log.w(getDefaultTag(), "当前版本的手机不支持查找singer和album,MIN VERSION_CODE Q")
+                        Log.w(
+                            getDefaultTag(),
+                            "当前版本的手机不支持查找singer和album,MIN VERSION_CODE Q"
+                        )
                     }
                     //将一行当中的对象封装到数据当中
-                    val bean = LocalMusic(song, singer ?: "", album ?: "", duration ?: 0L,path)
+                    val bean = LocalMusic(song, singer ?: "", album ?: "", duration ?: 0L, path)
                     list.add(bean)
                 } while (cursor.moveToNext())
                 _mCurrentDownloadList.postValue(list)

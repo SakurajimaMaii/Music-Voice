@@ -73,7 +73,12 @@ import java.util.*
 class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UIStateListener {
 
     /** 用于向 [cn.govast.vmusic.ui.activity.MusicActivity] 传递必要信息 */
-    data class MusicInfo(val name: String,val albumUrl:String,val currentProgress:Int,val duration: Int):Serializable
+    data class MusicInfo(
+        val name: String,
+        val albumUrl: String,
+        val currentProgress: Int,
+        val duration: Int
+    ) : Serializable
 
     /** 监听Service发送的广播 */
     private inner class MainReceiver : MusicBroadcast() {
@@ -124,8 +129,9 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                         }
                     }
 
-                    updateCurrentMusic = {
-                        getViewModel().setCurrentMusic(it)
+                    updateCurrentMusic = { song, url ->
+                        getViewModel().setCurrentMusic(song)
+                        getViewModel().mCurrentMusicUrl = url
                     }
                 }
             }
@@ -151,7 +157,11 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             mMainReceiver,
             IntentFilter(BConstant.ACTION_UPDATE)
         )
-        bindService(Intent(this,MusicService::class.java).setType(getDefaultTag()),MusicServiceConn(),Context.BIND_AUTO_CREATE)
+        bindService(
+            Intent(this, MusicService::class.java).setType(getDefaultTag()),
+            MusicServiceConn(),
+            Context.BIND_AUTO_CREATE
+        )
         // 设置状态栏
         setSupportActionBar(getBinding().topAppBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -295,11 +305,12 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         getBinding().musicControl.setOnClickListener {
             val intent = Intent(this, MusicActivity::class.java).also {
                 val currentMusic = getViewModel().mCurrentMusic.value?.apply {
-                    it.putExtra(MusicActivity.CURRENT_MUSIC_NAME_KEY,this.name)
-                    it.putExtra(MusicActivity.CURRENT_MUSIC_ALBUM_KEY,this.album.getPicUrl())
+                    it.putExtra(MusicActivity.CURRENT_MUSIC_NAME_KEY, this.name)
+                    it.putExtra(MusicActivity.CURRENT_MUSIC_ALBUM_KEY, this.album.getPicUrl())
                 }
                 it.putExtra(MusicActivity.CURRENT_PROGRESS_KEY, getViewModel().mCurrentProgress)
                 it.putExtra(MusicActivity.CURRENT_DURATION_KEY, getViewModel().mCurrentDuration)
+                it.putExtra(MusicActivity.CURRENT_MUSIC_URL, getViewModel().mCurrentMusicUrl)
             }
             startActivity(intent)
         }
