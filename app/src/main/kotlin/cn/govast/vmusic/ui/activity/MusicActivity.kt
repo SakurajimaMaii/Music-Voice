@@ -42,6 +42,8 @@ import cn.govast.vmusic.ui.base.sendOrderIntent
 import cn.govast.vmusic.utils.TimeUtils
 import cn.govast.vmusic.viewModel.MusicVM
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIStateListener {
 
@@ -106,13 +108,13 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
             state?.apply {
                 when (state) {
                     MusicService.PlayState.PLAYING ->
-                        getBinding().musicPlay.setImageResource(R.drawable.ic_pause)
+                        getBinding().musicPlay.setImageResource(R.drawable.ic_fill_0_pause)
 
                     MusicService.PlayState.PAUSE ->
-                        getBinding().musicPlay.setImageResource(R.drawable.ic_play)
+                        getBinding().musicPlay.setImageResource(R.drawable.ic_fill_0_play_arrow)
 
                     MusicService.PlayState.NOPLAYING ->
-                        getBinding().musicPlay.setImageResource(R.drawable.ic_play)
+                        getBinding().musicPlay.setImageResource(R.drawable.ic_fill_0_play_arrow)
                 }
             }
         }
@@ -140,6 +142,10 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
     override fun initUIState() {
         getViewModel().mCurrentMusicPlayWrapper.observe(this){ it ->
             getBinding().topAppBar.title = it.music.name
+            Glide.with(getContext())
+                .load(it.music.albumArt)
+                .apply(RequestOptions.bitmapTransform(BlurTransformation(25,20)))
+                .into(getBinding().background)
             Glide.with(getContext()).load(it.music.albumArt).into(
                 getBinding().musicAlbum
             )

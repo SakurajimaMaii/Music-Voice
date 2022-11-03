@@ -96,13 +96,13 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             state?.also {
                 when (it) {
                     MusicService.PlayState.PLAYING ->
-                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_pause)
+                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_fill_0_pause)
 
                     MusicService.PlayState.PAUSE ->
-                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_play)
+                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_fill_0_play_arrow)
 
                     MusicService.PlayState.NOPLAYING ->
-                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_play)
+                        getBinding().musicPlayBtn.setImageResource(R.drawable.ic_fill_0_play_arrow)
                 }
                 getViewModel().mCurrentPlayState = it
             } ?: getSnackbar().setText("未获取到播放状态").show()

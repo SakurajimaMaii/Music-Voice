@@ -17,10 +17,17 @@
 package cn.govast.vmusic.ui.adapter
 
 import android.content.Context
+import android.graphics.drawable.Drawable
+import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
 import cn.govast.vastadapter.recycleradpter.VastBindListAdapter
+import cn.govast.vasttools.helper.ContextHelper
+import cn.govast.vasttools.utils.ResUtils
 import cn.govast.vmusic.BR
+import cn.govast.vmusic.R
 import cn.govast.vmusic.model.MusicWrapper
+import com.bumptech.glide.Glide
+import com.google.android.material.imageview.ShapeableImageView
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -34,9 +41,17 @@ import cn.govast.vmusic.model.MusicWrapper
  *
  * @param context
  */
-class MusicAdapter(context: Context):VastBindListAdapter<MusicWrapper>(context, SongDiffUtil()) {
+class MusicAdapter(context: Context) : VastBindListAdapter<MusicWrapper>(context, SongDiffUtil()) {
 
-    class SongDiffUtil:DiffUtil.ItemCallback<MusicWrapper>(){
+    companion object {
+        @BindingAdapter("imageUrl", "error")
+        @JvmStatic
+        fun setMusicAlbumArt(view: ShapeableImageView, url: String, error: Drawable) {
+            Glide.with(ContextHelper.getAppContext()).load(url).error(error).into(view)
+        }
+    }
+
+    class SongDiffUtil : DiffUtil.ItemCallback<MusicWrapper>() {
         override fun areItemsTheSame(oldItem: MusicWrapper, newItem: MusicWrapper): Boolean {
             return oldItem.id == newItem.id
         }
@@ -55,7 +70,7 @@ class MusicAdapter(context: Context):VastBindListAdapter<MusicWrapper>(context, 
      *
      * @param pos
      */
-    fun getMusicByPos(pos:Int): MusicWrapper {
+    fun getMusicByPos(pos: Int): MusicWrapper {
         return getItem(pos)
     }
 }

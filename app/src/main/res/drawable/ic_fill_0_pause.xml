@@ -14,13 +14,12 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <style name="roundedStyle">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">15%</item>
-    </style>
-    <style name="circleStyle">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
-    </style>
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+  <path
+      android:fillColor="?colorPrimary"
+      android:pathData="M28.25,38V10H36v28ZM12,38V10h7.75v28Z"/>
+</vector>

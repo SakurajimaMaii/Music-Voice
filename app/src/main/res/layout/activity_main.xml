@@ -107,6 +107,7 @@
                         android:layout_weight="1"
                         android:contentDescription="@string/albumPicture"
                         android:src="@drawable/ic_music"
+                        app:shapeAppearance="@style/circleStyle"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -145,7 +146,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="10sp"
                         android:contentDescription="@string/play_button"
-                        android:src="@drawable/ic_play"
+                        android:src="@drawable/ic_fill_0_play_arrow"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />

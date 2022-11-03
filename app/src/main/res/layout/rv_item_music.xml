@@ -26,34 +26,47 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5sp"
-        android:background="@drawable/rv_item_local_music_bk">
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/item_local_music_song"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/musicAlbumArt"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:shapeAppearance="@style/roundedStyle"
+            app:imageUrl="@{wrapper.music.albumArt}"
+            app:error="@{@drawable/ic_app}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/musicName"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/musicName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
             android:text="@{wrapper.music.name,default=歌曲名称}"
             android:textStyle="bold"
             android:textColor="?colorOnPrimaryContainer"
             android:textAppearance="?attr/textAppearanceTitleMedium"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toEndOf="@id/musicAlbumArt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/musicArtist"/>
 
-        <TextView
-            android:id="@+id/item_local_music_singer"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/musicArtist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="@{wrapper.music.artist,default=歌手}"
             android:textColor="?colorOnPrimaryContainer"
             android:textAppearance="?attr/textAppearanceBodySmall"
-            app:layout_constraintLeft_toLeftOf="@id/item_local_music_song"
-            app:layout_constraintTop_toBottomOf="@id/item_local_music_song" />
+            app:layout_constraintStart_toStartOf="@id/musicName"
+            app:layout_constraintTop_toBottomOf="@id/musicName"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <cn.govast.vasttools.view.textview.FocusedTextView
-            android:id="@+id/item_local_music_album"
+            android:id="@+id/musicAlbum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -63,21 +76,9 @@
             android:maxEms="20"
             android:textColor="?colorOnPrimaryContainer"
             android:textAppearance="?attr/textAppearanceBodySmall"
-            app:layout_constraintBottom_toBottomOf="@id/item_local_music_singer"
-            app:layout_constraintLeft_toRightOf="@id/item_local_music_singer"
-            app:layout_constraintTop_toTopOf="@id/item_local_music_singer" />
+            app:layout_constraintBottom_toBottomOf="@id/musicArtist"
+            app:layout_constraintLeft_toRightOf="@id/musicArtist"
+            app:layout_constraintTop_toTopOf="@id/musicArtist" />
 
-        <TextView
-            android:id="@+id/item_local_music_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="8dp"
-            android:text="@{wrapper.music.durationStr}"
-            android:textColor="?colorOnPrimaryContainer"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_local_music_album" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
