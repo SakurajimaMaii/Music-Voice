@@ -34,12 +34,14 @@ import cn.govast.vmusic.constant.Order
 import cn.govast.vmusic.constant.Update
 import cn.govast.vmusic.constant.UpdateKey
 import cn.govast.vmusic.constant.UpdateKey.DURATION_KEY
-import cn.govast.vmusic.constant.UpdateKey.PLAY_STATE_KEY
 import cn.govast.vmusic.constant.UpdateKey.PROGRESS_KEY
 import cn.govast.vmusic.manager.MusicRequestMgr
 import cn.govast.vmusic.manager.CurrentPlayMusicMgr
+import cn.govast.vmusic.model.Music
+import cn.govast.vmusic.model.MusicPlayWrapper
+import cn.govast.vmusic.model.MusicWrapper
 import cn.govast.vmusic.model.net.music.play.MusicQuality
-import cn.govast.vmusic.model.net.music.search.Song
+import cn.govast.vmusic.model.net.music.search.MusicSearch
 import cn.govast.vmusic.ui.activity.MainActivity
 import cn.govast.vmusic.ui.base.sendUpdateIntent
 
@@ -97,7 +99,7 @@ class MusicService : VastService() {
     private var mCurrentPlayStatus = PlayState.NOPLAYING
 
     /** 当前待播放音乐列表 */
-    private val mCurrentPlayList: MutableList<Song> = ArrayList()
+    private val mCurrentPlayList: MutableList<MusicWrapper> = ArrayList()
 
     /**
      * 当前歌曲循环模式
@@ -168,7 +170,7 @@ class MusicService : VastService() {
                 // 判断音乐是否在播放
                 if (mMusicPlayer.mediaPlayer.isPlaying) {
                     sendUpdateIntent(Update.ON_PROGRESS) { intent ->
-                        intent.putExtra(DURATION_KEY, mMusicPlayer.getDuration())
+                        intent.putExtra(DURATION_KEY, mMusicPlayer.getDuration().toLong())
                         intent.putExtra(PROGRESS_KEY, mMusicPlayer.getProgressPercent())
                     }
                 }
@@ -257,7 +259,6 @@ class MusicService : VastService() {
                 Order.SEARCH -> {
                     intent.getStringExtra(NAME)?.also {
                         searchMusic(it)
-                        LogUtils.d(getDefaultTag(), it)
                     } ?: ToastUtils.showShortMsg("未正确接收到查询的歌名")
                 }
             }
@@ -290,27 +291,22 @@ class MusicService : VastService() {
     /**
      * 获取音乐Url并播放
      *
-     * @param song 音乐
      * @param quality 音乐播放质量
+     * @param song 音乐
      */
     @Suppress("SameParameterValue")
-    private fun playMusic(song: Song, quality: MusicQuality) {
-        MusicRequestMgr.getMusicUrl(song, quality) {
+    private fun playMusic(musicWrapper: MusicWrapper, quality: MusicQuality) {
+        MusicRequestMgr.getMusicUrl(musicWrapper.id, quality) {
             onSuccess = {
                 mMusicPlayer.playMusic(it.data[0].getUrl())
-                mMusicServiceDataListener?.updateCurrentMusic?.invoke(song, it.data[0].getUrl())
+                val musicPlayWrapper = MusicPlayWrapper(
+                    musicWrapper.music, mMusicPlayer.getProgressPercent(), it.data[0].getUrl()
+                )
                 // 通知页面更新
+                mMusicServiceDataListener?.updateCurrentMusic?.invoke(musicPlayWrapper)
                 sendUpdateIntent(Update.ON_MUSIC_PLAY) {
                     val bundle = Bundle().also {
-                        it.putSerializable(
-                            UpdateKey.MUSIC_PLAY_KEY,
-                            MainActivity.MusicInfo(
-                                song.name,
-                                song.album.getPicUrl(),
-                                mMusicPlayer.getProgressPercent().toInt(),
-                                song.duration
-                            )
-                        )
+                        it.putSerializable(UpdateKey.MUSIC_PLAY_KEY, musicPlayWrapper)
                     }
                     it.putExtras(bundle)
                 }
@@ -329,16 +325,18 @@ class MusicService : VastService() {
             onSuccess = {
                 mCurrentPlayList.apply {
                     clear()
-                    addAll(it.result.songs)
+                    for (song in it.result.songs) {
+                        add(MusicWrapper(song.id, Music(song)))
+                    }
                 }
                 mMusicServiceDataListener?.updateCurrentMusicList?.invoke(
                     mCurrentPlayList,
                     mCurrentPlayStatus
                 )
                 if (init) {
-                    mCurrentPlayMusicMgr.initMgr(it.result.songs)
+                    mCurrentPlayMusicMgr.initMgr(mCurrentPlayList)
                 } else {
-                    mCurrentPlayMusicMgr.resetMgr(it.result.songs)
+                    mCurrentPlayMusicMgr.resetMgr(mCurrentPlayList)
                 }
             }
             onError = {

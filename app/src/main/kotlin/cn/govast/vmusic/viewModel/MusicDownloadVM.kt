@@ -24,11 +24,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.govast.vasttools.helper.ContextHelper
-import cn.govast.vasttools.utils.AppUtils
 import cn.govast.vasttools.utils.LogUtils
 import cn.govast.vasttools.utils.ToastUtils
 import cn.govast.vasttools.viewModel.VastViewModel
-import cn.govast.vmusic.model.LocalMusic
+import cn.govast.vmusic.model.Music
+import cn.govast.vmusic.model.MusicWrapper
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -40,8 +40,8 @@ import cn.govast.vmusic.model.LocalMusic
 class MusicDownloadVM : VastViewModel() {
 
     /** 当前下载的音乐 */
-    private val _mCurrentDownloadList = MutableLiveData<MutableList<LocalMusic>>()
-    val mCurrentDownloadList: LiveData<MutableList<LocalMusic>>
+    private val _mCurrentDownloadList = MutableLiveData<MutableList<MusicWrapper>>()
+    val mCurrentDownloadList: LiveData<MutableList<MusicWrapper>>
         get() = _mCurrentDownloadList
 
     @SuppressLint("Range")
@@ -63,41 +63,43 @@ class MusicDownloadVM : VastViewModel() {
             }
 
             else -> {
-                val list = ArrayList<LocalMusic>()
+                val list = ArrayList<MusicWrapper>()
                 do {
-                    val path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                    val song = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
-                    var singer: String? = null
-                    var album: String? = null
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        singer =
-                            cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                        album =
-                            cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                    } else {
-                        Log.w(
-                            getDefaultTag(),
-                            "当前版本的手机不支持查找singer和album,MIN VERSION_CODE R"
-                        )
-                    }
-                    var duration: Long? = null
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        duration =
-                            cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    } else {
-                        Log.w(
-                            getDefaultTag(),
-                            "当前版本的手机不支持查找singer和album,MIN VERSION_CODE Q"
-                        )
-                    }
+                    val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
+                    val name =
+                        cursor.getStringFromCursor(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                    val artist =
+                        cursor.getStringFromCursor(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                    val album =
+                        cursor.getStringFromCursor(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
+                    val path =
+                        cursor.getStringFromCursor(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                    val duration =
+                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    val fileName =
+                        cursor.getStringFromCursor(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                    val year =
+                        cursor.getStringFromCursor(cursor.getColumnIndex(MediaStore.Audio.Media.YEAR))
+                    val albumArt =
+                        cursor.getStringFromCursor(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ARTIST))
                     //将一行当中的对象封装到数据当中
-                    val bean = LocalMusic(song, singer ?: "", album ?: "", duration ?: 0L, path)
-                    list.add(bean)
+                    val bean = Music(name, artist, album, path, duration, fileName, year, albumArt)
+                    list.add(MusicWrapper(id, bean))
                 } while (cursor.moveToNext())
                 _mCurrentDownloadList.postValue(list)
             }
         }
         cursor?.close()
+    }
+
+    private fun Cursor.getStringFromCursor(index: Int): String {
+        return if (index != -1) {
+            try {
+                this.getString(index)
+            } catch (e: Exception) {
+                "<unknown>"
+            }
+        } else "<unknown>"
     }
 
 }

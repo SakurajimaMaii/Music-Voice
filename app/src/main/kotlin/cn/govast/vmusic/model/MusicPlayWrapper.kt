@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-package cn.govast.vmusic.model.net.music.search
+package cn.govast.vmusic.model
 
-data class Result(
-    val searchQcReminder: Any,
-    val songCount: Int,
-    val songs: List<Song>
-)
+import java.io.Serializable
+
+// Author: Vast Gui
+// Email: guihy2019@gmail.com
+// Date: 2022/11/3
+// Description: 
+// Documentation:
+// Reference:
+
+/**
+ * 用来额外的携带 [music] 的播放信息
+ *
+ * @property music 当前播放的音乐对象
+ * @property currentProgress 当前的播放进度
+ * @property musicUrl 当前音乐的Url
+ */
+data class MusicPlayWrapper(
+    val music: Music, var currentProgress: Float, val musicUrl: String
+):Serializable

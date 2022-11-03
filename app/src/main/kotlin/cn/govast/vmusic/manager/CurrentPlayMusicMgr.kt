@@ -16,7 +16,7 @@
 
 package cn.govast.vmusic.manager
 
-import cn.govast.vmusic.model.net.music.search.Song
+import cn.govast.vmusic.model.MusicWrapper
 import cn.govast.vmusic.service.musicplay.MusicService
 
 
@@ -28,9 +28,9 @@ import cn.govast.vmusic.service.musicplay.MusicService
 // Reference:
 
 /** 用于管理当前播放音乐 */
-class CurrentPlayMusicMgr() {
+class CurrentPlayMusicMgr {
 
-    private lateinit var musicList: List<Song>
+    private lateinit var musicList: List<MusicWrapper>
     private var index = 0
 
     /**
@@ -38,21 +38,21 @@ class CurrentPlayMusicMgr() {
      *
      * @param musicList
      */
-    fun initMgr(musicList: List<Song>) {
+    fun initMgr(musicList: List<MusicWrapper>) {
         this.musicList = musicList
     }
 
     /**
      * 获取当前播放的歌曲
      */
-    fun getCurrentSong(): Song = musicList[index]
+    fun getCurrentSong(): MusicWrapper = musicList[index]
 
     /**
      * 获取下一首歌索引，如超过数组范围则返回0
      *
      * @return 下一首歌索引
      */
-    fun getNextSong(): Song {
+    fun getNextSong(): MusicWrapper {
         index++
         if (index >= musicList.size) {
             index = 0
@@ -65,7 +65,7 @@ class CurrentPlayMusicMgr() {
      *
      * @return 上一首更新标记即可
      */
-    fun getPreviewSong(): Song {
+    fun getPreviewSong(): MusicWrapper {
         index--
         if (index < 0) {
             index = musicList.size - 1
@@ -79,7 +79,7 @@ class CurrentPlayMusicMgr() {
      * @param index
      * @return
      */
-    fun getSongByIndex(index: Int):Song{
+    fun getSongByIndex(index: Int): MusicWrapper {
         this.index = index
         return  musicList[index]
     }
@@ -87,9 +87,9 @@ class CurrentPlayMusicMgr() {
     /**
      * 重置播放索引信息
      *
-     * @param musicListCount
+     * @param musicList
      */
-    fun resetMgr(musicList: List<Song>) {
+    fun resetMgr(musicList: List<MusicWrapper>) {
         this.musicList = musicList
         index = 0
     }
@@ -103,7 +103,7 @@ class CurrentPlayMusicMgr() {
      *
      * @param loopMode 要设置的循环模式
      */
-    fun getIndexAfterUpdateLoop(loopMode: MusicService.LoopMode): Song {
+    fun getIndexAfterUpdateLoop(loopMode: MusicService.LoopMode): MusicWrapper {
         // 完成播放查看当前的循环标记位
         // 列表循环直接下一首
         // 单曲循环则歌曲标记current不需要做更新操作，下一次直接继续播放之前的音乐

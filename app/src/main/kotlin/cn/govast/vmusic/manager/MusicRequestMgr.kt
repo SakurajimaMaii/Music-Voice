@@ -16,13 +16,12 @@
 
 package cn.govast.vmusic.manager
 
-import cn.govast.vmusic.network.repository.MusicRepository
 import cn.govast.vasttools.base.BaseActive
 import cn.govast.vasttools.network.ApiRspStateListener
 import cn.govast.vmusic.model.net.music.play.MusicQuality
 import cn.govast.vmusic.model.net.music.play.MusicUrl
 import cn.govast.vmusic.model.net.music.search.MusicSearch
-import cn.govast.vmusic.model.net.music.search.Song
+import cn.govast.vmusic.network.repository.MusicRepository
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -48,17 +47,17 @@ object MusicRequestMgr : BaseActive {
     /**
      * 获取歌曲Url
      *
-     * @param song
+     * @param id
      * @param quality
      * @param listener
      */
     fun getMusicUrl(
-        song: Song,
+        id: Int,
         quality: MusicQuality,
         listener: ApiRspStateListener<MusicUrl>.() -> Unit
     ) {
         getApiRequestBuilder()
-            .suspendWithListener({ MusicRepository.getMusicUrl(song.id, quality) }, listener)
+            .suspendWithListener({ MusicRepository.getMusicUrl(id, quality) }, listener)
     }
 
     override fun getDefaultTag(): String {

@@ -19,9 +19,10 @@ package cn.govast.vmusic.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.govast.vasttools.viewModel.VastViewModel
-import cn.govast.vmusic.model.net.music.search.Song
+import cn.govast.vmusic.model.Music
+import cn.govast.vmusic.model.MusicPlayWrapper
+import cn.govast.vmusic.model.MusicWrapper
 import cn.govast.vmusic.service.musicplay.MusicService
-import java.io.Serializable
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -36,13 +37,13 @@ class MainSharedVM : VastViewModel() {
     }
 
     /** 当前页面的Music */
-    private val _mCurrentMusic = MutableLiveData<Song>()
-    val mCurrentMusic: LiveData<Song>
+    private val _mCurrentMusic = MutableLiveData<MusicPlayWrapper>()
+    val mCurrentMusic: LiveData<MusicPlayWrapper>
         get() = _mCurrentMusic
 
     /** 当前音乐播放列表 */
-    private val _mCurrentMusicList = MutableLiveData<List<Song>>()
-    val mCurrentMusicList: LiveData<List<Song>>
+    private val _mCurrentMusicList = MutableLiveData<List<MusicWrapper>>()
+    val mCurrentMusicList: LiveData<List<MusicWrapper>>
         get() = _mCurrentMusicList
 
     /** 当前播放的进度 */
@@ -57,24 +58,19 @@ class MainSharedVM : VastViewModel() {
         get() = _mProgressState
 
     /** 当前播放歌曲的进度 */
-    var mCurrentDuration = 0
-
-    /**
-     * 当前播放歌曲的Url
-     */
-    var mCurrentMusicUrl:String = ""
+    var mCurrentDuration = 0L
 
     /** 设置 [cn.govast.vmusic.databinding.ActivityMainBinding] 页面的音乐信息 */
-    fun setCurrentMusic(song: Song) {
+    fun setCurrentMusic(song: MusicPlayWrapper) {
         _mCurrentMusic.postValue(song)
     }
 
     /** 设置 [cn.govast.vmusic.databinding.ActivityMainBinding] 页面的音乐信息 */
-    fun setCurrentMusic(index: Int) {
-        _mCurrentMusicList.value?.get(index)?.apply {
-            setCurrentMusic(this)
-        }
-    }
+//    fun setCurrentMusic(index: Int) {
+//        _mCurrentMusicList.value?.get(index)?.apply {
+//            setCurrentMusic(this.music)
+//        }
+//    }
 
     /**
      * 更新播放列表，如果 [playState] 为 [MusicService.PlayState.NOPLAYING]
@@ -82,11 +78,11 @@ class MainSharedVM : VastViewModel() {
      *
      * @param list
      */
-    fun updateMusicList(list: List<Song>,playState: MusicService.PlayState) {
+    fun updateMusicList(list: List<MusicWrapper>, playState: MusicService.PlayState) {
         _mCurrentMusicList.postValue(list)
         if(playState == MusicService.PlayState.NOPLAYING){
-            _mCurrentMusic.postValue(list[0])
-            mCurrentDuration = list[0].duration
+            _mCurrentMusic.postValue(MusicPlayWrapper(list[0].music,0f,""))
+            mCurrentDuration = list[0].music.duration
         }
     }
 

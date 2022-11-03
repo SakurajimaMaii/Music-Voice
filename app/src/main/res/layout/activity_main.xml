@@ -23,8 +23,8 @@
     <data>
 
         <variable
-            name="song"
-            type="cn.govast.vmusic.model.net.music.search.Song" />
+            name="musicPlayWrapper"
+            type="cn.govast.vmusic.model.MusicPlayWrapper" />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -119,7 +119,7 @@
                         android:ellipsize="marquee"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="@{song.name,default=测试文本}"
+                        android:text="@{musicPlayWrapper.music.name,default=测试文本}"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         app:layout_constraintBottom_toTopOf="@id/musicSinger"
                         app:layout_constraintStart_toEndOf="@id/musicAlbum"
@@ -132,7 +132,7 @@
                         android:layout_marginStart="10dp"
                         android:ellipsize="marquee"
                         android:singleLine="true"
-                        android:text="@{song.album.name,default=测试文本}"
+                        android:text="@{musicPlayWrapper.music.album,default=测试文本}"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/musicAlbum"

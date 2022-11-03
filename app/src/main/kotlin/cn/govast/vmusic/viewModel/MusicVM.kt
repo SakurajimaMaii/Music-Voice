@@ -18,8 +18,12 @@ package cn.govast.vmusic.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import cn.govast.vasttools.viewModel.VastViewModel
-import cn.govast.vmusic.model.net.music.search.Song
+import cn.govast.vmusic.model.Music
+import cn.govast.vmusic.model.MusicPlayWrapper
+import cn.govast.vmusic.model.MusicWrapper
+import java.io.Serializable
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -31,13 +35,26 @@ import cn.govast.vmusic.model.net.music.search.Song
 class MusicVM : VastViewModel() {
 
     /**
-     * 当前播放歌曲的Url
+     * 音乐下载信息
+     *
+     * @property music
+     * @property musicUrl
      */
-    var mCurrentMusicName:String = ""
+    data class MusicDownload(val music: Music, val musicUrl: String) : Serializable
 
-    /**
-     * 当前播放歌曲的Url
-     */
-    var mCurrentMusicUrl:String = ""
+    /** 当前播放歌曲 */
+    private val _mCurrentMusicPlayWrapper = MutableLiveData<MusicPlayWrapper>()
+    val mCurrentMusicPlayWrapper: LiveData<MusicPlayWrapper>
+        get() = _mCurrentMusicPlayWrapper
+
+    /** 当前要下载音乐的信息 */
+    var mCurrentMusicDownload: MusicDownload =
+        MusicDownload(Music("", "", "", "", 0L, "", "", ""), "")
+
+    fun setCurrentMusic(musicWrapper: MusicPlayWrapper) {
+        _mCurrentMusicPlayWrapper.postValue(musicWrapper)
+        mCurrentMusicDownload = MusicDownload(musicWrapper.music, musicWrapper.musicUrl)
+    }
+
 
 }

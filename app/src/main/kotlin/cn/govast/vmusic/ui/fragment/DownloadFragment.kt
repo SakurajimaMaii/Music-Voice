@@ -19,16 +19,12 @@ package cn.govast.vmusic.ui.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import cn.govast.vasttools.fragment.VastVbFragment
 import cn.govast.vasttools.fragment.VastVbVmFragment
 import cn.govast.vasttools.utils.LogUtils
 import cn.govast.vmusic.databinding.FragmentDownloadBinding
-import cn.govast.vmusic.model.LocalMusic
-import cn.govast.vmusic.model.net.music.search.Song
-import cn.govast.vmusic.ui.adapter.LocalMusicAdapter
+import cn.govast.vmusic.ui.adapter.MusicAdapter
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.viewModel.MusicDownloadVM
-import java.util.Collections.addAll
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -41,7 +37,7 @@ class DownloadFragment : VastVbVmFragment<FragmentDownloadBinding, MusicDownload
     UIStateListener {
 
     private val localMusicAdapter by lazy {
-        LocalMusicAdapter(requireContext())
+        MusicAdapter(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,7 +49,6 @@ class DownloadFragment : VastVbVmFragment<FragmentDownloadBinding, MusicDownload
 
     override fun initUIState() {
         getViewModel().mCurrentDownloadList.observe(viewLifecycleOwner) {
-            LogUtils.d(getDefaultTag(), it[0].path)
             localMusicAdapter.submitList(it)
         }
     }

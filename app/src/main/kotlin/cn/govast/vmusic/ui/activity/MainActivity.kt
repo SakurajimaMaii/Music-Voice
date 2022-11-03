@@ -59,7 +59,6 @@ import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.textview.MaterialTextView
 import com.permissionx.guolindev.PermissionX
 import nl.joery.animatedbottombar.AnimatedBottomBar
-import java.io.Serializable
 import java.text.DecimalFormat
 import java.util.*
 
@@ -72,19 +71,11 @@ import java.util.*
 
 class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UIStateListener {
 
-    /** 用于向 [cn.govast.vmusic.ui.activity.MusicActivity] 传递必要信息 */
-    data class MusicInfo(
-        val name: String,
-        val albumUrl: String,
-        val currentProgress: Int,
-        val duration: Int
-    ) : Serializable
-
     /** 监听Service发送的广播 */
     private inner class MainReceiver : MusicBroadcast() {
 
         override fun onProgress(intent: Intent) {
-            intent.getIntExtra(DURATION_KEY, 0).apply {
+            intent.getLongExtra(DURATION_KEY, 0).apply {
                 getViewModel().mCurrentDuration = this
             }
             intent.getFloatExtra(PROGRESS_KEY, 0f).apply {
@@ -129,9 +120,8 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                         }
                     }
 
-                    updateCurrentMusic = { song, url ->
-                        getViewModel().setCurrentMusic(song)
-                        getViewModel().mCurrentMusicUrl = url
+                    updateCurrentMusic = { musicWrapper ->
+                        getViewModel().setCurrentMusic(musicWrapper)
                     }
                 }
             }
@@ -162,9 +152,6 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
             MusicServiceConn(),
             Context.BIND_AUTO_CREATE
         )
-        // 设置状态栏
-        setSupportActionBar(getBinding().topAppBar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // 申请权限
         PermissionX.init(this)
             .permissions(
@@ -253,6 +240,9 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
     }
 
     override fun initUI() {
+        // 设置状态栏
+        setSupportActionBar(getBinding().topAppBar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         getBinding().fragmentVp.adapter = VastFragmentAdapter(this, ArrayList<Fragment>().apply {
             add(MusicPlayFragment())
             add(DownloadFragment())
@@ -304,13 +294,13 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         })
         getBinding().musicControl.setOnClickListener {
             val intent = Intent(this, MusicActivity::class.java).also {
-                val currentMusic = getViewModel().mCurrentMusic.value?.apply {
-                    it.putExtra(MusicActivity.CURRENT_MUSIC_NAME_KEY, this.name)
-                    it.putExtra(MusicActivity.CURRENT_MUSIC_ALBUM_KEY, this.album.getPicUrl())
+                getViewModel().mCurrentMusic.value?.apply {
+                    this.currentProgress = getViewModel().mCurrentProgress
+                    val bundle = Bundle().also { bundle ->
+                        bundle.putSerializable(MusicActivity.CURRENT_MUSIC_KEY, this)
+                    }
+                    it.putExtras(bundle)
                 }
-                it.putExtra(MusicActivity.CURRENT_PROGRESS_KEY, getViewModel().mCurrentProgress)
-                it.putExtra(MusicActivity.CURRENT_DURATION_KEY, getViewModel().mCurrentDuration)
-                it.putExtra(MusicActivity.CURRENT_MUSIC_URL, getViewModel().mCurrentMusicUrl)
             }
             startActivity(intent)
         }
@@ -338,8 +328,8 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
 
     override fun initUIState() {
         getViewModel().mCurrentMusic.observe(this) {
-            getBinding().song = it
-            Glide.with(this).load(it.album.getPicUrl()).into(
+            getBinding().musicPlayWrapper = it
+            Glide.with(this).load(it.music.albumArt).into(
                 getBinding().musicAlbum
             )
         }

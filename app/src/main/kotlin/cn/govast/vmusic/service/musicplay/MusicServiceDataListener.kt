@@ -16,7 +16,9 @@
 
 package cn.govast.vmusic.service.musicplay
 
-import cn.govast.vmusic.model.net.music.search.Song
+import cn.govast.vmusic.model.Music
+import cn.govast.vmusic.model.MusicPlayWrapper
+import cn.govast.vmusic.model.MusicWrapper
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -28,9 +30,9 @@ import cn.govast.vmusic.model.net.music.search.Song
 /** 用于 Service 和 Activity 进行数据交互 */
 class MusicServiceDataListener {
     /** 用于监听歌曲列表更新，播放状态用于你判断某些控件是否需要更新信息 */
-    var updateCurrentMusicList: ((songs: List<Song>, currentPlayState: MusicService.PlayState) -> Unit) =
+    var updateCurrentMusicList: ((songs: List<MusicWrapper>, currentPlayState: MusicService.PlayState) -> Unit) =
         { _, _ -> }
 
     /** 用于通知界面现在等待播放的歌曲 */
-    var updateCurrentMusic: ((song: Song, songUrl: String) -> Unit) = { _, _ -> }
+    var updateCurrentMusic: ((song: MusicPlayWrapper) -> Unit) = { }
 }

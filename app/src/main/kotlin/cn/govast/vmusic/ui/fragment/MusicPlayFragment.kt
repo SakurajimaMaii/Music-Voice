@@ -17,23 +17,22 @@
 package cn.govast.vmusic.ui.fragment
 
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
-import cn.govast.vmusic.ui.adapter.MusicAdapter
-import cn.govast.vmusic.databinding.FragmentPlayMusicBinding
-import cn.govast.vmusic.service.musicplay.MusicService
+import cn.govast.vastadapter.AdapterClickListener
+import cn.govast.vasttools.fragment.VastVbVmFragment
 import cn.govast.vmusic.constant.Order
+import cn.govast.vmusic.databinding.FragmentPlayMusicBinding
+import cn.govast.vmusic.model.Music
+import cn.govast.vmusic.model.MusicPlayWrapper
+import cn.govast.vmusic.model.MusicWrapper
+import cn.govast.vmusic.service.musicplay.MusicService
+import cn.govast.vmusic.ui.adapter.MusicAdapter
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.ui.base.sendOrderIntent
 import cn.govast.vmusic.ui.components.SpacesItemDecoration
 import cn.govast.vmusic.viewModel.MainSharedVM
-import cn.govast.vastadapter.AdapterClickListener
-import cn.govast.vasttools.filemgr.FileMgr
-import cn.govast.vasttools.fragment.VastVbVmFragment
-import cn.govast.vasttools.utils.LogUtils
-import cn.govast.vmusic.model.net.music.search.Song
 import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter
 
 // Author: Vast Gui
@@ -61,7 +60,7 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
     override fun initUIState() {
         getViewModel().mCurrentMusicList.observe(requireActivity()) {
             if(mMusicAdapter.itemCount != 0){
-                mMusicAdapter.submitList(ArrayList<Song>())
+                mMusicAdapter.submitList(ArrayList<MusicWrapper>())
             }
             mMusicAdapter.submitList(it)
             getBinding().musicRecycler.visibility = View.VISIBLE
@@ -74,8 +73,8 @@ class MusicPlayFragment : VastVbVmFragment<FragmentPlayMusicBinding, MainSharedV
             LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
         mMusicAdapter.registerClickEvent(object : AdapterClickListener {
             override fun onItemClick(view: View, pos: Int) {
-                mMusicAdapter.getMusicByPos(pos).also {
-                    getViewModel().setCurrentMusic(it)
+                mMusicAdapter.getMusicByPos(pos).apply {
+                    getViewModel().setCurrentMusic(MusicPlayWrapper(this.music,0f,""))
                 }
                 sendOrderIntent(Order.NOW) { intent ->
                     intent.putExtra(MusicService.NOW, pos)

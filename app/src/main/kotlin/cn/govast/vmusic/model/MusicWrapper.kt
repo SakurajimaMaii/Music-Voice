@@ -18,41 +18,27 @@ package cn.govast.vmusic.model
 
 import cn.govast.vastadapter.AdapterItem
 import cn.govast.vmusic.R
-import cn.govast.vmusic.utils.TimeUtils
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
-// Date: 2022/11/1
+// Date: 2022/11/2
 // Description: 
 // Documentation:
 // Reference:
 
 /**
- * 下载到本地的歌曲
+ * 用于在列表中展示 [music] 对象
  *
- * @property name 歌曲名
- * @property singer 歌手名
- * @property album 专辑名称
- * @property duration 播放时长
- * @property path
- * @property albumArt
+ * @property id 歌曲从服务器获取的唯一id，或者从contentProvider获取的唯一id
+ * @property music 播放音乐的对象
  */
-data class LocalMusic(
-    val name:String,
-    var singer: String,
-    var album: String,
-    val duration: Long,
-    var path: String
-):AdapterItem {
-
-    /** 返回时长字符串 */
-    fun getDurationStr() = TimeUtils.timeParse(duration.toLong())
-
+class MusicWrapper(val id: Int, val music: Music) : AdapterItem {
     /**
      * 返回布局id
+     *
      * @return int
      */
     override fun getBindType(): Int {
-        return R.layout.rv_item_local_music
+        return R.layout.rv_item_music
     }
 }

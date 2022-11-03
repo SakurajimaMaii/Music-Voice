@@ -20,5 +20,5 @@ import cn.govast.vasttools.network.base.BaseApiRsp
 
 data class MusicUrl(
     val code: Int,
-    val data: List<cn.govast.vmusic.model.net.music.play.Data>
+    val data: List<Data>
 ):BaseApiRsp

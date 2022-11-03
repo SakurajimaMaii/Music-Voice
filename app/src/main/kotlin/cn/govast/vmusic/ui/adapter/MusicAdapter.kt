@@ -18,9 +18,9 @@ package cn.govast.vmusic.ui.adapter
 
 import android.content.Context
 import androidx.recyclerview.widget.DiffUtil
-import cn.govast.vmusic.BR
 import cn.govast.vastadapter.recycleradpter.VastBindListAdapter
-import cn.govast.vmusic.model.net.music.search.Song
+import cn.govast.vmusic.BR
+import cn.govast.vmusic.model.MusicWrapper
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -34,20 +34,20 @@ import cn.govast.vmusic.model.net.music.search.Song
  *
  * @param context
  */
-class MusicAdapter(context: Context):VastBindListAdapter<Song>(context, SongDiffUtil()) {
+class MusicAdapter(context: Context):VastBindListAdapter<MusicWrapper>(context, SongDiffUtil()) {
 
-    class SongDiffUtil:DiffUtil.ItemCallback<Song>(){
-        override fun areItemsTheSame(oldItem: Song, newItem: Song): Boolean {
+    class SongDiffUtil:DiffUtil.ItemCallback<MusicWrapper>(){
+        override fun areItemsTheSame(oldItem: MusicWrapper, newItem: MusicWrapper): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Song, newItem: Song): Boolean {
+        override fun areContentsTheSame(oldItem: MusicWrapper, newItem: MusicWrapper): Boolean {
             return oldItem.id == newItem.id
         }
     }
 
     override fun setVariableId(): Int {
-        return BR.song
+        return BR.wrapper
     }
 
     /**
@@ -55,7 +55,7 @@ class MusicAdapter(context: Context):VastBindListAdapter<Song>(context, SongDiff
      *
      * @param pos
      */
-    fun getMusicByPos(pos:Int):Song{
+    fun getMusicByPos(pos:Int): MusicWrapper {
         return getItem(pos)
     }
 }
