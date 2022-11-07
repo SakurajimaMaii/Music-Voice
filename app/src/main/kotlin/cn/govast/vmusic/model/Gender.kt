@@ -24,5 +24,5 @@ package cn.govast.vmusic.model
 // Reference:
 
 enum class Gender {
-    SECRET,MAN,WOMAN
+    SECRET, MAN, WOMAN
 }

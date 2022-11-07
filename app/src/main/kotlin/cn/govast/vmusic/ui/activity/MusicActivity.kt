@@ -18,13 +18,16 @@ package cn.govast.vmusic.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.*
-import android.database.Cursor
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.palette.graphics.Palette
 import cn.govast.vasttools.activity.VastVbVmActivity
 import cn.govast.vasttools.extension.cast
+import cn.govast.vasttools.utils.ColorUtils
 import cn.govast.vasttools.utils.LogUtils
 import cn.govast.vasttools.utils.ResUtils
 import cn.govast.vasttools.utils.ToastUtils
@@ -39,10 +42,14 @@ import cn.govast.vmusic.service.musicdownload.MusicDownloadService
 import cn.govast.vmusic.service.musicplay.MusicService
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.ui.base.sendOrderIntent
+import cn.govast.vmusic.utils.BitmapUtils
 import cn.govast.vmusic.utils.TimeUtils
 import cn.govast.vmusic.viewModel.MusicVM
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.ImageViewTarget
+import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.imageview.ShapeableImageView
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIStateListener {
@@ -140,12 +147,39 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
     }
 
     override fun initUIState() {
-        getViewModel().mCurrentMusicPlayWrapper.observe(this){ it ->
+        getViewModel().mCurrentMusicPlayWrapper.observe(this) { it ->
             getBinding().topAppBar.title = it.music.name
             Glide.with(getContext())
                 .load(it.music.albumArt)
-                .apply(RequestOptions.bitmapTransform(BlurTransformation(25,20)))
-                .into(getBinding().background)
+                .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 20)))
+                .into(object : ImageViewTarget<Drawable>(getBinding().background) {
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
+                    ) {
+                        getBinding().background.setImageDrawable(resource)
+                        val isLight = androidx.core.graphics.ColorUtils.calculateLuminance(
+                            Palette.from(BitmapUtils.drawableToBitmap(resource)).generate()
+                                .getDominantColor(Color.GRAY)
+                        ) >= 0.5
+                        ToastUtils.showShortMsg(isLight.toString())
+                        getBinding().apply {
+                            topAppBar.setTitleTextColor(if (isLight) Color.BLACK else Color.WHITE)
+                            musicProgressSlider.thumbTintList = ColorStateList(arrayOf(intArrayOf()),
+                                intArrayOf(if (isLight) ResUtils.getColor(R.color.colorPrimary) else Color.GRAY)
+                            )
+                            musicDuration.setTextColor(if (isLight) ResUtils.getColor(R.color.colorPrimary) else Color.WHITE)
+                            musicDownload.drawable.setTint(if (isLight) ResUtils.getColor(R.color.colorPrimary) else Color.WHITE)
+                            musicPlay.drawable.setTint(if (isLight) ResUtils.getColor(R.color.colorPrimary) else Color.WHITE)
+                            musicPlayNext.drawable.setTint(if (isLight) ResUtils.getColor(R.color.colorPrimary) else Color.WHITE)
+                            musicPlayLast.drawable.setTint(if (isLight) ResUtils.getColor(R.color.colorPrimary) else Color.WHITE)
+                        }
+                    }
+
+                    override fun setResource(resource: Drawable?) {
+                        LogUtils.i(getDefaultTag(), "设置资源")
+                    }
+                })
             Glide.with(getContext()).load(it.music.albumArt).into(
                 getBinding().musicAlbum
             )
@@ -173,9 +207,9 @@ class MusicActivity : VastVbVmActivity<ActivityMusicBinding, MusicVM>(), UIState
         setSupportActionBar(getBinding().topAppBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // 初始化获取到的音乐对象和进度
-        val music = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            intent.extras?.getSerializable(CURRENT_MUSIC_KEY,MusicPlayWrapper::class.java)
-        }else{
+        val music = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.extras?.getSerializable(CURRENT_MUSIC_KEY, MusicPlayWrapper::class.java)
+        } else {
             @Suppress("DEPRECATION")
             cast(intent.extras?.getSerializable(CURRENT_MUSIC_KEY))
         }

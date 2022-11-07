@@ -47,7 +47,7 @@ interface UserNetService {
     suspend fun loginState(): LoginStateRes
 
     /**
-     * 获取用户信息
+     * [获取用户信息](https://neteasecloudmusicapi.vercel.app/#/?id=%e8%8e%b7%e5%8f%96%e8%b4%a6%e5%8f%b7%e4%bf%a1%e6%81%af)
      *
      * @return
      */

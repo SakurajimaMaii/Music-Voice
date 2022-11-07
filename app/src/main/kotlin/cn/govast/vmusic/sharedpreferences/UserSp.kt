@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import cn.govast.vasttools.helper.ContextHelper
 import cn.govast.vmusic.extension.toFields
-import cn.govast.vmusic.model.net.user.UserProfile
+import cn.govast.vmusic.model.net.user.LoginStateRes
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -44,7 +44,7 @@ object UserSp {
         return mSharedPreferences
     }
 
-    fun writeUser(userProfile: UserProfile) {
+    fun writeUser(userProfile: LoginStateRes.Data.Profile) {
         with(mSharedPreferences.edit()) {
             userProfile.toFields().forEach { (name, value) ->
                 when (value) {
