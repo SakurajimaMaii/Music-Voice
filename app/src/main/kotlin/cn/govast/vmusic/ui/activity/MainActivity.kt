@@ -45,13 +45,13 @@ import cn.govast.vmusic.constant.UpdateKey.DURATION_KEY
 import cn.govast.vmusic.constant.UpdateKey.PLAY_STATE_KEY
 import cn.govast.vmusic.constant.UpdateKey.PROGRESS_KEY
 import cn.govast.vmusic.databinding.ActivityMainBinding
-import cn.govast.vmusic.network.repository.UserRepository
 import cn.govast.vmusic.service.musicplay.MusicService
 import cn.govast.vmusic.sharedpreferences.UserSp
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.ui.base.sendOrderIntent
 import cn.govast.vmusic.ui.fragment.DownloadFragment
 import cn.govast.vmusic.ui.fragment.MusicPlayFragment
+import cn.govast.vmusic.ui.fragment.RankingFragment
 import cn.govast.vmusic.viewModel.MainSharedVM
 import com.bumptech.glide.Glide
 import com.google.android.material.imageview.ShapeableImageView
@@ -227,6 +227,7 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         getBinding().fragmentVp.adapter = VastFragmentAdapter(this, ArrayList<Fragment>().apply {
             add(MusicPlayFragment())
+            add(RankingFragment())
             add(DownloadFragment())
         })
         getBinding().musicPlayBtn.setOnClickListener {

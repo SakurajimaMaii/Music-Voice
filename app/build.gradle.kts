@@ -78,6 +78,7 @@ dependencies {
     implementation(AndroidX.nav_dynamic_features_fragment)
     implementation(AndroidX.nav_fragment_ktx)
     implementation(AndroidX.nav_ui_ktx)
+    implementation(AndroidX.paging3)
     implementation(AndroidX.palette)
     implementation(AndroidX.preference_ktx)
     implementation(AndroidX.recyclerview)

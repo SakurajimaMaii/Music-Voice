@@ -18,6 +18,7 @@ package cn.govast.vmusic.network.service
 
 import cn.govast.vmusic.model.net.music.play.MusicUrl
 import cn.govast.vmusic.model.net.music.search.MusicSearch
+import cn.govast.vmusic.model.net.toplist.TopList
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -36,7 +37,7 @@ interface MusicNetService {
      * @return
      */
     @POST("/cloudsearch")
-    suspend fun searchMusic(@Query("keywords") name:String): MusicSearch
+    suspend fun searchMusic(@Query("keywords") name: String): MusicSearch
 
     /**
      * [获取音乐Url](https://neteasecloudmusicapi.vercel.app/#/?id=%e8%8e%b7%e5%8f%96%e9%9f%b3%e4%b9%90-url-%e6%96%b0%e7%89%88)
@@ -45,5 +46,13 @@ interface MusicNetService {
      * @param level 播放等级
      */
     @POST("/song/url/v1")
-    suspend fun getMusicUrl(@Query("id") id:Int,@Query("level") level:String): MusicUrl
+    suspend fun getMusicUrl(@Query("id") id: Int, @Query("level") level: String): MusicUrl
+
+    /**
+     * [获取所有榜单](https://neteasecloudmusicapi.vercel.app/#/?id=%e6%89%80%e6%9c%89%e6%a6%9c%e5%8d%95)
+     *
+     * @return
+     */
+    @POST("/toplist")
+    suspend fun getTopList(): TopList
 }

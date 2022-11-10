@@ -14,34 +14,32 @@
  * limitations under the License.
  */
 
-package cn.govast.vmusic
+package cn.govast.vmusic.viewModel
 
-import android.app.Application
-import cn.govast.city.db.AreaDatabase
-import cn.govast.vasttools.config.ToolsConfig
-import cn.govast.vasttools.helper.ContextHelper
+import cn.govast.vasttools.lifecycle.StateLiveData
+import cn.govast.vasttools.viewModel.VastViewModel
+import cn.govast.vmusic.model.net.toplist.TopList
+import cn.govast.vmusic.network.repository.MusicRepository
+
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
-// Date: 2022/9/29
+// Date: 2022/11/10
 // Description: 
 // Documentation:
 // Reference:
 
-class VMusicApp: Application() {
+class RankingVM: VastViewModel() {
 
-    companion object{
-        /**
-         * 获取城市数据库
-         */
-        val areaDao by lazy {
-            AreaDatabase.getDatabase(ContextHelper.getAppContext()).AreaDao()
-        }
-    }
+    val topList = StateLiveData<TopList>()
 
-    override fun onCreate() {
-        super.onCreate()
-        ToolsConfig.init(this)
+    fun getTopList(){
+        getRequestBuilder()
+            .suspendWithListener({ MusicRepository.getTopList() }){
+                onSuccess = {
+                    topList.postValueAndSuccess(it)
+                }
+            }
     }
 
 }

@@ -68,4 +68,5 @@
     <string name="start_download">开始下载</string>
     <string name="cor_info_download_success">下载成功</string>
     <string name="err_info_get_current_music">当前播放音乐信息获取失败</string>
+    <string name="main_bottom_bar_ranking">排行榜</string>
 </resources>

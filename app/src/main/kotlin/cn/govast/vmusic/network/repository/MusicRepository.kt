@@ -19,6 +19,7 @@ package cn.govast.vmusic.network.repository
 import cn.govast.vmusic.model.net.music.play.MusicQuality
 import cn.govast.vmusic.model.net.music.play.MusicUrl
 import cn.govast.vmusic.model.net.music.search.MusicSearch
+import cn.govast.vmusic.model.net.toplist.TopList
 import cn.govast.vmusic.network.ServiceCreator
 import cn.govast.vmusic.network.service.MusicNetService
 
@@ -44,6 +45,10 @@ object MusicRepository {
      */
     suspend fun getMusicUrl(id: Int, quality: MusicQuality): MusicUrl {
         return mMusicNetService.getMusicUrl(id, quality.value)
+    }
+
+    suspend fun getTopList(): TopList {
+        return mMusicNetService.getTopList()
     }
 
 }

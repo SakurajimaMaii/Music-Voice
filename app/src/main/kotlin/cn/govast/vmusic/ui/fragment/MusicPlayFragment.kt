@@ -24,7 +24,6 @@ import cn.govast.vastadapter.AdapterClickListener
 import cn.govast.vasttools.fragment.VastVbVmFragment
 import cn.govast.vmusic.constant.Order
 import cn.govast.vmusic.databinding.FragmentPlayMusicBinding
-import cn.govast.vmusic.model.Music
 import cn.govast.vmusic.model.MusicPlayWrapper
 import cn.govast.vmusic.model.MusicWrapper
 import cn.govast.vmusic.service.musicplay.MusicService
