@@ -16,8 +16,8 @@
 
 package cn.govast.vmusic.network.interceptor
 
-import cn.govast.vmusic.mmkv.MMKV.userMMKV
-import cn.govast.vmusic.constant.UserConstant.USER_COOKIE
+import cn.govast.vasttools.utils.LogUtils
+import cn.govast.vmusic.sharedpreferences.UserSp
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -40,8 +40,8 @@ class AddCookiesInterceptor : Interceptor {
             .url
             .newBuilder()
             .addQueryParameter("timestamp", time)
-        userMMKV.decodeStringSet(USER_COOKIE)?.let {cookieSet->
-            modifiedUrl.addQueryParameter("cookie", cookieSet.first())
+        UserSp.getCookie()?.apply {
+            modifiedUrl.addQueryParameter("cookie", this)
         }
         val newRequestBuilder = request.newBuilder().url(modifiedUrl.build()).build().newBuilder()
         return chain.proceed(newRequestBuilder.build())

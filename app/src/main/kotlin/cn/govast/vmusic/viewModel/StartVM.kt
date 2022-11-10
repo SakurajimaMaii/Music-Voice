@@ -20,7 +20,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.govast.city.model.Area
 import cn.govast.vasttools.lifecycle.StateLiveData
-import cn.govast.vasttools.utils.LogUtils
 import cn.govast.vasttools.utils.RegexUtils
 import cn.govast.vasttools.utils.ResUtils
 import cn.govast.vasttools.utils.ToastUtils
@@ -91,11 +90,7 @@ class StartVM : VastViewModel() {
     fun getCaptcha(phone: String) {
         if (RegexUtils.isPhoneNumber(phone)) {
             getRequestBuilder()
-                .suspendWithListener({ UserRepository.getCaptcha(phone) }) {
-                    onFailed = { code, msg ->
-                        ToastUtils.showShortMsg("$code $msg")
-                    }
-                }
+                .suspendWithListener({ UserRepository.getCaptcha(phone) }) {}
         } else ToastUtils.showShortMsg(ResUtils.getString(R.string.err_info_phone))
     }
 
@@ -136,7 +131,7 @@ class StartVM : VastViewModel() {
     suspend fun loadingArea() {
         UserSp.getSp().getBoolean(UserSp.IsFirst, true).apply {
             if (this) {
-                val gson: Gson = Gson()
+                val gson = Gson()
                 val type: Type = object : TypeToken<ArrayList<Area>>() {}.type
                 val areaList = gson.fromJson<ArrayList<Area>>(areas, type)
                 areaList.forEachIndexed { index, area ->

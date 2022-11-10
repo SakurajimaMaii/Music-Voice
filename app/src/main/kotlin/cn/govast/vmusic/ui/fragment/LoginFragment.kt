@@ -18,15 +18,13 @@ package cn.govast.vmusic.ui.fragment
 
 import android.os.Bundle
 import android.view.View
-import androidx.databinding.DataBindingUtil.getBinding
 import androidx.navigation.fragment.findNavController
 import cn.govast.vmusic.R
 import cn.govast.vmusic.databinding.FragmentLoginBinding
 import cn.govast.vmusic.viewModel.StartVM
 import cn.govast.vasttools.fragment.VastVbVmFragment
-import cn.govast.vasttools.utils.ToastUtils
-import cn.govast.vmusic.constant.UserConstant
-import cn.govast.vmusic.mmkv.MMKV
+import cn.govast.vasttools.utils.LogUtils
+import cn.govast.vmusic.sharedpreferences.UserSp
 import cn.govast.vmusic.ui.base.UIStateListener
 
 // Author: Vast Gui
@@ -46,7 +44,7 @@ class LoginFragment : VastVbVmFragment<FragmentLoginBinding, StartVM>(), UIState
 
     override fun initUIState() {
         getViewModel().cellphoneLogin.observe(requireActivity()){
-            MMKV.userMMKV.encode(UserConstant.USER_COOKIE, setOf(it.cookie))
+            UserSp.setCookie(it.cookie)
             findNavController().navigate(R.id.action_loginFragment_to_mainActivity)
         }
     }

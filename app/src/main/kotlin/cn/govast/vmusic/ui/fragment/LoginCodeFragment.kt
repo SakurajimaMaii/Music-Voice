@@ -22,13 +22,12 @@ import androidx.navigation.fragment.findNavController
 import cn.govast.vasttools.fragment.VastVbVmFragment
 import cn.govast.vasttools.utils.ToastUtils
 import cn.govast.vmusic.R
-import cn.govast.vmusic.constant.UserConstant.USER_COOKIE
 import cn.govast.vmusic.databinding.FragmentLoginCodeBinding
-import cn.govast.vmusic.mmkv.MMKV.userMMKV
 import cn.govast.vmusic.model.net.qrcode.GenQRCodeOption
 import cn.govast.vmusic.model.net.qrcode.QRCodeCheckState
 import cn.govast.vmusic.network.ServiceCreator
 import cn.govast.vmusic.network.service.LoginNetService
+import cn.govast.vmusic.sharedpreferences.UserSp
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.utils.BitmapUtils
 import cn.govast.vmusic.viewModel.StartVM
@@ -52,33 +51,29 @@ class LoginCodeFragment : VastVbVmFragment<FragmentLoginCodeBinding, StartVM>(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (null != userMMKV.decodeStringSet(USER_COOKIE)) {
-            findNavController().navigate(R.id.mainActivity)
-        } else {
-            getRequestBuilder()
-                .suspendWithListener({ mQRCodeService.generateQRCode() }) {
-                    onSuccess = {
-                        getRequestBuilder().suspendWithListener({
-                            qrCodeKey = it.data.unikey
-                            mQRCodeService.getQRCode(
-                                GenQRCodeOption(it.data.unikey, true)
-                            )
-                        }) {
-                            onSuccess = { QRCodeInfo ->
-                                getBinding().loginCode.setImageBitmap(
-                                    BitmapUtils.getBitmapFromBase64(
-                                        QRCodeInfo.data.qrimg
-                                    )
+        getRequestBuilder()
+            .suspendWithListener({ mQRCodeService.generateQRCode() }) {
+                onSuccess = {
+                    getRequestBuilder().suspendWithListener({
+                        qrCodeKey = it.data.unikey
+                        mQRCodeService.getQRCode(
+                            GenQRCodeOption(it.data.unikey, true)
+                        )
+                    }) {
+                        onSuccess = { QRCodeInfo ->
+                            getBinding().loginCode.setImageBitmap(
+                                BitmapUtils.getBitmapFromBase64(
+                                    QRCodeInfo.data.qrimg
                                 )
-                                getViewModel().checkQRCode(qrCodeKey)
-                            }
-                            onEmpty = {
-                                ToastUtils.showShortMsg("二维码生成失败")
-                            }
+                            )
+                            getViewModel().checkQRCode(qrCodeKey)
+                        }
+                        onEmpty = {
+                            ToastUtils.showShortMsg("二维码生成失败")
                         }
                     }
                 }
-        }
+            }
         initUIState()
     }
 
@@ -89,7 +84,7 @@ class LoginCodeFragment : VastVbVmFragment<FragmentLoginCodeBinding, StartVM>(),
     override fun initUIState() {
         getViewModel().qrCodeCheck.observe(viewLifecycleOwner) {
             if (it.code == QRCodeCheckState.SURE.code) {
-                userMMKV.encode(USER_COOKIE, setOf(it.cookie))
+                UserSp.setCookie(it.cookie)
                 findNavController().navigate(R.id.mainActivity)
             } else {
                 getViewModel().checkQRCode(qrCodeKey)

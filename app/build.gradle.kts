@@ -89,7 +89,6 @@ dependencies {
     implementation(Libraries.event_bus)
     implementation(Libraries.glide)
     implementation(Libraries.glide_transformations)
-    implementation(Libraries.mmkv)
     implementation(Libraries.permissionx)
     implementation(Libraries.progressmanager)
     implementation(Libraries.recyclerview_animators)

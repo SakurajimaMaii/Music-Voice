@@ -23,10 +23,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import cn.govast.vasttools.fragment.VastVbFragment
 import cn.govast.vasttools.utils.ToastUtils
 import cn.govast.vmusic.broadcast.BConstant
-import cn.govast.vmusic.constant.UserConstant
 import cn.govast.vmusic.databinding.FragmentUserLoginSettingBinding
-import cn.govast.vmusic.mmkv.MMKV.userMMKV
 import cn.govast.vmusic.network.repository.UserRepository
+import cn.govast.vmusic.sharedpreferences.UserSp
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -42,7 +41,7 @@ class UserFragment : VastVbFragment<FragmentUserLoginSettingBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getBinding().userLoginOutBtn.setOnClickListener {
-            userMMKV.encode(UserConstant.USER_COOKIE,emptyCookie) // 清空用户Cookie数据
+            UserSp.setCookie(null) // 清空用户Cookie数据
             LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(Intent(BConstant.ACTION_LOGIN_OUT)) // 发送退出广播
             getRequestBuilder()
                 .suspendWithListener({UserRepository.loginOut()}){

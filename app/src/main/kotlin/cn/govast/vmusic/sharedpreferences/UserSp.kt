@@ -30,14 +30,15 @@ import cn.govast.vmusic.model.net.user.LoginStateRes
 // Reference:
 
 object UserSp {
-    private const val UserSpFile = "USER_SP_FILE"
+    private const val USER_SP_FILE = "USER_SP_FILE"
+    private const val USER_COOKIE = "USER_COOKIE"
     const val IsFirst = "IS_FIRST"
 
     private val mContext by lazy {
         ContextHelper.getAppContext()
     }
     private val mSharedPreferences by lazy {
-        mContext.getSharedPreferences(UserSpFile, Context.MODE_PRIVATE)
+        mContext.getSharedPreferences(USER_SP_FILE, Context.MODE_PRIVATE)
     }
 
     fun getSp(): SharedPreferences {
@@ -56,6 +57,25 @@ object UserSp {
             apply()
         }
     }
+
+    /**
+     * 设置cookie
+     *
+     * @param cookie
+     */
+    fun setCookie(cookie:String?){
+        with(mSharedPreferences.edit()){
+            putString(USER_COOKIE,cookie)
+            apply()
+        }
+    }
+
+    /**
+     * 获取Cookie
+     *
+     * @return
+     */
+    fun getCookie():String? = mSharedPreferences.getString(USER_COOKIE,null)
 
     /** 设置首期启动数据记录 */
     fun isFirst() {

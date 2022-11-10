@@ -18,15 +18,11 @@ package cn.govast.vmusic.ui.fragment
 
 import android.os.Bundle
 import android.view.View
-import androidx.databinding.DataBindingUtil.getBinding
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import cn.govast.vasttools.fragment.VastVbFragment
 import cn.govast.vasttools.fragment.VastVbVmFragment
 import cn.govast.vmusic.R
-import cn.govast.vmusic.constant.UserConstant
 import cn.govast.vmusic.databinding.FragmentInitBinding
-import cn.govast.vmusic.mmkv.MMKV
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.viewModel.StartVM
 import kotlinx.coroutines.Dispatchers

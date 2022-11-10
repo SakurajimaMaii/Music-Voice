@@ -47,7 +47,7 @@
     <style name="Vmusic.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/colorSurface</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
-        <item name="windowSplashScreenAnimationDuration">1500</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
         <item name="postSplashScreenTheme">@style/Vmusic</item>
     </style>
 </resources>

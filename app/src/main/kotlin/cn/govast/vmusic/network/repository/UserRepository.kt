@@ -16,6 +16,8 @@
 
 package cn.govast.vmusic.network.repository
 
+import cn.govast.vmusic.model.net.captcha.Captcha
+import cn.govast.vmusic.model.net.captcha.CaptchaResult
 import cn.govast.vmusic.model.net.qrcode.QRCodeCheck
 import cn.govast.vmusic.model.net.user.LoginOutRes
 import cn.govast.vmusic.model.net.user.LoginStateRes
@@ -49,11 +51,11 @@ object UserRepository {
         return mUserService.loginState()
     }
 
-    suspend fun getCaptcha(phone: String): cn.govast.vmusic.model.net.captcha.Captcha {
+    suspend fun getCaptcha(phone: String): Captcha {
         return mLoginService.getCaptcha(phone)
     }
 
-    suspend fun phoneLogin(phone: String, captcha: String): cn.govast.vmusic.model.net.captcha.CaptchaResult {
+    suspend fun phoneLogin(phone: String, captcha: String): CaptchaResult {
         return mLoginService.phoneLogin(phone, captcha)
     }
 

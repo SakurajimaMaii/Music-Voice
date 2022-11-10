@@ -167,7 +167,6 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
                     )
                 }
             }
-        initUser()
         initUI()
         initUIState()
     }
@@ -220,23 +219,6 @@ class MainActivity : VastVbVmActivity<ActivityMainBinding, MainSharedVM>(), UISt
         } else {
             getBinding().fragmentVp.currentItem = getBinding().fragmentVp.currentItem - 1
         }
-    }
-
-    private fun initUser() {
-        getRequestBuilder()
-            .suspendWithListener({ UserRepository.checkLoginState() }) {
-                onSuccess = {
-                    it.data.profile?.also { userProfile ->
-                        UserSp.writeUser(userProfile)
-                    }
-                }
-                onError = {
-                    getSnackbar().setText(it?.message ?: "用户信息初始化失败").show()
-                }
-                onEmpty = {
-                    getSnackbar().setText("用户信息初始化失败").show()
-                }
-            }
     }
 
     override fun initUI() {
