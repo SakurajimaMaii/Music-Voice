@@ -19,20 +19,19 @@ package cn.govast.vmusic.ui.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
-import cn.govast.vmusic.mmkv.MMKV.userMMKV
+import cn.govast.vasttools.fragment.VastVbVmFragment
+import cn.govast.vasttools.utils.ToastUtils
 import cn.govast.vmusic.R
-import cn.govast.vmusic.constant.UserConstant
 import cn.govast.vmusic.constant.UserConstant.USER_COOKIE
 import cn.govast.vmusic.databinding.FragmentLoginCodeBinding
+import cn.govast.vmusic.mmkv.MMKV.userMMKV
+import cn.govast.vmusic.model.net.qrcode.GenQRCodeOption
+import cn.govast.vmusic.model.net.qrcode.QRCodeCheckState
 import cn.govast.vmusic.network.ServiceCreator
 import cn.govast.vmusic.network.service.LoginNetService
 import cn.govast.vmusic.ui.base.UIStateListener
 import cn.govast.vmusic.utils.BitmapUtils
 import cn.govast.vmusic.viewModel.StartVM
-import cn.govast.vasttools.fragment.VastVbVmFragment
-import cn.govast.vasttools.utils.ToastUtils
-import cn.govast.vmusic.model.net.qrcode.GenQRCodeOption
-import cn.govast.vmusic.model.net.qrcode.QRCodeCheckState
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -90,7 +89,7 @@ class LoginCodeFragment : VastVbVmFragment<FragmentLoginCodeBinding, StartVM>(),
     override fun initUIState() {
         getViewModel().qrCodeCheck.observe(viewLifecycleOwner) {
             if (it.code == QRCodeCheckState.SURE.code) {
-                userMMKV.encode(UserConstant.USER_COOKIE, setOf(it.cookie))
+                userMMKV.encode(USER_COOKIE, setOf(it.cookie))
                 findNavController().navigate(R.id.mainActivity)
             } else {
                 getViewModel().checkQRCode(qrCodeKey)

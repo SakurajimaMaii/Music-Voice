@@ -19,7 +19,7 @@ package cn.govast.vmusic.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.govast.city.model.Area
-import cn.govast.vasttools.livedata.NetStateLiveData
+import cn.govast.vasttools.lifecycle.StateLiveData
 import cn.govast.vasttools.utils.LogUtils
 import cn.govast.vasttools.utils.RegexUtils
 import cn.govast.vasttools.utils.ResUtils
@@ -29,6 +29,7 @@ import cn.govast.vmusic.R
 import cn.govast.vmusic.VMusicApp
 import cn.govast.vmusic.model.net.captcha.CaptchaResult
 import cn.govast.vmusic.model.net.qrcode.QRCodeCheck
+import cn.govast.vmusic.model.net.user.LoginStateRes
 import cn.govast.vmusic.network.repository.UserRepository
 import cn.govast.vmusic.sharedpreferences.UserSp
 import cn.govast.vmusic.utils.JsonUtils
@@ -45,9 +46,9 @@ import java.lang.reflect.Type
 
 class StartVM : VastViewModel() {
 
-    val qrCodeCheck = NetStateLiveData<QRCodeCheck>()
+    val qrCodeCheck = StateLiveData<QRCodeCheck>()
 
-    val cellphoneLogin = NetStateLiveData<CaptchaResult>()
+    val cellphoneLogin = StateLiveData<CaptchaResult>()
 
     private val areas by lazy {
         JsonUtils.getJson("areas.json")
@@ -62,6 +63,8 @@ class StartVM : VastViewModel() {
     val progress: LiveData<Int>
         get() = _progress
 
+    val userLoginStatus = StateLiveData<LoginStateRes>()
+
     fun checkQRCode(key: String) {
         getRequestBuilder()
             .suspendWithListener({
@@ -72,10 +75,10 @@ class StartVM : VastViewModel() {
                     qrCodeCheck.postValueAndSuccess(it)
                 }
                 onFailed = { errorCode, errorMsg ->
-                    LogUtils.d(getDefaultTag(), errorCode.toString() + errorMsg)
+                    qrCodeCheck.postFailed(errorCode, errorMsg)
                 }
                 onError = {
-                    LogUtils.d(getDefaultTag(), it?.cause?.message)
+                    qrCodeCheck.postError(it)
                 }
             }
     }
@@ -110,6 +113,21 @@ class StartVM : VastViewModel() {
                 }
                 onError = {
                     it?.printStackTrace()
+                }
+            }
+    }
+
+    /**
+     * 检查用户登录状态
+     */
+    fun userLoginStatus(){
+        getRequestBuilder()
+            .suspendWithListener({UserRepository.checkLoginState()}){
+                onSuccess = {
+                    userLoginStatus.postValueAndSuccess(it)
+                }
+                onEmpty = {
+                    userLoginStatus.postEmpty()
                 }
             }
     }

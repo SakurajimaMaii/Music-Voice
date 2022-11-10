@@ -22,12 +22,16 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.fragment.NavHostFragment
 import cn.govast.vasttools.activity.VastVbVmActivity
 import cn.govast.vasttools.extension.cast
+import cn.govast.vasttools.manager.filemgr.FileMgr
 import cn.govast.vasttools.utils.ActivityUtils
+import cn.govast.vasttools.utils.LogUtils
 import cn.govast.vmusic.R
 import cn.govast.vmusic.constant.UserConstant
 import cn.govast.vmusic.databinding.ActivityStartBinding
 import cn.govast.vmusic.mmkv.MMKV
 import cn.govast.vmusic.viewModel.StartVM
+import java.io.File
+import java.io.FileWriter
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
@@ -52,12 +56,16 @@ class StartActivity : VastVbVmActivity<ActivityStartBinding, StartVM>() {
         splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         ActivityUtils.addActivity(this)
+        // 检查用户登录状态
+        getViewModel().userLoginStatus()
         // 用户已经登录,替换导航图
-        if (null != MMKV.userMMKV.decodeStringSet(UserConstant.USER_COOKIE)) {
-            val graph = navController.navInflater.inflate(R.navigation.nav_start).also {
-                it.setStartDestination(R.id.nav_main)
+        getViewModel().userLoginStatus.getState().observeState(this){
+            onSuccess = {
+                val graph = navController.navInflater.inflate(R.navigation.nav_start).also {
+                    it.setStartDestination(R.id.nav_main)
+                }
+                navController.setGraph(graph, Bundle())
             }
-            navController.setGraph(graph, Bundle())
         }
     }
 

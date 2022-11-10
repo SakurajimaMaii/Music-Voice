@@ -26,7 +26,7 @@ import android.provider.MediaStore
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import cn.govast.vasttools.broadcastreceiver.VastBroadcastReceiver
 import cn.govast.vasttools.extension.cast
-import cn.govast.vasttools.filemgr.FileMgr
+import cn.govast.vasttools.manager.filemgr.FileMgr
 import cn.govast.vasttools.service.VastService
 import cn.govast.vasttools.utils.DateUtils
 import cn.govast.vasttools.utils.DownloadUtils
@@ -35,8 +35,6 @@ import cn.govast.vasttools.utils.ResUtils
 import cn.govast.vasttools.utils.ToastUtils
 import cn.govast.vmusic.R
 import cn.govast.vmusic.broadcast.BConstant
-import cn.govast.vmusic.ui.activity.MusicActivity
-import cn.govast.vmusic.viewModel.MusicDownloadVM
 import cn.govast.vmusic.viewModel.MusicVM
 
 // Author: Vast Gui
